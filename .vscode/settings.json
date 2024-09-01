@@ -1,0 +1,12 @@
+{
+  "frontMatter.content.pageFolders": [
+    {
+      "path": "[[workspace]]/docs",
+      "title": "docs"
+    },
+    {
+      "title": "ConfigManagement",
+      "path": "[[workspace]]/docs/ConfigManagement"
+    }
+  ]
+}

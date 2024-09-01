@@ -16,7 +16,7 @@ const config: Config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "MapColonies", // Usually your GitHub org/user name.
-  projectName: "docusaurus", // Usually your repo name.
+  projectName: "infops-portal", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -29,6 +29,10 @@ const config: Config = {
     locales: ["en"],
   },
 
+  markdown: {
+    mermaid: true,
+  },
+
   presets: [
     [
       "classic",
@@ -37,8 +41,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            "https://github.com/MapColonies/infops-portal/tree/master/docs/",
+          editUrl: "https://github.com/MapColonies/infops-portal/tree/master/",
         },
         blog: {
           showReadingTime: true,
@@ -80,7 +83,7 @@ const config: Config = {
         },
         // { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/MapColonies/docusaurus",
+          href: "https://github.com/MapColonies/infops-portal",
           label: "GitHub",
           position: "right",
         },
@@ -134,8 +137,18 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: [
+        "typescript",
+        "json",
+        "bash",
+        "yaml",
+        "docker",
+        "regex",
+        "sql",
+      ],
     },
   } satisfies Preset.ThemeConfig,
+  themes: ["@docusaurus/theme-mermaid"],
 };
 
 export default config;
