@@ -8,5 +8,6 @@
       "title": "ConfigManagement",
       "path": "[[workspace]]/docs/ConfigManagement"
     }
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

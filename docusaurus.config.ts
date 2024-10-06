@@ -1,12 +1,13 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import { remotePluginGenerator } from "./remoteFetch";
 
 const config: Config = {
   title: "Infra Ops Portal",
   tagline: "Penguins are cool",
   favicon: "img/favicon.ico",
-
+  plugins: [...remotePluginGenerator()],
   // Set the production url of your site here
   url: "https://mapcolonies.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -30,6 +31,7 @@ const config: Config = {
   },
 
   markdown: {
+    format: "detect",
     mermaid: true,
   },
 
