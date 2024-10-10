@@ -4,8 +4,8 @@ import type * as Preset from "@docusaurus/preset-classic";
 import { remotePluginGenerator } from "./remoteFetch";
 
 const config: Config = {
-  title: "infra Portal",
-  tagline: "Penguins are cool",
+  title: "Infra Portal",
+  tagline: "Beavers are cool",
   favicon: "img/favicon.ico",
   plugins: [...remotePluginGenerator()],
   // Set the production url of your site here
@@ -71,7 +71,7 @@ const config: Config = {
     // Replace with your project's social card
     image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: "infra Portal",
+      title: "Infra Portal",
       logo: {
         alt: "My Site Logo",
         src: "img/logo.svg",
@@ -145,7 +145,7 @@ const config: Config = {
         //   ],
         // },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} infra Portal, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Infra Portal, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
