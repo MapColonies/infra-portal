@@ -4,10 +4,10 @@ import type * as Preset from "@docusaurus/preset-classic";
 import { remotePluginGenerator } from "./remoteFetch";
 
 const config: Config = {
-  title: "Infra Ops Portal",
-  tagline: "Penguins are cool",
+  title: "Infra Portal",
+  tagline: "Beavers are cool",
   favicon: "img/favicon.ico",
-  plugins: [...remotePluginGenerator()],
+  plugins: [...remotePluginGenerator(), require.resolve('docusaurus-lunr-search')],
   // Set the production url of your site here
   url: "https://mapcolonies.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -17,7 +17,8 @@ const config: Config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "MapColonies", // Usually your GitHub org/user name.
-  projectName: "infops-portal", // Usually your repo name.
+  projectName: "infra-portal", // Usually your repo name.
+  trailingSlash: false,
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -43,7 +44,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/MapColonies/infops-portal/tree/master/",
+          editUrl: "https://github.com/MapColonies/infra-portal/tree/master/",
         },
         blog: {
           showReadingTime: true,
@@ -54,7 +55,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/MapColonies/infops-portal/tree/master/docs/",
+            "https://github.com/MapColonies/infra-portal/tree/master/docs/",
           // Useful options to enforce blogging best practices
           onInlineTags: "warn",
           onInlineAuthors: "warn",
@@ -71,7 +72,7 @@ const config: Config = {
     // Replace with your project's social card
     image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: "InfOps Portal",
+      title: "Infra Portal",
       logo: {
         alt: "My Site Logo",
         src: "img/logo.svg",
@@ -91,7 +92,7 @@ const config: Config = {
         },
         // { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/MapColonies/infops-portal",
+          href: "https://github.com/MapColonies/infra-portal",
           label: "GitHub",
           position: "right",
         },
@@ -145,7 +146,7 @@ const config: Config = {
         //   ],
         // },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} InfOps Portal, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Infra Portal, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

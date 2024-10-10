@@ -51,7 +51,7 @@ const sources: (GithubSource | Source)[] = [
   },
   {
     type: 'github',
-    documents: ['readme.md'],
+    documents: ['README.md'],
     branch: 'master',
     name: 'eslint-config',
     repo: 'MapColonies/eslint-config',
