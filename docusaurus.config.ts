@@ -7,7 +7,7 @@ const config: Config = {
   title: "Infra Portal",
   tagline: "Beavers are cool",
   favicon: "img/favicon.ico",
-  plugins: [...remotePluginGenerator()],
+  plugins: [...remotePluginGenerator(), require.resolve('docusaurus-lunr-search')],
   // Set the production url of your site here
   url: "https://mapcolonies.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
