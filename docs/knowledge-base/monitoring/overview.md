@@ -11,7 +11,8 @@ import TabItem from '@theme/TabItem';
 
 # An Overview of Monitoring Stack
 
-The monitoring stack is a Kubernetes-based stack used to observe, monitor, and alert on the health and performance metrics. It leverages open-source tools, including **Prometheus**, **Grafana**, **Blackbox Exporter**, **Alertmanager**, and **OpenTelemetry**.
+The monitoring stack is a Kubernetes-based stack used to observe, monitor, and alert on the health and performance metrics.
+It leverages open-source tools, including **Prometheus**, **Grafana**, **Blackbox Exporter**, **Alertmanager**, and **OpenTelemetry**.
 
 ![monitoring stack components diagram](./img/monitoring.png)
 
@@ -20,32 +21,8 @@ You can access Prometheus at https://prometheus.mapcolonies.net.
 
 Prometheus is the core system for collecting and storing metrics as time-series data, meaning each metric is stored with the timestamp of when it was recorded, alongside labels that provide additional context to the metric.
 
-Metrics are collected at intervals of 5 seconds with a timeout of 3 seconds. Evaluation of rules (for alerting, recording, etc.) happens every 30 seconds.
 
-```yaml
-{
-  global:
-      scrape_interval: 5s
-      scrape_timeout: 3s
-      evaluation_interval: 30s
-}
-```
-
-Our Prometheus instance scraping configuration is defined in prometheus.yml and is set to scrape metrics from multiple sources:
-
-1. It scrapes its own metrics to monitor its performance.
-  ```yaml
-  {
-    prometheus.yml:
-      scrape_configs:
-        - job_name: prometheus
-          static_configs:
-            - targets:
-              - localhost:9090
-  }
-  ```
-
-2. It scrapes other pods that are in specific namespaces and correctly labeled.
+The prometheus scrapes other pods that are in specific namespaces and correctly labeled, as seen in the following configuration snippet
   ```yaml
   {
         - job_name: k8s-scrape
@@ -62,6 +39,11 @@ Our Prometheus instance scraping configuration is defined in prometheus.yml and 
               regex: true
   }
   ```
+In order to scrape your pod you should assure your pod is deployed in one of the namespaces from the list and has the following annotation to your deployments: 
+![prometheus scrape annotations](./img/prometheus-annotations.png)
+
+
+
 
 3. It scrapes endpoints using the Blackbox Exporter for external probing.
   ```yaml
