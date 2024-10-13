@@ -52,11 +52,11 @@ In order to trigger the [bundler pipeline](https://jenkins.mapcolonies.net/job/b
 
 * Go to the bundler pipeline
 * Click on `Build with parameters`  
-![Bundler build with parameters](./img/bundler-1.png)
+![Bundler build with parameters](./img/bundler-build-with-params-1.png)
 * Click on `Choose File` and upload the `artifacts.json` from you local computer.  
-![Bundler browse artifacts file](./img/bundler-2.png)
+![Bundler browse artifacts file](./img/bundler-browse-file-2.png)
 * Click the Build button
-![Bundler build button](./img/bundler-3.png)
+![Bundler build button](./img/bundler-build-3.png)
 * After the bundler will finish it'll send a slack message to the `<team>-notifications` channel based on the user logged in.
 ![Bundler slack message](./img/bundler-slack.png)
 * Click on the download link in the slack message and download the bundle zip file which you'll use later on in the unbundler in the relevant network.
@@ -68,6 +68,6 @@ In order to trigger the unbundler, open the jenkins instance in the relevant net
 
 * Click on `Build with Parameters`
 * Click on `Choose file` and select the bundler zip file from your computer
-![Unbundler browse file](./img/bundler-slack.png)
+![Unbundler browse file](./img/unbundler-browse-file-1.png)
 * Click the `build` button
 * Once the bundler is done you'll be able to find all the artifacts which were in the bundle zip file in all the registries in the specific network you're working on.
