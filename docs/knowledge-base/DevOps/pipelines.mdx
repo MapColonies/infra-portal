@@ -57,30 +57,6 @@ We have 2 options for deployment:
 1. Manual deployment
 2. Auto Deploy
 
-#### Manual deployment
-
-The manual deployment is happening on our Jenkins instance.  
-The pipeline name is [Deploy-Chart](https://jenkins.mapcolonies.net/job/Deploy-Chart/).
-
-How to use it?
-
-* Click on the `Build with parameters` button
-![jenkins manual deploy 1](./img/jenkins-manual-deploy-1.png)
-
-* In the next screen you'll need to fill up the parameters:
-  * `BRANCH` - is the list of the auto populated branches from the `helm-charts` repo.
-  * `NAMESPACE` - is the namespace where do you wish to deploy the chart
-  * `VALUES_FILE` - is the values file which you want to use for the deployment
-  * `RELEASE_NAME` - is the release name which you want to create or upgrade
-  * `CHART_DIRECTORY_LOCATION` - is the relative path of the directory which holds the chart you wishi to deploy (E.G `infra/monitoring`)
-
-You can see how it looks with the pre-filled params.  
-
-![jenkins manual deploy parameters](./img/jenkins-manual-deploy-2.png)
-
-* After filling up the parameters, click on the `Build` button
-* When the build will kickoff it'll send a message in `<team>-notifications` channel in Slack that it has started and after it has finished it'll also send another message.  
-
 #### Auto deployment
 
 The auto deployment process is currently monitoring the following branches: `master` and `qa`. On each commit to the [helm-charts repository](https://github.com/MapColonies/helm-charts) on the monitored branch the pipeline is kicking off.
