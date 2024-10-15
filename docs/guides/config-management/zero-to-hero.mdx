@@ -19,29 +19,6 @@ This guide assumes that you have an already existing service based on the [MapCo
 
 It is also recommended to read the [schemas package readme](https://github.com/MapColonies/schemas/blob/master/README.md).
 
-## What is Config Management?
-
-Config Management is the complete solution to manage all the configuration needs of MapColonies.
-It's intended to support the system in all stages from early development to production.
-
-
-Config management has the following parts:
-
-- [schemas](https://github.com/MapColonies/schemas) - Contains the JSON Schemas that define all the configs
-- [config-server](https://github.com/MapColonies/config-server) - Server for managing all the configurations
-- [config](https://github.com/MapColonies/config) - NPM package for using config management with your NodeJS service
-- [config-ui](https://github.com/MapColonies/config-ui) - UI for interacting with the config server
-
-
-{/* Replace this once docusaurus add support to mermaid v11 with architechture diagram */}
-![config parts relation diagram](./img/config-relation-diagram.png)
-
-## Motivation
-The MapColonies™ Config Management system provides a centralized solution for managing all service configurations. 
-This system ensures a single source of truth, simplifying configuration management. 
-It also validates configurations against a JSON Schema, guaranteeing their correctness. 
-Additionally, schema validation ensures that all configurations are strongly typed, enabling seamless integration with your code.
-
 ## Before we start
 In general, the implementation of the MapColonies™ Config Management system consists of the following steps:
 1. Work environment setup.
