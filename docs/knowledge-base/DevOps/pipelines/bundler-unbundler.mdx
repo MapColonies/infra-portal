@@ -1,6 +1,6 @@
 ---
-title: bundler-and-unbundler
-sidebar_position: 1
+title: Bundler & Unbundler
+sidebar_position: 3
 toc_min_heading_level: 2
 toc_max_heading_level: 6
 
@@ -9,7 +9,6 @@ toc_max_heading_level: 6
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Bundler/Unbundler
 
 The bundler and unbundler workflows are intended to help our dev team to bring in the artifacts which were built in the release flow in an easy way to our internal deployments.
 
@@ -18,7 +17,7 @@ We utilize Jenkins for the bundler and unbundler.
 
 ![Bundler and Unbundler](./img/bundler-unbundler.png) 
 
-### Bundler pipeline
+## Bundler pipeline
 
 The [bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/) has 1 parameter which is the `artifacts.json` file.
 
@@ -58,7 +57,7 @@ Once the bundler is done it'll send a slack message to the `<team>-notifications
 
 ![Bundler slack message](./img/bundler-slack.png)
 
-### Unbundler pipeline
+## Unbundler pipeline
 
 The unbundler pipeline is happening in other networks we have.
 After copying over the `bundle` file to the relevant network, there will be an unbundler pipeline on the jenkins.

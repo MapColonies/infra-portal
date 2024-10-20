@@ -11,6 +11,10 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
+The CI pipelines are responsible for validating, compiling and building the artifacts and publishing them to the various registries.
+
+## Background
+
 We store all our helm charts of all the teams under the [helm-charts repository](https://github.com/MapColonies/helm-charts)
 
 This repository is a mono repo, where each team has it’s own `scope`. For example, `3D` team has it’s own directory where the team is storing their helm charts.  
@@ -30,11 +34,7 @@ This repository is a mono repo, where each team has it’s own `scope`. For exam
 
 ## Release Workflow
 
-We can see the diagram of the Release workflow below
-
 ![release workflow diagram](./img/release-workflow-diagram.png)
-
-### CI part
 
 The release workflow begins with a new release or tag push on each service repository and it's happening via Github Actions workflows.
 
