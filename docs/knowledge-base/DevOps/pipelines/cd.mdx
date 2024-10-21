@@ -26,7 +26,7 @@ We have 2 options for deployment:
 
 The auto deployment process is currently monitoring the following branches: `master` and `qa`. On each commit to the [helm-charts repository](https://github.com/MapColonies/helm-charts) on the monitored branch the pipeline is kicking off.
 
-The pipeline can be found [here](https://jenkins.mapcolonies.net/job/Deploy%20Chart%20Polling%20-%20Multibranch/)  
+The pipeline can be found [here](https://jenkins.mapcolonies.net/job/Deploy%20Chart%20Polling%20-%20Multibranch/).  
 As you can see in the overview page of the pipeline there are 2 branches which it's monitoring.
 
 ![jenkins auto deploy overview](./img/jenkins-auto-deploy-1.png)  
@@ -35,7 +35,7 @@ As you can see in the overview page of the pipeline there are 2 branches which i
 
 * The pipeline is first of all looking at changes introduced in each commit with a `git diff`.
 * After finding the `diff` it'll look at the `deployment.json` in the `scope` (each team's directory in the `helm-charts` repo) directories.
-* Here's an example of `deployment.json` file
+* Here's an example of `deployment.json` file.
 
 ```json
 [

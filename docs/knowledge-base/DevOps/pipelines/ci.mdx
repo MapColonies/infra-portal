@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
-The CI pipelines are responsible for validating, compiling and building the artifacts and publishing them to the various registries.
+The CI (Continues Integration) pipelines are responsible for validating, compiling and building the artifacts and publishing them to the various registries.
 
 ## Background
 
@@ -36,10 +36,10 @@ This repository is a mono repo, where each team has it’s own `scope`. For exam
 
 ![release workflow diagram](./img/release-workflow-diagram.png)
 
-The release workflow begins with a new release or tag push on each service repository and it's happening via Github Actions workflows.
+The release workflow begins with a new release or tag push on each service repository and is executed using Github Actions workflows.
 
 The workflows are being triggered automatically.  
 If we take a look at a sample repo `store-trigger` it has a workflow called `Build and push artifacts` , where the source of this can be found [here](https://github.com/MapColonies/store-trigger/blob/master/.github/workflows/build-and-push.yaml)
 
-The workflow is building the dokcer image of the service, tagging it and pushing it to `Azure ACR`, along with the docker image it's also pushing the helm package which is part of the repository.  
+The workflow is building the docker image of the service, tagging it and pushing it to `Azure ACR`. Along with the docker image the flow also builds and pushes the helm package which is part of the repository.  
 Afterwards it's updating the `artifacts.json` which is associated with the team's `scope` under the [helm-charts repository](https://github.com/MapColonies/helm-charts) with the new releases which have been just released.  
