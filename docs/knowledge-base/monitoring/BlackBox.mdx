@@ -1,9 +1,12 @@
 ---
+id: BlackBox
 title: BlackBox
-sidebar_position: 1
+sidebar_label: BlackBox
+sidebar_position: 2
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/BlackBox
 toc_min_heading_level: 2
 toc_max_heading_level: 5
-
 ---
 
 import Tabs from '@theme/Tabs';
@@ -32,4 +35,18 @@ extraScrapeConfigs: |
 ## Alerting
 You can set up alert rules in Prometheus based on Blackbox Exporter metrics.  
 Here’s an example of an alert rule that checks for high response times:
-![blackbox alert](./img/blackbox-alert.png)
+
+```yaml
+alerting_rules.yml:
+  groups:
+    - name: blackbox_alerts
+      rules:
+        - alert: CertExpiration
+          expr: ((probe_ssl_earliest_cert_expiry - time()) / 3600 / 24 < 30)
+          for: 90s
+          labels:
+            severity: 'critical'
+          annotations:
+            description: "An SSL certificate for the ({{ $labels.instance }}) endpoint is about to expire in 30 days!"
+            summary: "An SSL certificate for the ({{ $labels.instance }}) endpoint is about to expire in 30 days!"
+```
