@@ -46,3 +46,6 @@ run the following from the `Chart` directory you wish to upgrade.
 `helm diff upgrade foo --values dev-values.yaml .`  
 If there's a `diff`, the output will show all the diffs between the `k8s` objects which will be modified/create/deleted.  
 You can also specify multiple values files `helm diff upgrade foo --values dev-values.yaml --values dev1-values.yaml .`
+
+Here's an example of the `helm diff` output
+![Helm diff](./img/helm-diff.png)
