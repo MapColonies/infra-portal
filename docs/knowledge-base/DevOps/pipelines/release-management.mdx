@@ -12,16 +12,17 @@ import TabItem from '@theme/TabItem';
 # Release Management Guide
 
 This document outlines the release management process for Libot Mipuy, which involves multiple teams and services. 
-The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services and "Libot version" for managing deployed Libot stack on networks.
+The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services
+and "Libot version" for managing deployed Libot stack on networks.
 
 ## Libot Version Tag
 
 - The **Libot Version** is assigned based on the `helm-charts` release version.
-- This version represents the bundle of all service releases for the annual deployment to production.
+- This version represents the bundle of all service releases for the deployment to production.
 
 ## Service Branching Strategy
 
-Each service must maintain at least two main branches to track the latest stable release and major version updates:
+Each service must maintain at least one main branch to track the latest stable release and major version updates:
 
 1. **`master`**:
    - Represents the latest stable version of the service.
@@ -29,12 +30,13 @@ Each service must maintain at least two main branches to track the latest stable
    
 2. **`MAJOR.x.x`** (e.g., `1.x.x`, `2.x.x`):
    - Tracks the major version series of a service.
-   - A new branch is created for every major version.
+   - A new branch is created for every major version that is smaller than the latest major version.
    - Example:
-     - If a service's latest release version is `2.3.0` and a new feature is added, a pull request (PR) will be created for both:
-       - `master` (for stable updates)
-       - `2.x.x` (to track the new version).
-     - Once merged, both branches will represent the `2.4.0` release, while the `1.x.x` branch remains unchanged.
+     - If a service's latest release version is `3.3.0` and a new bug fix needs to be merged to latest release with major version '2', 
+       a pull request (PR) will be created for both:
+       - `master` (represents 3.x.x) - only if the bug fix relevant to this release too
+       - `2.x.x` (to track the new version with the fix).
+     - Once merged, both branches will represent a release with the bug fix, while the `1.x.x` branch remains unchanged.
 
 ## Service Release Flow
 
@@ -45,7 +47,6 @@ Explanation:
 1. The developer creates a PR
 
 2. On merging to master: 
-    - An automate workflow is activated to merge the PR also to the MAJOR branch
     - release-please takes action and opens a PR release with these changes:
         - Updating package.json to the new release version
         - Updating Changelog with the new version
@@ -56,7 +57,6 @@ Explanation:
     :::
 
 3. On merging the release PR to master:
-    - An automate workflow is activated to merge the PR also to the MAJOR branch
     - release-please will create a new release
 
 4. On new release, an automate workflow will be triggered to:
@@ -66,7 +66,7 @@ Explanation:
 
 **End State:**
     - New release version based on SemVer
-    - master and relevant MAJOR branch point to the new release
+    - master points to the new release
     - NPM, Docker and Helm registries updated with the new release
 
 ## Helm Repositories Strategy
