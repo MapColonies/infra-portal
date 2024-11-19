@@ -59,10 +59,10 @@ Explanation:
 3. On merging the release PR to master:
     - release-please will create a new release
 
-4. On new release, an automate workflow will be triggered to:
-    - if it is a library repo -> push to NPM
-    - if it has Dockerfile -> build a docker image and push to registry
-    - if it has helm -> package the helm chart and push to registry
+4. On new release, some automate workflows will be triggered:
+    - Push to `NPM` (for libraries)
+    - Build a docker image and push to registry (if a `Dockerfile` exists)
+    - Pack the helm chart and push to registry (if a `helm` chart exists)
 
 **End State:**
     - New release version based on SemVer
@@ -107,6 +107,8 @@ When a new release of Libot is created, a workflow is triggered to document the 
     - Confluence updated with the Libot version and its dependencies
 
 ## Bundle Strategy
+
+![Bundling Strategy](./img/release-management/bundler-flow.png)
 
 You can see more about bundler and unbundler [here](./bundler-unbundler.mdx).  
 The only change is that the bundler pipeline will be able to bundle "Libot Version".
