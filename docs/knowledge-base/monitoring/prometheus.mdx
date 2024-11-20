@@ -13,7 +13,10 @@ import TabItem from '@theme/TabItem';
 # Prometheus
 
 ## Overview
-Prometheus is an open-source monitoring and alerting system designed to collect and store metrics as time series data. It scrapes metrics from targets like applications pods and servers, stores them with the timestamp and labels, and allows querying using PromQL. Prometheus is commonly used to track system performance and set up alerts based on defined conditions.
+Prometheus is an open-source monitoring and alerting system designed to collect and store metrics as time series data.
+It scrapes metrics from targets like applications pods and servers, stores them with the timestamp and labels
+and allows querying using PromQL. Prometheus is commonly used to track system performance and set up alerts based on defined
+conditions.
 
 
 :::tip
@@ -23,12 +26,15 @@ You can read more about Prometheus in the [Prometheus documentation](https://pro
 ## Home Screen Overview 
 You can access Libot's Prometheus at https://prometheus.mapcolonies.net.
 
-The Prometheus home screen provides an overview of the current status of the Prometheus server. Here, you can see the targets that are being monitored, the current configuration of Prometheus, and access the built-in query interface.
+The Prometheus home screen provides an overview of the current status of the Prometheus server.
+Here, you can see the targets that are being monitored, the current configuration of Prometheus,
+and access the built-in query interface.
 
-![prometheus homescreen](./img/prometheus-homescreen.png)
+![prometheus homescreen](./img/prometheus/prometheus-homescreen.png)
 
 ## Prometheus Scrape Configuration
-Prometheus scrapes metrics from pods located in specific namespaces and annotated correctly. Below is an example configuration snippet:
+Prometheus scrapes metrics from pods located in specific namespaces and annotated correctly.
+Below is an example configuration snippet:
 
   ```yaml
   - job_name: k8s-scrape
@@ -46,7 +52,8 @@ Prometheus scrapes metrics from pods located in specific namespaces and annotate
   ```
 ### Configuring Your Service for Prometheus Scraping
 
-To ensure your pod is scraped, it should be deployed in one of the listed namespaces and annotated correctly. The required annotation looks like this:
+To ensure your pod is scraped, it should be deployed in one of the listed namespaces and annotated correctly.
+The required annotation looks like this:
 
 ```yaml
   podAnnotations:
@@ -60,9 +67,10 @@ To ensure your pod is scraped, it should be deployed in one of the listed namesp
 You can access the official [Prometheus alerting documentation]([https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/]) 
 :::
 
-Prometheus Alerts are rules defined in Prometheus that automatically trigger notifications when certain conditions are met, such as high CPU usage or service downtime.
+Prometheus Alerts are rules defined in Prometheus that automatically trigger notifications when certain conditions are met,
+such as high CPU usage or service downtime.
 
-![prometheus alerts](./img/prometheus-alerts.png)
+![prometheus alerts](./img/prometheus/prometheus-alerts.png)
 
 These alert rules are defined in Prometheus' configuration and are automatically evaluated.
 ```yaml
@@ -84,7 +92,8 @@ alerting_rules.yml:
 
 - **groups**: Organizes alerts into logical groups. Alerts within the same group are evaluated together.
 - **alert**: The name of the alert, which should describe the issue it triggers.
-- **expr**: The PromQL expression that defines when the alert should be triggered. If the expression evaluates as true, the alert fires.
+- **expr**: The PromQL expression that defines when the alert should be triggered.
+If the expression evaluates as true, the alert fires.
 - **for**: The amount of time the condition must be met before triggering the alert.
 - **labels**: Additional labels that provide context or are used for routing in Alertmanager.
 - **annotations**: Human-readable descriptions or summaries of the alert.
