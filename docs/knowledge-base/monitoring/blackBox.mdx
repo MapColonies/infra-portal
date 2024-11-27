@@ -35,21 +35,16 @@ extraScrapeConfigs: |
           - https://another-endpoint.com
 
 ```
+:::info Key Configuration Elements
+
+- **job_name**: The name of the scrape job (blackbox in this example) used to identify the probe.
+- **metrics_path**: Specifies the path for scraping metrics. The Blackbox Exporter's metrics are available at /probe.
+- **scrape_interval**: Defines how often Prometheus will probe the endpoints. Here, it probes every 15 seconds.
+- **params**: Parameters passed to the probe. For instance, module: [http_2xx] ensures the probe checks for a successful HTTP 200 response.
+- **static_configs**: Lists the endpoints to probe.
+
+:::
+
 ## Alerting
 You can set up alert rules in Prometheus based on Blackbox Exporter metrics.  
-Here’s an example of an alert rule that checks for high response times:
-
-```yaml
-alerting_rules.yml:
-  groups:
-    - name: blackbox_alerts
-      rules:
-        - alert: CertExpiration
-          expr: ((probe_ssl_earliest_cert_expiry - time()) / 3600 / 24 < 30)
-          for: 90s
-          labels:
-            severity: 'critical'
-          annotations:
-            description: "An SSL certificate for the ({{ $labels.instance }}) endpoint is about to expire in 30 days!"
-            summary: "An SSL certificate for the ({{ $labels.instance }}) endpoint is about to expire in 30 days!"
-```
+For more details about setting up alerts with Prometheus, see the [Prometheus Alerts](./Prometheus#prometheus-alerts) section.
