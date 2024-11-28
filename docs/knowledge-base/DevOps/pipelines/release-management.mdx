@@ -75,6 +75,13 @@ The deployment part is described in the next section
 
 ## Helming Strategy
 
+:::warning
+This strategy does not include the checks during development. 
+It assumes that the new released service is properly checked and its updated chart is good.
+All the development tests should happen before the service was released so in this flow we assume 
+that the chart is good and does not require deployment in order to know if it is a good chart
+:::
+
 ![Helming Strategy](./img/release-management/helm-strategy.png)
 
 The project includes two different repositories that represent two different flows:
@@ -88,12 +95,13 @@ The project includes two different repositories that represent two different flo
 With this strategy, we separate the charts from the values.  
 
 "helm-charts" repo will contain only the chart. The structure of the helm.  
-"helm-values" repo will contain **only the values based on the relevant chart** and the "Libot Version" it based on.
+"helm-values" repo will contain **only the values based on the relevant chart** and the "Libot Version" it based on (a file named "libot-version.json" in the repo).
 The values files that represent namespaces of openshift should not be part of the structure. They should be in a different repo.
 That's way we earn:  
 
 1. **Avoiding "trash" commits**  
-Imagine if we keep the values with the chart, Now if we want to change the log level from info to debug, we will have to commit the change in the repo itself and this shouldn't be. 
+Imagine if we keep the values with the chart, Now if we want to change the log level from info to debug, 
+we will have to commit the change in the repo itself and this shouldn't be. 
 That way we will "trash" the repo with a lot with unnecessary commits that don't related to chart itself.
 
 2. **Allowing informative versions of helm-charts**  
@@ -120,15 +128,25 @@ This flow suppose to handle the update of new versions of services and creation 
 1. When a service has a new release and helm folder (points that its chart in helm-charts needs to be updated), 
 open a PR in helm-charts that update the version of the service.
 
-:::info
+:::note
 The developer should see the PR and make more changes if necessary
 :::
 
 2. After the PR is ready, merge the PR.
 
+::::info
+The PR can contain multiple commits so if there are more than one service that triggered the PR (more than one chart that needs to be updated), 
+the PR will contain all the changes so the merge of the PR will update the versions of all the relevant services in helm-charts.
+
+:::tip
+If there is a service that you don't want to include it yet in helm-charts, you can disable the workflow that triggers that PR
+:::
+
+::::
+
 3. On "master" push:
     - Create a new "Libot Version" using release-please. 
-    The release-please should also update the docker and helm versions of the service in:
+    The release-please should also update the docker and helm versions of the services in:
         - `artifacts.json` file inside the domain that represent the information of all services and versions of the domain
         - `libot-artifacts.json` in the root directory that represent the information of all services and versions of **all** domains
 
@@ -149,13 +167,13 @@ Now, we have an updated structure of the chart and we can move on to the values.
 
 This flow suppose to handle the update of the namespaces values (integration and prod) and the deployment in openshift.
 
-0. On new release, there will be a PR on stage branch in `helm-values` repo that updates the "Libot Version"
+0. On new release, there will be a PR on stage branch in `helm-values` repo that updates the "Libot Version" in `libot-version.json` file
 
 1. There will be an auto deploy in "integration" namespace
 
 2. After testing it and make sure the values are OK, the developer will merge the PR
 
-3. Once the stage branch is updated, a new PR will be automatically created in "prod" branch to update the "Libot Version"
+3. Once the stage branch is updated, a new PR will be automatically created in "prod" branch to update the "Libot Version" in the file
 
 4. The developer will manually deploy using the prod values file
 
@@ -164,7 +182,14 @@ This flow suppose to handle the update of the namespaces values (integration and
 **End State**:
 
 * Updated values in all branches based on "Libot Version"
+* Updated `libot-version.json` file in every branch
 * Updated deployments in all namespaces in openshift
+
+:::info
+The values flow is the same flow in the network. 
+There will be helm-values repo based on branches (each branch will represent a namespace in openshift) 
+and in every branch there will be a file named: `libot-version.json` that will represent the related chart version
+:::
 
 ## Bundle Strategy
 
