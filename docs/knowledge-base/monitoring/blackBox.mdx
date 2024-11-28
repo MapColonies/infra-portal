@@ -45,6 +45,10 @@ extraScrapeConfigs: |
 
 :::
 
+To add, update, or remove an endpoint to scrape, or to modify an entire scrape job, you need to create a pull request in the repository
+[helm-charts](https://github.com/MapColonies/helm-charts). Make your changes in the `infra/values/scrape-values.yaml` file.
+After that, please notify the infra team for a review and upgrade.
+
 ## Alerting
 You can set up alert rules in Prometheus based on Blackbox Exporter metrics.  
 For more details about setting up alerts with Prometheus, see the [Prometheus Alerts](./Prometheus#prometheus-alerts) section.
