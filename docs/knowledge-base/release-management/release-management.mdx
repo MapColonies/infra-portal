@@ -40,7 +40,7 @@ Each service must maintain at least one main branch to track the latest stable r
 
 ## Service Release Flow
 
-![Releasing Flow](./img/release-management/release-on-repo.png)
+![Releasing Flow](./images/release-on-repo.png)
 
 Explanation:
 
@@ -82,7 +82,7 @@ All the development tests should happen before the service was released so in th
 that the chart is good and does not require deployment in order to know if it is a good chart
 :::
 
-![Helming Strategy](./img/release-management/helm-strategy.png)
+![Helming Strategy](./images/helm-strategy.png)
 
 The project includes two different repositories that represent two different flows:
 
@@ -90,7 +90,7 @@ The project includes two different repositories that represent two different flo
 
 2. **Values Flow using "Helm-Values" repo** - Handling the deployment in openshift based on the new "Libot Version" that was created in `helm-charts`
 
-### Explanation:
+### Explanation
 
 With this strategy, we separate the charts from the values.  
 
@@ -121,7 +121,7 @@ Let's walk through the flows!
 
 ### Chart Flow
 
-![Chart Flow](./img/release-management/chart-flow.png)
+![Chart Flow](./images/chart-flow.png)
 
 This flow suppose to handle the update of new versions of services and creation of new "Libot Release".
 
@@ -163,7 +163,7 @@ Now, we have an updated structure of the chart and we can move on to the values.
 
 ### Values Flow
 
-![Values Flow](./img/release-management/values-flow.png)
+![Values Flow](./images/values-flow.png)
 
 This flow suppose to handle the update of the namespaces values (integration and prod) and the deployment in openshift.
 
@@ -193,7 +193,7 @@ and in every branch there will be a file named: `libot-version.json` that will r
 
 ## Bundle Strategy
 
-![Bundling Strategy](./img/release-management/bundler-strategy.png)
+![Bundling Strategy](./images/bundler-strategy.png)
 
-You can see more about bundler and unbundler [here](./bundler-unbundler.mdx).  
+You can see more about bundler and unbundler [here](../DevOps/pipelines/bundler-unbundler.mdx).  
 The only change is that the bundler pipeline will be able to create a bundle based on the "Libot Version".  
