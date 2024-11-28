@@ -69,46 +69,106 @@ Explanation:
     - master points to the new release
     - NPM, Docker and Helm registries updated with the new release
 
-## Helm Repositories Strategy
+:::info
+The deployment part is described in the next section
+:::
 
-![Helming Strategy](./img/release-management/helm-repositories-strategy.png)
+## Helming Strategy
 
-The project includes three additional repositories for Helm charts and values:
+![Helming Strategy](./img/release-management/helm-strategy.png)
 
-1. Service Repositories:
-    - Each service repository contains its own actual Helm chart.
+The project includes two different repositories that represent two different flows:
 
-2. **`helm-charts`**:
-    - This repository contains packaged versions of all the Helm charts used across services.
-    - The Helm charts themselves are imported from a registry via OCI, meaning the repository
-      stores the packaged charts rather than the actual charts.
-    - This repository represents the Libot Version during the annual production deployment.
+1. **Chart Flow using "Helm-Charts" repo** - Handling the new charts and versions from the services and creation of new "Libot Version"
 
-3. **`helm-values`**:
-   - Stores Helm values for different environments.
-   - Contains branches for each environment (e.g., `stage`, `prod`).
+2. **Values Flow using "Helm-Values" repo** - Handling the deployment in openshift based on the new "Libot Version" that was created in `helm-charts`
 
-When changes are pushed to `master` in the service repos,  
-automatic PRs are created in both `helm-charts` and `helm-values`:
-    - Initially, an automatic PR is created in `helm-chart`.
-    - Once the PR is merged to master, an automatic stage PR is opened in `helm-values`
-    - Once the stage PR is merged, another automatic PR is created for the prod branch, 
-      facilitating the promotion of changes to production.
-    - Once the prod PR is merged, a new release (represents Libot version) will be created in:
-        1. stage branch
-        2. prod branch
-        3. `helm-charts` repo
+### Explanation:
 
-When a new release of Libot is created, a workflow is triggered to document the Libot version and all its dependencies in Confluence.
+With this strategy, we separate the charts from the values.  
 
-**End State:**
-    - New release version of Libot
-    - OCP updated in stage and prod namespaces
-    - Confluence updated with the Libot version and its dependencies
+"helm-charts" repo will contain only the chart. The structure of the helm.  
+"helm-values" repo will contain **only the values based on the relevant chart** and the "Libot Version" it based on.
+The values files that represent namespaces of openshift should not be part of the structure. They should be in a different repo.
+That's way we earn:  
+
+1. **Avoiding "trash" commits**  
+Imagine if we keep the values with the chart, Now if we want to change the log level from info to debug, we will have to commit the change in the repo itself and this shouldn't be. 
+That way we will "trash" the repo with a lot with unnecessary commits that don't related to chart itself.
+
+2. **Allowing informative versions of helm-charts**  
+If we keep the chart and the values together, We will have a hard time to handle properly the release of helm-chart 
+duo to the many changes on the values that does not require a new release.
+From the other hand, there are changes in the values file that we want to change. Imagine that you want to change the default port to be 80. 
+This is a "structure" change because you want to change a default value so it does require a new release.
+So you won't know what requires a new release and what is not.
+With the separated values and charts, you will have just default values in the chart so every change in that values file will require new release.
+
+3. **Simpler deployment**  
+IF we keep them together, we will need to manage every chart (along with the values) in different branches. 
+That way we will have hard time to manage the charts in all the branches.
+With the new strategy, we need to "worry" only the values and the version of the chart when we deploy. We won't manage the chart anymore.
+
+Let's walk through the flows!
+
+### Chart Flow
+
+![Chart Flow](./img/release-management/chart-flow.png)
+
+This flow suppose to handle the update of new versions of services and creation of new "Libot Release".
+
+1. When a service has a new release and helm folder (points that its chart in helm-charts needs to be updated), 
+open a PR in helm-charts that update the version of the service.
+
+:::info
+The developer should see the PR and make more changes if necessary
+:::
+
+2. After the PR is ready, merge the PR.
+
+3. On "master" push:
+    - Create a new "Libot Version" using release-please. 
+    The release-please should also update the docker and helm versions of the service in:
+        - `artifacts.json` file inside the domain that represent the information of all services and versions of the domain
+        - `libot-artifacts.json` in the root directory that represent the information of all services and versions of **all** domains
+
+    - Package all the charts and push them to helm registry.  
+    For example:  
+    On new libot release with version 3.0.1, we will push to helm registry the raster-ingestion chart with this name: `rater-ingestion-3.0.1`. 
+
+**End State**:
+
+* New "Libot Version" 
+* Charts of the new version packed in helm registry.
+
+Now, we have an updated structure of the chart and we can move on to the values.
+
+### Values Flow
+
+![Values Flow](./img/release-management/values-flow.png)
+
+This flow suppose to handle the update of the namespaces values (integration and prod) and the deployment in openshift.
+
+0. On new release, there will be a PR on stage branch in `helm-values` repo that updates the "Libot Version"
+
+1. There will be an auto deploy in "integration" namespace
+
+2. After testing it and make sure the values are OK, the developer will merge the PR
+
+3. Once the stage branch is updated, a new PR will be automatically created in "prod" branch to update the "Libot Version"
+
+4. The developer will manually deploy using the prod values file
+
+5. After testing it and make sure the values are OK, the developer will merge the PR to "prod" branch
+
+**End State**:
+
+* Updated values in all branches based on "Libot Version"
+* Updated deployments in all namespaces in openshift
 
 ## Bundle Strategy
 
-![Bundling Strategy](./img/release-management/bundler-flow.png)
+![Bundling Strategy](./img/release-management/bundler-strategy.png)
 
 You can see more about bundler and unbundler [here](./bundler-unbundler.mdx).  
-The only change is that the bundler pipeline will be able to bundle "Libot Version".
+The only change is that the bundler pipeline will be able to create a bundle based on the "Libot Version".  
