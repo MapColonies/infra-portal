@@ -34,22 +34,7 @@ and access the built-in query interface.
 
 ## Prometheus Scrape Configuration
 Prometheus scrapes metrics from pods located in specific namespaces and annotated correctly.
-Below is an example configuration snippet:
 
-  ```yaml
-  - job_name: k8s-scrape
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          own_namespace: true
-          names:
-            - projectA
-            - projectB
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-        action: keep
-        regex: true
-  ```
 ### Configuring Your Service for Prometheus Scraping
 
 To ensure your pod is scraped, it should be deployed in one of the listed namespaces and annotated correctly.
@@ -99,3 +84,7 @@ If the expression evaluates as true, the alert fires.
 - **annotations**: Human-readable descriptions or summaries of the alert.
 
 :::
+
+To add, update, or remove an alert, you need to create a pull request in the repository
+[helm-charts](https://github.com/MapColonies/helm-charts). Make your changes in the `infra/values/alerts-values.yaml` file.
+After that, please notify the infra team for a review and upgrade.

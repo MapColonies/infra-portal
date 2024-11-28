@@ -14,12 +14,16 @@ import TabItem from '@theme/TabItem';
 
 # Grafana Tempo
 
-You can access Grafana Tempo at https://grafana.mapcolonies.net/datasources/edit/tempo.
+You can use Grafana Tempo at https://grafana.mapcolonies.net/datasources/edit/tempo.
 
 Grafana Tempo is a distributed tracing backend used to store and query trace data received from OpenTelemetry Collector or
 other tracing sources like Jaeger. It allows you to analyze traces for system performance, error detection, and latency
 tracking. Tempo is capable of storing trace data at high throughput without requiring an index, making it highly efficient for
 large-scale applications.
+
+:::tip
+You can read more about Tempo in the [Grafana documentation](https://grafana.com/docs/tempo/latest/)
+:::
 
 ## Example: Visualizing Traces
 Once the OpenTelemetry Collector sends traces to Tempo, you can view and analyze these traces in Grafana.

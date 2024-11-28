@@ -1,7 +1,7 @@
 ---
 id: OpenTelemetryCollector
 title: OpenTelemetryCollector
-sidebar_label: OpenTelemetryCollector
+sidebar_label: OpenTelemetry Collector
 sidebar_position: 5
 sidebar_class_name: monitoring
 slug: /knowledge-base/monitoring/OpenTelemetryCollector
@@ -19,6 +19,10 @@ including traces, metrics, and logs. It receives telemetry data from your servic
 for storage and visualization. The OpenTelemetry acts as a bridge between your services and observability backends
 like Grafana Tempo for traces and Prometheus for metrics.
 
+:::tip
+You can read more about OpenTelemetry Coloector in the [OpenTelemetry documentation](https://opentelemetry.io/docs/collector/)
+:::
+
 ## Example: Collecting Traces
 
 To collect distributed traces from your services and send them to Grafana Tempo for visualization,
@@ -29,3 +33,8 @@ tracing:
   enabled: true
   url: http://infra-monitoring-opentelemetry-collector.infra-services.svc.cluster.local:4317
 ```
+
+## Sampling in OpenTelemetry
+Sampling controls which traces are collected and exported to manage data volume.
+Common strategies include: head sampling (deciding at the start of a trace) and tail sampling (deciding after the trace completes).
+This helps balance observability with resource efficiency.
