@@ -95,9 +95,11 @@ The project includes two different repositories that represent two different flo
 With this strategy, we separate the charts from the values.  
 
 "helm-charts" repo will contain only the chart. The structure of the helm.  
-"helm-values" repo will contain **only the values based on the relevant chart** and the "Libot Version" it based on (a file named "libot-version.json" in the repo).
-The values files that represent namespaces of openshift should not be part of the structure. They should be in a different repo.
-That's way we earn:  
+"helm-values" repo will contain **only the values based on the relevant chart** 
+and the "Libot Version" it based on (a file named "libot-version.json" in the repo).
+The values files that represent namespaces of openshift should not be part of the structure 
+(as they only config files). They should be in a different repo.  
+That's way we earn:
 
 1. **Avoiding "trash" commits**  
 Imagine if we keep the values with the chart, Now if we want to change the log level from info to debug, 
@@ -112,10 +114,17 @@ This is a "structure" change because you want to change a default value so it do
 So you won't know what requires a new release and what is not.
 With the separated values and charts, you will have just default values in the chart so every change in that values file will require new release.
 
-3. **Simpler deployment**  
+3. **One and only structure**
+Currently, the charts in the network can be different from the charts in Azure because the charts can be modified. 
+Using the new strategy, we make sure that there will be one source of truth and it sits in helm-charts outside the internal network and only there! 
+
+4. **Simpler deployment**  
 IF we keep them together, we will need to manage every chart (along with the values) in different branches. 
 That way we will have hard time to manage the charts in all the branches.
-With the new strategy, we need to "worry" only the values and the version of the chart when we deploy. We won't manage the chart anymore.
+With the new strategy, we need to "worry" only the values and the version of the chart when we deploy. We won't manage the chart anymore.  
+We can only run this command template:  
+`helm install myrelease oci://HELM_REGISTRY/helm-charts/raster-ingestion --version 3.1.0`  
+And that's it! We don't need the chart in the repo anymore. We make the structure and the config independent to each other.
 
 Let's walk through the flows!
 
