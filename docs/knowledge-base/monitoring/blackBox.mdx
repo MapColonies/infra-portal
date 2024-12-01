@@ -22,7 +22,7 @@ to show uptime, response times, and more.
 ## Scrape Setup
 To scrape your endpoint, you need to create an entry in this section of the `prometheus.yml` configuration:
 
-```yaml
+```yaml title="Scrape Config"
 extraScrapeConfigs: |
   - job_name: 'blackbox'
     metrics_path: /probe
@@ -45,10 +45,11 @@ extraScrapeConfigs: |
 
 :::
 
-To add, update, or remove an endpoint to scrape, or to modify an entire scrape job, you need to create a pull request in the repository
-[helm-charts](https://github.com/MapColonies/helm-charts). Make your changes in the `infra/values/scrape-values.yaml` file.
+To add, update, or remove an endpoint to scrape, or to modify an entire scrape job, you need to create a pull request 
+[here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/scrape-values.yaml).  
 After that, please notify the infra team for a review and upgrade.
 
 ## Alerting
-You can set up alert rules in Prometheus based on Blackbox Exporter metrics.  
+After setting up scraping with the Blackbox Exporter, you may want to configure alerts to monitor the health
+and performance of the scraped endpoints.  
 For more details about setting up alerts with Prometheus, see the [Prometheus Alerts](./Prometheus#prometheus-alerts) section.

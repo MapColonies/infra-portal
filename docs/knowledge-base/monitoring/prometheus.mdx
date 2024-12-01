@@ -58,7 +58,8 @@ such as high CPU usage or service downtime.
 ![prometheus alerts](./img/prometheus/prometheus-alerts.png)
 
 These alert rules are defined in Prometheus' configuration and are automatically evaluated.
-```yaml
+
+```yaml title="Alerts Config"
 alerting_rules.yml:
   groups:
     - name: blackbox_alerts
@@ -86,5 +87,5 @@ If the expression evaluates as true, the alert fires.
 :::
 
 To add, update, or remove an alert, you need to create a pull request in the repository
-[helm-charts](https://github.com/MapColonies/helm-charts). Make your changes in the `infra/values/alerts-values.yaml` file.
+[here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/alerts-values.yaml).  
 After that, please notify the infra team for a review and upgrade.
