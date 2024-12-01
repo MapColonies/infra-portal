@@ -33,7 +33,8 @@ and access the built-in query interface.
 ![prometheus homescreen](./img/prometheus/prometheus-homescreen.png)
 
 ## Prometheus Scrape Configuration
-Prometheus scrapes metrics from pods located in specific namespaces and annotated correctly.
+Prometheus scrapes metrics from pods if they are in specific namespaces, properly annotated,
+and expose metrics on the specified port.
 
 ### Configuring Your Service for Prometheus Scraping
 
