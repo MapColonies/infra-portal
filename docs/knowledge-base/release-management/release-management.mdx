@@ -103,12 +103,11 @@ This gives us the following benefits:
 Imagine if we keep the values with the chart. If we want to change the log level, for example, from `info` to `debug`, we will have to commit the change as part of the chart. This is true for all changes made to any value. This means we will clutter the repo with a lot of commits that don't have anything to do with the core of the chart itself.
 
 2. **Informative versions for helm-charts**  
-If we keep the chart and the values together, We will have a hard time to handle properly the release of helm-chart 
-duo to the many changes on the values that does not require a new release.
-From the other hand, there are changes in the values file that we want to change. Imagine that you want to change the default port to be 80. 
-This is a "structure" change because you want to change a default value so it does require a new release.
-So you won't know what requires a new release and what is not.
-With the separated values and charts, you will have just default values in the chart so every change in that values file will require new release.
+If we keep the chart and the values together, we will have a hard time properly handling the release of helm-chart due to the many changes on the values (which aren't part of a release).
+On the other hand, there are some value changes that are more meaningful that we want to document.
+For example, you want to change the default port to be 80. This is a "structure" change because you want to set a new default value.
+If you keep the values as part of the chart, you won't know what requires a new release and what doesn't.
+When they are seperated, it is clearer what changes are a core part of your chart.
 
 3. **One and only structure**
 Currently, the charts in the network can be different from the charts in Azure because the charts can be modified. 
