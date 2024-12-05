@@ -17,7 +17,8 @@ and "Libot version" for managing deployed Libot stack on networks.
 
 ## Libot Version Tag
 
-The **Libot Version** is an alias to a specific `helm-charts` release version. This means that it represents the entirety of all service releases for the production deployment and it's structure.
+The **Libot Version** is an alias to a specific `helm-charts` release version. 
+This means that it represents the entirety of all service releases for the production deployment and it's structure.  
 
 ## Service Branching Strategy
 
@@ -47,12 +48,13 @@ Explanation:
 
 2. On merging to master: 
     - release-please takes action and opens a PR release with these changes:
-        - Updating package.json to the new release version
-        - Updating `CHANGELOG` with the new version
-        - Updating `helm chart` version
+        - Updating all relevant files with the new release version
+        - Updating Changelog with the new version
+        - Updating helm (chart version)
 
     :::info
-    The release version will be based on ([SemVer](https://semver.org/)) (according to the PR title)
+    The release version will be based on [SemVer](https://semver.org/) 
+    (according to the PR title that will be based on [commitlint](https://github.com/conventional-changelog/commitlint))
     :::
 
 3. On merging the release PR to master, `release-please` will create a new release
@@ -74,7 +76,8 @@ The deployment part is described in the next section
 ## Helming Strategy
 
 :::warning
-This strategy does not include the checks you should make during the development process such a running tests, all of the development tests should occur before release.
+This strategy does not include the checks you should make during the development process such a running tests. 
+All of the development tests should occur before release.
 We assume that the new released service is properly checked and its updated chart is properly constructed.
 :::
 
@@ -88,9 +91,10 @@ The project includes two different repositories that represent two different flo
 
 ### Explanation
 
-The main goal is to seperate the development part of `helm charts` (the structure) from the deployment part (the `values`).
+The main goal is to separate the development part of `helm charts` (the structure) from the deployment part (the `values`).
 
-`helm-charts` repo will contain only the chart, which is the deployment structure, and a default `values` file. The structure shouldn't change much from now on (for the current set of features).  
+`helm-charts` repo will contain only the chart, which is the deployment structure, and a default `values` file. 
+The structure shouldn't change much from now on (for the current set of features).  
 `helm-values` repo will contain **only the values based on the relevant chart** 
 and the `helm-chart` version it's based on (a file named "helm-chart.json" in the repo).
 The value files that represent openshift namespaces should not be part of the structure 
@@ -98,20 +102,25 @@ The value files that represent openshift namespaces should not be part of the st
 This gives us the following benefits:
 
 1. **Avoiding "irrelevant" commits**  
-Imagine if we keep the values with the chart. If we want to change the log level, for example, from `info` to `debug`, we will have to commit the change as part of the chart. This is true for all changes made to any value. This means we will clutter the repo with a lot of commits that don't have anything to do with the core of the chart itself.
+Imagine if we keep the values with the chart. If we want to change the log level, for example, from `info` to `debug`, 
+we will have to commit the change as part of the chart. This is true for all changes made to any value. 
+This means we will clutter the repo with a lot of commits that don't have anything to do with the core of the chart itself.
 
 2. **Informative versions for helm-charts**  
-If we keep the chart and the values together, we will have a hard time properly handling the release of helm-chart due to the many changes on the values (which aren't part of a release).
+If we keep the chart and the values together, we will have a hard time properly handling the release of helm-chart due to 
+the many changes on the values (which aren't part of a release).
 On the other hand, there are some value changes that are more meaningful that we want to document.
 For example, you want to change the default port to be 80. This is a "structure" change because you want to set a new default value.
 If you keep the values as part of the chart, you won't know what requires a new release and what doesn't.
-When they are seperated, it is clearer what changes are a core part of your chart.
+When they are separated, it is clearer what changes are a core part of your chart.
 
 3. **One true structure**
-Currently, the charts in the network are different from the charts in Azure because they can be modified. Using the new strategy, we make sure that there will be one source of truth which is `helm-charts`.
+Currently, the charts in the network are different from the charts in Azure because they can be modified. 
+Using the new strategy, we make sure that there will be one source of truth which is `helm-charts`.
 
 4. **Simpler deployment**  
-Keeping the values with the core structure forces us to manage every chart (along with the values) in different branches, which makes it harder to manage.
+Keeping the values with the core structure forces us to manage every chart (along with the values) in different branches, 
+which makes it harder to manage.
 With the new strategy, we need to only "worry" about the values and the version of the chart before moving on to the deployment.
 We can run this command template:  
 `helm install myrelease oci://HELM_REGISTRY/helm-charts/raster-ingestion --version VERSION`  
@@ -135,7 +144,8 @@ The developer should see the PR and make more changes if necessary
 2. After the PR is ready, merge the PR.
 
 ::::info
-The PR accumulates changes made from multiple repositories, updating the versions of services in the chart as you release them. Notice that it isn't necessary to merge every change, this way you can accumulate changes until you have your stable team (or multiple teams) version.
+The PR accumulates changes made from multiple repositories, updating the versions of services in the chart as you release them. 
+Notice that it isn't necessary to merge every change, this way you can accumulate changes until you have your stable team (or multiple teams) version.
 
 :::tip
 If there is a service that you don't want to include it yet in helm-charts, you can disable the workflow that triggers that PR
