@@ -137,8 +137,7 @@ The developer should see the PR and make more changes if necessary
 2. After the PR is ready, merge the PR.
 
 ::::info
-The PR can contain multiple commits so if there are more than one service that triggered the PR (more than one chart that needs to be updated), 
-the PR will contain all the changes so the merge of the PR will update the versions of all the relevant services in helm-charts.
+The PR accumulates changes made from multiple repositories, updating the versions of services in the chart as you release them. Notice that it isn't necessary to merge every change, this way you can accumulate changes until you have your stable team (or multiple teams) version.
 
 :::tip
 If there is a service that you don't want to include it yet in helm-charts, you can disable the workflow that triggers that PR
