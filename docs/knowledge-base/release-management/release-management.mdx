@@ -102,7 +102,7 @@ This gives us the following benefits:
 1. **Avoiding "irrelevant" commits**  
 Imagine if we keep the values with the chart. If we want to change the log level, for example, from `info` to `debug`, we will have to commit the change as part of the chart. This is true for all changes made to any value. This means we will clutter the repo with a lot of commits that don't have anything to do with the core of the chart itself.
 
-2. **Allowing informative versions of helm-charts**  
+2. **Informative versions for helm-charts**  
 If we keep the chart and the values together, We will have a hard time to handle properly the release of helm-chart 
 duo to the many changes on the values that does not require a new release.
 From the other hand, there are changes in the values file that we want to change. Imagine that you want to change the default port to be 80. 
