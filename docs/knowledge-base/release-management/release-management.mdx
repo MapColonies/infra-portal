@@ -113,12 +113,11 @@ When they are seperated, it is clearer what changes are a core part of your char
 Currently, the charts in the network are different from the charts in Azure because they can be modified. Using the new strategy, we make sure that there will be one source of truth which is `helm-charts`.
 
 4. **Simpler deployment**  
-IF we keep them together, we will need to manage every chart (along with the values) in different branches. 
-That way we will have hard time to manage the charts in all the branches.
-With the new strategy, we need to "worry" only the values and the version of the chart when we deploy. We won't manage the chart anymore.  
-We can only run this command template:  
-`helm install myrelease oci://HELM_REGISTRY/helm-charts/raster-ingestion --version 3.1.0`  
-And that's it! We don't need the chart in the repo anymore. We make the structure and the config independent to each other.
+Keeping the values with the core structure forces us to manage every chart (along with the values) in different branches, which makes it harder to manage.
+With the new strategy, we need to only "worry" about the values and the version of the chart before moving on to the deployment.
+We can run this command template:  
+`helm install myrelease oci://HELM_REGISTRY/helm-charts/raster-ingestion --version VERSION`  
+And that's it! We don't need the chart in the repo anymore. We make the structure and the config independent of each other.
 
 Let's walk through the flows!
 
