@@ -90,7 +90,7 @@ The project includes two different repositories that represent two different flo
 
 ### Explanation
 
-With this strategy, we separate the charts from the values.  
+The main goal is to seperate the development part of `helm charts` (the structure) from the deployment part (the `values`).
 
 `helm-charts` repo will contain only the chart, which is the deployment structure, and a default `values` file. The structure shouldn't change much from now on (for the current set of features).  
 `helm-values` repo will contain **only the values based on the relevant chart** 
