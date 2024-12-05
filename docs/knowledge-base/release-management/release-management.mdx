@@ -92,11 +92,11 @@ The project includes two different repositories that represent two different flo
 
 With this strategy, we separate the charts from the values.  
 
-"helm-charts" repo will contain only the chart. The structure of the helm.  
-"helm-values" repo will contain **only the values based on the relevant chart** 
-and the "Libot Version" it based on (a file named "libot-version.json" in the repo).
-The values files that represent namespaces of openshift should not be part of the structure 
-(as they only config files). They should be in a different repo.  
+`helm-charts` repo will contain only the chart, which is the deployment structure, and a default `values` file. The structure shouldn't change much from now on (for the current set of features).  
+`helm-values` repo will contain **only the values based on the relevant chart** 
+and the `helm-chart` version it's based on (a file named "helm-chart.json" in the repo).
+The value files that represent openshift namespaces should not be part of the structure 
+(as they are only config files), they should be in a different repo.
 This gives us the following benefits:
 
 1. **Avoiding "trash" commits**  
