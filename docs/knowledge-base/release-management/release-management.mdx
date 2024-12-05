@@ -99,7 +99,7 @@ The value files that represent openshift namespaces should not be part of the st
 (as they are only config files), they should be in a different repo.
 This gives us the following benefits:
 
-1. **Avoiding "trash" commits**  
+1. **Avoiding "irrelevant" commits**  
 Imagine if we keep the values with the chart. If we want to change the log level, for example, from `info` to `debug`, we will have to commit the change as part of the chart. This is true for all changes made to any value. This means we will clutter the repo with a lot of commits that don't have anything to do with the core of the chart itself.
 
 2. **Allowing informative versions of helm-charts**  
