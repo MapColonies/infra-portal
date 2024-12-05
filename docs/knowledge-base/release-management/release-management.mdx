@@ -74,10 +74,8 @@ The deployment part is described in the next section
 ## Helming Strategy
 
 :::warning
-This strategy does not include the checks during development. 
-It assumes that the new released service is properly checked and its updated chart is good.
-All the development tests should happen before the service was released so in this flow we assume 
-that the chart is good and does not require deployment in order to know if it is a good chart
+This strategy does not include the checks you should make during the development process such a running tests, all of the development tests should occur before release.
+We assume that the new released service is properly checked and its updated chart is properly constructed.
 :::
 
 ![Helming Strategy](./images/helm-strategy.png)
