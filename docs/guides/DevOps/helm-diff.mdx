@@ -43,9 +43,9 @@ Now you have `helm-diff` plugin installed on your Windows workstation.
 
 Assuming that your chart name is `foo` and your values file name is `dev-values.yaml`
 run the following from the Chart directory you wish to upgrade.  
-`helm diff upgrade foo --values dev-values.yaml`.  
+`helm diff upgrade foo --values dev-values.yaml .`  
 You can also specify multiple values files:  
-`helm diff upgrade foo --values dev-values.yaml --values dev1-values.yaml`.  
+`helm diff upgrade foo --values dev-values.yaml --values dev1-values.yaml .`  
 If there's a difference, the output will show all the diffs between the k8s objects which will be modified/create/deleted.  
 
 Here's an example of the `helm diff` output

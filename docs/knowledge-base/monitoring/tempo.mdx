@@ -1,0 +1,31 @@
+---
+id: Tempo
+title: Tempo
+sidebar_label: Tempo
+sidebar_position: 6
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/Tempo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Grafana Tempo
+
+You can use Grafana Tempo at https://grafana.mapcolonies.net/datasources/edit/tempo.
+
+Grafana Tempo is a distributed tracing backend used to store and query trace data received from OpenTelemetry Collector or
+other tracing sources like Jaeger. It allows you to analyze traces for system performance, error detection, and latency
+tracking. Tempo is capable of storing trace data at high throughput without requiring an index, making it highly efficient for
+large-scale applications.
+
+:::tip
+You can read more about Tempo in the [Grafana documentation](https://grafana.com/docs/tempo/latest/)
+:::
+
+## Example: Visualizing Traces
+Once the OpenTelemetry Collector sends traces to Tempo, you can view and analyze these traces in Grafana.
+
+![tempo query](./img/tempo/tempo-query.png)
