@@ -12,12 +12,14 @@ import TabItem from '@theme/TabItem';
 # Release Management Guide
 
 This document outlines the release management process for Libot Mipuy, which involves multiple teams and services. 
-The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services and the "Libot version" which is used for managing our deployment stack in different networks.
+The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services 
+and the "Libot version" which is used for managing our deployment stack in different networks.
 
 ## Libot Version Tag
 
-The **Libot Version** is an alias to a specific `helm-charts` release version. 
-This means that it represents the entirety of all service releases for the production deployment and it's structure.  
+The **Libot Version** is an alias to a specific `helm-charts` release version (`helm-charts` repo is our "one source of truth" 
+structure of helm and is explained below in [Helming Strategy](#helming-strategy)). This means that it represents the entirety of all 
+service releases for the production deployment and it's structure.  
 
 ## Service Branching Strategy
 
@@ -51,7 +53,8 @@ Explanation:
     - Updating helm (chart version)
 
     :::info
-    The release version will be based on [SemVer](https://semver.org/) (according to the PR title that will abide [commitlint](https://github.com/conventional-changelog/commitlint))
+    The release version will be based on [SemVer](https://semver.org/) (according to the PR title that will abide 
+    [commitlint](https://github.com/conventional-changelog/commitlint))
     :::
 
 3. On merging the release PR to master, `release-please` will create a new release
@@ -112,7 +115,7 @@ If you keep the values as part of the chart, you won't know what requires a new 
 When they are separated, it is clearer what changes are a core part of your chart.
 
 3. **One true structure**  
-Currently, the charts in the defferent networks are different from the charts in Azure because they can be modified. 
+Currently, the charts in the different networks are different from the charts in Azure because they can be modified. 
 Using the new strategy, we make sure that there will be one source of truth which is `helm-charts`.
 
 4. **Simpler deployment**  
@@ -131,7 +134,8 @@ Let's walk through the flows!
 
 This flow handles the update of `helm-charts` and the creation of a new release version.
 
-1. When a service has a new release and a helm folder exists, meaning that it's chart in helm-charts needs to be updated, open a PR in `helm-charts` that updates the version of the service.
+1. When a service has a new release and a helm folder exists, meaning that it's chart in helm-charts needs to be updated, 
+open a PR in `helm-charts` that updates the version of the service.
 
 :::note
 The developer should see the PR and make more changes if necessary
@@ -139,24 +143,25 @@ The developer should see the PR and make more changes if necessary
 
 2. After the PR is ready, merge the PR.
 
-::::info
+:::info
 The PR accumulates changes made from multiple repositories, updating the versions of services in the chart as you release them. 
 Notice that it isn't necessary to merge every change, this way you can accumulate changes until you have your stable team (or multiple teams) version.
-
-:::tip
-If there is a service that you don't want to include it yet in helm-charts, you can disable the workflow that triggers that PR
 :::
-
-::::
 
 3. On push to `master`:
     - Create a new release using `release-please`. 
     `release-please` should also update the docker and helm versions of the services in:
         - `artifacts.json` file inside the domain that represent the information of all services and versions of the domain
-        - `libot-artifacts.json` in the root directory that represent the information of all services and versions of **all** domains
+        - `libot-artifacts.json` file in the root directory that represent the information of all services and versions of **all** domains
+            :::info
+            `libot-artifacts.json` is a new file presented in `helm-charts` in order to group in one file all the information of the domains 
+            and the services related to `helm-charts` version. This file will be updated automatically on every change of `artifacts.json` 
+            files present inside the domains folders
+            :::
 
     - Package all the charts and push them to helm registry.  
-    For example, let's assume a new release `3.0.1` where the only change was in raster ingestion. In this case we will push to helm registry the `raster-ingestion` chart with the name `rater-ingestion-3.0.1`. 
+    For example, let's assume a new release `3.0.1` where the only change was in raster ingestion. 
+    In this case we will push to helm registry the `raster-ingestion` chart with the name `rater-ingestion-3.0.1`. 
 
 **End State**:
 
@@ -173,11 +178,10 @@ This flow handles the update of the namespace's values (`integration` and `prod`
 
 0. On new release, there will be a PR on stage branch in `helm-values` repo that updates the `helm-charts` version in `helm-charts.json` file
 
-1. The content of the new PR will be auto deployed to the `integration` namespace
+1. After running and testing the new chart (locally and remotely) and making sure the structure and values work as intended, you may merge the PR
 
-2. After running and testing the new chart (locally and remotely) and making sure the structure and values work as intended, you may merge the PR
-
-3. Once the stage branch is updated, a new PR will be automatically created in "prod" branch to update the `helm-charts` version in the file
+2. Once the stage branch is updated, it will be auto deployed to the `integration` namespace 
+and a new PR will be automatically created in "prod" branch to update the `helm-charts` version in the file
 
 After the PR to the prod branch is created, it is the developer's responsibility to deploy and merge the PR.
 
