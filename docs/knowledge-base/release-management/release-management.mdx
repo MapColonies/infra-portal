@@ -45,11 +45,10 @@ Explanation:
 
 1. The developer creates a PR
 
-2. On merging to master: 
-    - release-please takes action and opens a PR release with these changes:
-        - Updating all relevant files with the new release version
-        - Updating Changelog with the new version
-        - Updating helm (chart version)
+2. On merging to master `release-please` takes action and opens a release PR with these changes:
+    - Updating all relevant files with the new release version
+    - Updating Changelog with the new version details
+    - Updating helm (chart version)
 
     :::info
     The release version will be based on [SemVer](https://semver.org/) 
