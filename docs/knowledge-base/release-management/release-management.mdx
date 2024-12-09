@@ -104,7 +104,7 @@ This means we will clutter the repo with a lot of commits that don't have anythi
 
 2. **Informative versions for helm-charts**  
 If we keep the chart and the values together, we will have a hard time properly handling the release of helm-chart due to 
-the many changes on the values (which aren't part of a release).
+the many changes to the values (which aren't part of a release).
 On the other hand, there are some value changes that are more meaningful that we want to document.
 For example, you want to change the default port to be 80. This is a "structure" change because you want to set a new default value.
 If you keep the values as part of the chart, you won't know what requires a new release and what doesn't.
