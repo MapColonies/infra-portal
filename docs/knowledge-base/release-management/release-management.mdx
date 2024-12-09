@@ -202,7 +202,7 @@ and in every branch there will be a file named: `helm-charts.json` that will rep
 This flow handles the release of "[Libot Version](#libot-version-tag)".
 
 1. Trigger through Jenkins the creation of new Libot Release Version. 
-The pipeline will allow you to choose from one of helm-chart releases the release you want to sign as new "Libot Version"
+The pipeline will allow you to choose from one of `helm-charts` releases the release you want to sign as new "Libot Version"
 
 2. Jenkins will document in confluence the difference between the latest Libot Version and the new one that was just created.
 The document should include also the changelog of the actual services rather than just the versions diff.
