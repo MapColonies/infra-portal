@@ -46,13 +46,26 @@ Here's an example of the `artifacts.json`
     }
   },
   "git": [
-    "MapColonies/helm-charts"
+    "MapColonies/helm-charts",
+    "MapColonies/jenkins-integration@multifiles"
   ]
 }
 ```  
 
 The bundler pipeline will bundle all the artifacts (docker tar balls, helm packages, git repos) into 1 zip file.
 
+### .bundlerrc Feature
+Repositories that include a `.bundlerrc` file in their root directory will be processed with this file as a whitelist.
+Only the files and directories explicitly declared in the `.bundlerrc` file will be saved in the final ZIP file.
+Repositories without a `.bundlerrc` file will have their entire contents saved in the ZIP file.
+
+```text title=".bundlerrc"
+helm/
+README.md
+scripts/
+```
+
+### Slack notification
 Once the bundler is done it'll send a slack message to the `<team>-notifications` channel based on the user logged in.
 
 ![Bundler slack message](./img/bundler-slack.png)
