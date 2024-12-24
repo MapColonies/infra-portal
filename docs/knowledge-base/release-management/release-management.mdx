@@ -59,7 +59,7 @@ Explanation:
 
 3. On merging the release PR to master, `release-please` will create a new release
 
-4. On new release, some automate workflows will be triggered:
+4. On new release, some automate workflows will be triggered (concurrently):
     - Push to `NPM` (for libraries)
     - Build a docker image and push to registry (if a `Dockerfile` exists)
     - Pack the helm chart and push to registry (if a `helm` chart exists)
@@ -135,38 +135,30 @@ Let's walk through the flows!
 This flow handles the update of `helm-charts` and the creation of a new release version.
 
 1. When a service has a new release and a helm folder exists, meaning that it's chart in helm-charts needs to be updated, 
-open a PR in `helm-charts` that updates the version of the service.
-
-:::note
-The developer should see the PR and make more changes if necessary
-:::
+ a PR will be automatically opened in `helm-charts` with these changes:
+ - update of the specific chart version
+ - update artifacts.json
+    ::::info
+    The developer should see the PR and make more changes if necessary
+    :::note
+    The value of image tag won't be updated as we want to guide the teams to use `appVersion` instead
+    :::
+    ::::
 
 2. After the PR is ready, merge the PR.
 
-:::info
-The PR accumulates changes made from multiple repositories, updating the versions of services in the chart as you release them. 
-Notice that it isn't necessary to merge every change, this way you can accumulate changes until you have your stable team (or multiple teams) version.
-:::
+3. On push to `master`, there will be a new PR using `release-please`. The PR will be the updated chart version according to the commitlint
 
-3. On push to `master`:
-    - Create a new release using `release-please`. 
-    `release-please` should also update the docker and helm versions of the services in:
-        - `artifacts.json` file inside the domain that represent the information of all services and versions of the domain
-        - `libot-artifacts.json` file in the root directory that represent the information of all services and versions of **all** domains
-            :::info
-            `libot-artifacts.json` is a new file presented in `helm-charts` in order to group in one file all the information of the domains 
-            and the services related to `helm-charts` version. This file will be updated automatically on every change of `artifacts.json` 
-            files present inside the domains folders
-            :::
+4. Merging the PR of `release-please`, will create a new release and attach to the release the artifacts.json
 
-    - Package all the charts and push them to helm registry.  
-    For example, let's assume a new release `3.0.1` where the only change was in raster ingestion. 
-    In this case we will push to helm registry the `raster-ingestion` chart with the name `rater-ingestion-3.0.1`. 
+5. On new release, there will be a github workflow that will push the release to helm registry
+
+6. After that, a new PR will be triggered to helm-values (starting the new section of [Values Flow](#values-flow))
 
 **End State**:
 
-* New `helm-charts` version 
-* Charts of the new version packed in helm registry
+* New `helm-charts` release version (of the specific chart)
+* The release version exists also in the registry
 
 Now, we have an updated structure of the chart and we can move on to the values.
 
@@ -176,7 +168,7 @@ Now, we have an updated structure of the chart and we can move on to the values.
 
 This flow handles the update of the namespace's values (`integration` and `prod`) and the deployment in `openshift`.
 
-0. On new release, there will be a PR on stage branch in `helm-values` repo that updates the `helm-charts` version in `helm-charts.json` file
+0. On new release of `helm-charts`, there will be a PR on stage branch in `helm-values` repo that updates the `helm-charts` version in `helm-charts.json` file
 
 1. After running and testing the new chart (locally and remotely) and making sure the structure and values work as intended, you may merge the PR
 
