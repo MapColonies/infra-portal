@@ -14,6 +14,13 @@ This document outlines the release management process for Libot Mipuy, which inv
 The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services
 and the "Libot version" which is used for managing our deployment stack in different networks.
 
+## Libot Version
+
+The **Libot Version** is an alias to specific versions of various domains within the `helm-charts` repository 
+(which serves as our "one source of truth" for the structure of helm, as explained below in [Helming Strategy](#helming-strategy)). 
+
+This means that it encompasses the entirety of all service releases for the production deployment and its structure.
+
 ## Service Branching Strategy
 
 Each service must maintain at least one main branch to track the latest stable release and major version updates:
@@ -191,12 +198,6 @@ and in every branch there will be a file named: `chart-version.txt` that will re
 :::
 
 ## Next Step - Create "Libot Version"
-
-### Libot Version Tag
-
-The **Libot Version** is an alias to a specific `helm-charts` release version (`helm-charts` repo is our "one source of truth"
-structure of helm and is explained below in [Helming Strategy](#helming-strategy)). This means that it represents the entirety of all
-service releases for the production deployment and it's structure.
 
 ### Libot Version Strategy
 
