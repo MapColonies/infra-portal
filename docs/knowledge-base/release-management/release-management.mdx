@@ -14,12 +14,6 @@ This document outlines the release management process for Libot Mipuy, which inv
 The release strategy follows semantic versioning ([SemVer](https://semver.org/)) for individual services
 and the "Libot version" which is used for managing our deployment stack in different networks.
 
-## Libot Version Tag
-
-The **Libot Version** is an alias to a specific `helm-charts` release version (`helm-charts` repo is our "one source of truth"
-structure of helm and is explained below in [Helming Strategy](#helming-strategy)). This means that it represents the entirety of all
-service releases for the production deployment and it's structure.
-
 ## Service Branching Strategy
 
 Each service must maintain at least one main branch to track the latest stable release and major version updates:
@@ -196,7 +190,15 @@ There will be helm-values repo based on branches (each branch will represent a n
 and in every branch there will be a file named: `chart-version.txt` that will represent the related chart version
 :::
 
-## Libot Version Strategy
+## Next Step - Create "Libot Version"
+
+### Libot Version Tag
+
+The **Libot Version** is an alias to a specific `helm-charts` release version (`helm-charts` repo is our "one source of truth"
+structure of helm and is explained below in [Helming Strategy](#helming-strategy)). This means that it represents the entirety of all
+service releases for the production deployment and it's structure.
+
+### Libot Version Strategy
 
 ![Libot Version Strategy](./images/libot-version-strategy.png)
 
@@ -210,7 +212,7 @@ This flow handles the release of "[Libot Version](#libot-version-tag)".
 
 3. At the end, the pipeline will trigger the bundler pipeline
 
-## Bundle Strategy
+### Bundle Strategy
 
 ![Bundling Strategy](./images/bundler-strategy.png)
 
