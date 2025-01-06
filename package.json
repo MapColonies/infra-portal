@@ -30,7 +30,11 @@
     "@docusaurus/tsconfig": "^3.6.1",
     "@docusaurus/types": "^3.6.1",
     "docusaurus-plugin-remote-content": "^4.0.0",
-    "typescript": "~5.5.2"
+    "docusaurus-plugin-typedoc": "^1.2.0",
+    "typedoc": "^0.27.6",
+    "typedoc-plugin-markdown": "^4.4.1",
+    "typescript": "~5.5.2",
+    "zx": "^8.3.0"
   },
   "browserslist": {
     "production": [

@@ -21,3 +21,4 @@ yarn-error.log*
 
 # Generated README.md files
 /docs/knowledge-base/packages/*/README.md
+typedoc/

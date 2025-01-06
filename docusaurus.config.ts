@@ -1,7 +1,37 @@
+import path from 'node:path';
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import { remotePluginGenerator } from "./remoteFetch";
+
+import {Options} from '@docusaurus/plugin-content-docs'
+
+
+function injectTypeDocSidebar(items: Awaited<ReturnType<Options['sidebarItemsGenerator']>>) {
+  return items.map((item) => {
+    //   console.log(item);
+    
+    // if (item.link?.id === 'api/index') {
+    //   return {
+    //     ...item,
+    //     items: require('./docs/api/typedoc-sidebar.cjs'),
+    //   };
+    // }
+    if (item.type === 'category' && item.label === 'Packages') {
+      item.items = item.items.map((subItem) => {
+        if (subItem.type === 'category' && 'id' in subItem.link && subItem.link.id.includes('/telemetry/') && subItem.items[0].type === 'category') {
+          const typedoc = subItem.items[0];
+          typedoc.label = 'Typedoc';
+          
+          typedoc.items = require('./docs/knowledge-base/packages/telemetry/typedoc/typedoc-sidebar.cjs');
+        }
+        return subItem;
+      });
+      
+    }
+    return item;
+  });
+}
 
 const config: Config = {
   title: "Infra Portal",
@@ -9,6 +39,9 @@ const config: Config = {
   favicon: "img/favicon.ico",
   plugins: [
     ...remotePluginGenerator(),
+    ['docusaurus-plugin-typedoc', typedocOptionsExpress],
+    ['docusaurus-plugin-typedoc', typedocOptionsTelemetry],
+    // ["@docusaurus/plugin-content-docs", contentDocsOptions],
     require.resolve("docusaurus-lunr-search"),
   ],
   // Set the production url of your site here
@@ -44,6 +77,9 @@ const config: Config = {
       "classic",
       {
         docs: {
+          sidebarItemsGenerator: async ({defaultSidebarItemsGenerator, ...args}) => {
+            return injectTypeDocSidebar(await defaultSidebarItemsGenerator(args));
+          },
           sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.

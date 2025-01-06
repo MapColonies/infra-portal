@@ -1,5 +1,7 @@
+import path from 'node:path';
 import { PluginOptions } from '@docusaurus/types';
 import { RemoteContentPluginOptions } from 'docusaurus-plugin-remote-content';
+import { $, cd, tmpdir, within } from 'zx';
 
 interface GithubSource {
   type: 'github';
@@ -8,6 +10,7 @@ interface GithubSource {
   branch: string;
   documents: string[];
   targetDir: string;
+  typedoc?: boolean;
 }
 
 interface Source {
@@ -40,6 +43,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'telemetry',
     repo: 'MapColonies/telemetry',
     targetDir: 'docs/knowledge-base/packages/telemetry',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -48,6 +52,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'error-express-handler',
     repo: 'MapColonies/error-express-handler',
     targetDir: 'docs/knowledge-base/packages/error-express-handler',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -56,20 +61,24 @@ const sources: (GithubSource | Source)[] = [
     name: 'eslint-config',
     repo: 'MapColonies/eslint-config',
     targetDir: 'docs/knowledge-base/packages/eslint-config',
-  },{
+  },
+  {
     type: 'github',
     documents: ['README.md'],
     branch: 'master',
     name: 'express-access-log-middleware',
     repo: 'MapColonies/express-access-log-middleware',
     targetDir: 'docs/knowledge-base/packages/express-access-log-middleware',
-  },{
+    typedoc: true,
+  },
+  {
     type: 'github',
     documents: ['README.md'],
     branch: 'master',
     name: 'js-logger',
     repo: 'MapColonies/js-logger',
     targetDir: 'docs/knowledge-base/packages/js-logger',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -78,6 +87,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'openapi-express-viewer',
     repo: 'MapColonies/openapi-express-viewer',
     targetDir: 'docs/knowledge-base/packages/openapi-express-viewer',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -94,6 +104,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'read-pkg',
     repo: 'MapColonies/read-pkg',
     targetDir: 'docs/knowledge-base/packages/read-pkg',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -102,6 +113,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'config',
     repo: 'MapColonies/config',
     targetDir: 'docs/knowledge-base/packages/config',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -118,7 +130,8 @@ const sources: (GithubSource | Source)[] = [
     name: 'openapi-helpers',
     repo: 'MapColonies/openapi-helpers',
     targetDir: 'docs/knowledge-base/packages/openapi-helpers',
-  }
+    typedoc: true,
+  },
 ];
 
 type ModifyContent = (
@@ -171,7 +184,7 @@ function modifyContentBuilder(source: Source): ModifyContent {
 }
 
 export function remotePluginGenerator(): [string, PluginOptions][] {
-  const processedSources = sources.map(source => {
+  const processedSources = sources.map((source) => {
     if (source.type === 'github') {
       return githubSourceToSource(source);
     }
@@ -193,3 +206,67 @@ export function remotePluginGenerator(): [string, PluginOptions][] {
   );
 }
 // plugins: [["docusaurus-plugin-remote-content", {name: 'telemetry', sourceBaseUrl: 'https://raw.githubusercontent.com/MapColonies/telemetry/refs/heads/master', outDir: 'docs/telemetry', documents: ['README.md']}]],
+
+import { TypeDocOptions } from 'typedoc';
+import { PluginOptions as TypedocMarkdownOptions } from 'typedoc-plugin-markdown';
+import { PluginOptions as DocusaurusTypedocOptions } from 'docusaurus-plugin-typedoc';
+
+const baseTypedocOptions: Partial<
+  TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions
+> = {
+  readme: 'none',
+  hidePageTitle: false,
+  outputFileStrategy: 'members',
+  cleanOutputDir: true,
+  hidePageHeader: false,
+};
+
+const telemetryTypedocImport = require('./typedoc/telemetry/typedoc.config.js');
+telemetryTypedocImport.entryPoints = telemetryTypedocImport.entryPoints.map(
+  (entry: string) => path.join('./typedoc/telemetry', entry)
+);
+
+const typedocOptionsTelemetry: Partial<
+  TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions
+> = {
+  id: 'telemetry',
+  ...baseTypedocOptions,
+  ...telemetryTypedocImport,
+  tsconfig: './typedoc/telemetry/tsconfig.json',
+  basePath: './typedoc/telemetry',
+  out: 'docs/knowledge-base/packages/telemetry/typedoc',
+};
+
+export async function typedocPluginGenerator(): Promise<
+  [string, PluginOptions][]
+> {
+  const typedocSources = sources.filter(
+    (source): source is GithubSource =>
+      source.type === 'github' && source.typedoc
+  );
+
+  const tempDir = tmpdir('typedoc');
+
+  for (const source of typedocSources) {
+    console.log(`Cloning ${source.name} to ${tempDir}`);
+    
+    await within(async () => {
+      cd(tempDir);
+      await $`git clone --depth 1 --branch ${source.branch} https://mapcolonies/${source.repo}.git`;
+      cd(source.name);
+      await $`npm ci`;
+    });
+  }
+
+  return typedocSources.map((source): [string, PluginOptions] => {
+    return [
+      'docusaurus-plugin-typedoc',
+      {
+        id: source.name,
+        entryPoints: [path.join(tempDir, source.name, 'src', 'index.ts')],
+        tsconfig: `../${source.targetDir}/tsconfig.json`,
+        out: `${source.targetDir}/typedoc`,
+      },
+    ];
+  });
+}
