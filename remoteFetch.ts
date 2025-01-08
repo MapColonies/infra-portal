@@ -233,15 +233,21 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
 
     console.log('typedoc', source.name);
 
-    const typedocConfigPath = path.join(destDir, 'typedoc.config.js');
-    const doesConfigJsExist = fs.existsSync(typedocConfigPath);
+    const typedocJsConfigPath = path.join(destDir, 'typedoc.config.js');
+    const typedocJsonConfigPath = path.join(destDir, 'typedoc.json');
+    const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
-    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
+    possibleTypedocConfigs.forEach((fileName) => {
+      const configPath = path.join(destDir, fileName);
+      const doesConfigPathExists = fs.existsSync(configPath);
 
-    if (doesConfigJsExist) {
-      extraConfig = require(typedocConfigPath);
-      extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
-    }
+      let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
+
+      if (doesConfigPathExists) {
+        extraConfig = require(typedocJsConfigPath);
+        extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
+      }
+    });
 
     plugins.push([
       'docusaurus-plugin-typedoc',
