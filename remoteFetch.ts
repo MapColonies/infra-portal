@@ -231,10 +231,6 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
       await $`npm ci --omit=""`;
     });
 
-    console.log('typedoc', source.name);
-
-    const typedocJsConfigPath = path.join(destDir, 'typedoc.config.js');
-    const typedocJsonConfigPath = path.join(destDir, 'typedoc.json');
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
     possibleTypedocConfigs.forEach((fileName) => {
@@ -244,7 +240,7 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
       let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
 
       if (doesConfigPathExists) {
-        extraConfig = require(typedocJsConfigPath);
+        extraConfig = require(configPath);
         extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
       }
     });
