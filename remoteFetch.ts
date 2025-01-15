@@ -233,11 +233,11 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
 
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
+    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
     possibleTypedocConfigs.forEach((fileName) => {
       const configPath = path.join(destDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
 
-      let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
 
       if (doesConfigPathExists) {
         extraConfig = require(configPath);
