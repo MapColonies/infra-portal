@@ -1,0 +1,84 @@
+---
+title: Default config
+sidebar_position: 2
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Default config
+
+Step by step guide on how to create a [default config](../../knowledge-base/config-management/default-configs.md) for your schema to ease the deployment of your service.
+
+### Assumptions
+
+This guide assumes that you have an understanding of creating schemas and already created a schema for your service.
+Check out the [Zero to Hero](./zero-to-hero.mdx) guide if you haven't created a schema yet.
+
+The examples in this guide will use the schema `my-schema` with version `v1` that was created in the `Zero to Hero` guide.
+
+
+## create your default config
+1. Create a file named `v1.configs.json` in the same folder as your schema file.
+```json title="schemas/my-domain/my-schema/v1.configs.json"
+[]
+```
+
+2. Choose a name for your default config:
+```json title="schemas/my-domain/my-schema/v1.configs.json"
+[
+  {
+    "name": "default-config",
+    "value": {}
+  }
+]
+```
+
+3. Add the default config value based on the schema:
+```json title="schemas/my-domain/my-schema/v1.configs.json"
+[
+  {
+    "name": "default-config",
+    "value": {
+      "id": "default-id",
+      "name": "default-name",
+      "age": 18
+      "isAlive": true
+    }
+  }
+]
+```
+
+## Run validations
+Run the validation script to make sure the default config is valid.
+```bash
+npm run validate
+```
+
+## Add a reference to another default config
+If your default config has a [reference](../../knowledge-base/config-management/references.mdx) to another config you created, or a common config you can reference it in the value:
+```json title="schemas/my-domain/my-schema/v1.configs.json"
+[
+  {
+    "name": "default-config",
+    "value": {
+      "commonConfig": {
+        "$ref": {
+          "configName": "other-config",
+          "version": "latest"
+        }
+      }
+    }
+  }
+]
+```
+
+## Next steps
+Now that you finished writing your default config, you can submit a PR to the schemas repo and ask for it to be reviewed.
+
+If you have any questions or need help, feel free to ask for help.
+
+If you have any suggestions for this guide, please open a pull request.
