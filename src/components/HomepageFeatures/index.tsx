@@ -10,32 +10,42 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'CI/CD',
+    Svg: require('@site/static/img/beaver_ci_cd.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        We manage continuous integration and continuous deployment pipelines using 
+        Jenkins and GitHub Actions to ensure smooth and efficient development workflows
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'DevOps Infrastructures',
+    Svg: require('@site/static/img/beaver_devops.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Our team sets up and maintains essential DevOps infrastructures such as 
+        monitoring tools and SFTP-Go to ensure system reliability and performance
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Applicative Structures',
+    Svg: require('@site/static/img/beaver_applicative_structures.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        We provide robust solutions for various applicative structures like authentication 
+        and config management to streamline development processes and improve application performance
+      </>
+    ),
+  },
+  {
+    title: 'MC-Packages',
+    Svg: require('@site/static/img/beaver_mc_packages.svg').default,
+    description: (
+      <>
+        We develop and maintain common packages to help teams build 
+        better applications faster and more efficiently
       </>
     ),
   },
@@ -43,7 +53,7 @@ const FeatureList: FeatureItem[] = [
 
 function Feature({title, Svg, description}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--3')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>
