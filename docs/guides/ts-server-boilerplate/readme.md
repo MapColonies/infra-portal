@@ -41,4 +41,4 @@ git clone git@github.com:MapColonies/ts-server-boilerplate.git
 
 From here on, you can start developing your project using the boilerplate as a starting point. The boilerplate includes many features and packages to make the development process easier and faster and ensure common practices and standards.
 
-Check the [boilerplate documentation](
+Check the [boilerplate documentation](../../knowledge-base/ts-server-boilerplate/readme.md) for more information on the features and packages included in the boilerplate.
