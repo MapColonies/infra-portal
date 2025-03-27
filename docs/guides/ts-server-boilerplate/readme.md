@@ -37,7 +37,20 @@ git clone git@github.com:MapColonies/ts-server-boilerplate.git
 
 6. Rename the `src/resourceName` and `src/anotherResource` directories and change the content of the files inside them to match your project's resources. You can also add any additional resources that are relevant to your project.
 
-7. Change the tests to match your project's resources. You can also add any additional tests that are relevant to your project.
+7. Run your project to make sure everything is working as expected.
+
+```bash
+npm run start:dev
+```
+
+8. Change the tests to match your project's resources. You can also add any additional tests that are relevant to your project.
+
+9. Run your tests to make sure everything is working as expected.
+
+```bash
+npm run test
+```
+
 
 From here on, you can start developing your project using the boilerplate as a starting point. The boilerplate includes many features and packages to make the development process easier and faster and ensure common practices and standards.
 

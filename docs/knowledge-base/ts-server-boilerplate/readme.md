@@ -13,6 +13,17 @@ When creating a new project, you can use the boilerplate as a template repositor
 
 ![create-repo-boilerplate](./img//create-repo-boilerplate-dark.png)
 
+## Important scripts
+- `npm run start:dev` - Start the server in development mode.
+- `npm run start` - Start the server in production mode.
+- `npm run test` - Run the tests.
+- `npm run test:unit` - Run the unit tests.
+- `npm run test:integration` - Run the integration tests.
+- `npm run lint` - Lint the code.
+- `npm run format:fix` - Format the code.
+- `npm run build` - Build the project.
+- `generate:openapi-types` - Generate types from the OpenAPI schema.
+
 ## Deep dive
 We can break down the boilerplate into the following sections:
 1. Code
