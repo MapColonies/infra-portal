@@ -12,7 +12,7 @@ The entry point of the application is the `src/index.ts` file. This file is resp
 
 The file also handles the error handling of critical errors (e.g. not errors that are part of a request).
 
-### healthcheck
+### Healthcheck
 
 The application healthcheck are configured in the `src/healthcheck.ts` file. This file is responsible for checking the health of the application and returning a response to the client. The healthcheck is configured to return a 200 OK response if the application is healthy, otherwise the application is unhealthy.
 
@@ -20,23 +20,23 @@ You should customize the healthcheck to match your application needs. The defaul
 
 The healthchecks are implemented using the [`@godaddy/terminus`](https://github.com/godaddy/terminus) package.
 
-## server builder
+## Server Builder
 
 The `src/serverBuilder.ts` file is responsible for creating the Express.js server and configuring it with the necessary middleware and routes.
 
-### openapi viewer
+### Openapi viewer
 
 The OpenAPI viewer is configured and enables to view the OpenAPI documentation in the browser. By default, the OpenAPI viewer is configured to serve the OpenAPI documentation at the `/docs/api` endpoint. You can customize the endpoint by changing the configuration.
 
 For more information on how to use the OpenAPI viewer, check the [openapi-express-viewer documentation](../packages/openapi-express-viewer/README.md).
 
-### routers
+### Routers
 
 The routers are configured in the `src/serverBuilder.ts` file. The routers are responsible for handling the requests and returning the responses. The routers are organized by resource, with each resource having its own router.
 
 When adding a new resource, you should create a new router and add it to the `src/serverBuilder.ts` file. The router should be imported from the resource directory.
 
-### metrics middleware
+### Metrics middleware
 
 The metrics middleware exposes NodeJS, express and custom metrics to [Prometheus](https://prometheus.io/). The metrics are exposed at the `/metrics` endpoint.
 
@@ -63,32 +63,72 @@ For more information check the [error-express-handler package](../packages/error
 The container config file is responsible for configuring the dependency injection container. The container is used to manage the dependencies of the application and to inject them into the classes that need them.
 The container is configured using the `tsyringe` package. The package is used to create the container and to register the dependencies.
 
+The boilerplate comes with a few default dependencies that are registered in the container. If the registered object is not a class, you can use the interface `SERVICES` under `src/common/constants.ts` to make it easier to find and share the registered object.
+
 For more information check the [`tsyringe` package documentation](https://github.com/microsoft/tsyringe).
 
-## config
+## Config
 
-## telemetry
+The boilerplate is configured with the MapColonies configuration package. The package is used to manage the configuration of the application and to load the configuration from a central server or environment variables.
 
-### logger
+The config is defined under `src/common/config.ts` file and uses the schema defined for the boilerplate. As you implement your own service, you should create a new schema that matches your service configuration and extends the boilerplate's one.
 
-### metrics
+Check the following resources for more information:
 
-### tracing
+- [Config management docs](../config-management/README.mdx)
+- [Config getting started guide](../../guides/config-management/zero-to-hero.mdx)
+- [MapColonies config package](../packages/config/README.md)
 
-#### init before app startup
+## Telemetry
+
+The boilerplate comes with multiple options to monitor and observe your application. For best results, you should use all of them and tailor them to your needs.
+
+### Logger
+
+The logger used by the boiler plate is MapColonies [`js-logger`](../packages/js-logger/README.md). The logger is available for usage by injecting it into your class using the `@inject` decorator.
+
+The logger is also configured to log the requests and responses using the `express-access-log-middleware` package as explained [here](#http-logger).
+
+### Metrics
+
+Metrics are handled by the [`prom-client`](https://github.com/siimon/prom-client) package. The metrics are exposed at the `/metrics` endpoint and are collected by Prometheus. The metrics are configured to collect NodeJS, express and custom metrics.
+
+Information about the metrics middleware is also available [here](#metrics-middleware).
+
+### Tracing
+
+The boilerplate is instrumented using [OpenTelemetry](https://opentelemetry.io/). To ease with the implementation of tracing, the package uses the [Telemetry package](../packages//telemetry/README.md) that handles the initialization and configuration of the OpenTelemetry SDK. In addition the package also exposes helpers which you can use to instrument your code.
+
+The tracing is defined in the `src/common/tracing.ts` file and loaded in the `src/instrumentation.mts` file.
+
+:::warning
+
+The `instrumentation.mts` file must be loaded before the application loads. This can be done by using NodeJS `--import` flag. The NPM scripts and dockerfile are already configured to do so. If you are using a different way to load the application, make sure to load the `instrumentation.mts` file before the application loads.
+
+:::
 
 ## openapi
 
-generate + use function
+The boilerplate is a design first project. You should first design your API using the OpenAPI schema and then implement the code. The OpenAPI schema is located in the `openapi` directory. The OpenAPI schema is used to generate the types for the project.
 
-## typescript paths
+For your convenience you can use the `openapi-helpers` package to type the request handlers in your controllers. For more information check the [`openapi-helpers`](../packages/openapi-helpers/README.md) package.
 
-## common
+## TypeScript paths
 
-## Structure
+The boilerplate supports the use of TypeScript [`paths feature`](https://www.typescriptlang.org/tsconfig/#paths). You can add your own paths by adding a new one to the `tsconfig.json` file. The paths are defined under the `compilerOptions.paths` property.
 
-### model
+The aliases are resolved to relative path after compilation using the [`tsc-alias`](https://github.com/justkey007/tsc-alias) package. For the tests, the aliases are resolved by mapping the paths using jest.
 
-### controller
+## Common Folder
 
-### routes
+The `src/common` directory contains common code that is used by the application. It contains constants, interfaces, and types that are used by the application. You can extends the common code to add your own custom code.
+
+## Resource Structure
+
+Each resource in the project is a directory under the `src/` directory. The resource directory is separated into the following directories:
+
+- Model - Contains your model, types and business logic.
+
+- Controller - Contains the request handlers for the resource. Anything HTTP related should be in this directory.
+
+- Routes - Contains the routes that map the request handlers to the endpoints. The routes are defined using the OpenAPI schema. The routes should be added to the router in the `src/serverBuilder.ts` file.
