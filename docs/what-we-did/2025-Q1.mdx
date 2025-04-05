@@ -1,0 +1,110 @@
+---
+title: 🎉 2025-Q1 Overview
+sidebar_position: 2
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 📊 Monitoring
+
+### 🔑 Grafana SSO Authentication via GitHub
+We’ve made logging into Grafana easier! Now, you can sign in using your GitHub account through Single Sign-On (SSO), 
+so there's no need to manage another password. Simply click **Sign in with GitHub** on the Grafana login page, and you’re in!
+
+**Why this is great:**
+- No more remembering passwords
+- Secure authentication via GitHub
+
+---
+
+## 🔧 Config Management
+
+### 📦 Deployed in All Sites and Ready for Production
+Our **Config Management** system has been successfully deployed across all environments and is now ready for production use!
+
+---
+
+## 🛠️ CI/CD Improvements
+
+### 📝 Helm Lint in the PR Workflow
+To ensure higher quality and smoother deployments, we’ve added **Helm linting** as part of the pull request workflow.  
+This will help us catch issues with Helm charts early on, preventing errors during deployment.
+
+---
+
+## 📦 Upgrading The Entire MC-Packages
+
+We took a major step forward by upgrading our entire MapColonies packages.  
+It’s now fully compatible with the latest versions, ensuring improved performance and stability.
+
+### 🚨 Upgrades with BREAKING CHANGES:
+
+#### ESLint Upgrade: v8 -> v9
+
+Key changes in ESLint 9:
+
+* Flat Config as the default: Simplifies configuration with `eslint.config.js` as the single format.  
+  Better default settings: Supports newer JavaScript syntax by default, like ECMAScript latest version and ESM.
+
+* Improved plugin and rule management: Makes it easier to set up and use ESLint with various plugins and rule sets.
+
+* Performance improvements: Faster linting, especially in large projects.
+
+These updates make ESLint 9 a more streamlined tool, improving both ease of setup and performance.
+
+#### Open Telemetry Upgrades 
+* We’ve updated the telemetry package to the latest versions of all OpenTelemetry dependencies. 
+This will help improve the observability and reliability of our services.
+
+---
+
+## 🛡️ Authentication
+
+### 🔐 New Informative Properties in OPA Response
+We’ve added to the response clients get from OPA some new properties. One important property is the **"sub"** field, 
+which represents the client name. This can be very helpful when monitoring requests and analyzing usage by clients. 
+
+### 🔒 Masking Tokens for Security
+We’ve masked the token information in OPA responses.  
+This adds an additional layer of security and reduces the risk of exposing sensitive data.
+
+---
+
+## 📑 New Helm Library for Labels and Annotations
+
+We’ve created a new Helm library named [labels and annotations](https://github.com/MapColonies/labels-and-annotations). 
+This library is responsible for adding common labels and annotations to any service that uses it as a dependency. 
+
+**Why this is helpful:**
+- **Consistency**: All services in the project will have the required labels and annotations
+- **Improve Visualization**: These labels will be used to help centralize services from all teams in one dashboard
+
+---
+
+## 🕍 Boilerplate
+
+We synced all the MC-Package upgrades to the boilerplate. Here are the important PRs made in this quarter:
+
+### 🧾 Added Recommended VS Code Extensions ([#337](https://github.com/MapColonies/ts-server-boilerplate/pull/337))
+Added a recommended list of VS Code extensions to enhance the developer experience, including tools for YAML, OpenAPI, Helm, Docker, Kubernetes, and ESLint.
+
+### ☸️ Added VS Code Settings ([#338](https://github.com/MapColonies/ts-server-boilerplate/pull/338))
+Configured these additional VS Code settings:
+- Setting Prettier as the default formatter
+- Ensuring a final newline is added to files
+
+### 🗣️ Refactored Commitlint Configuration ([#339](https://github.com/MapColonies/ts-server-boilerplate/pull/339))
+This PR updates the commitlint configuration to extend `@map-colonies/commitlint-config` and removes custom scope rules that irrelevant now
+
+### 🆕 Upgraded Redocly to a Non-Deprecated Package ([#341](https://github.com/MapColonies/ts-server-boilerplate/pull/341))
+This PR replaces the deprecated Redocly dependency with the updated `@redocly/cli` package, including related configuration changes
+
+### 📦 Common TSConfig Package ([#342](https://github.com/MapColonies/ts-server-boilerplate/pull/342))
+This PR updates the project to use the shared `@map-colonies/tsconfig` package, simplifying TypeScript configuration management and removing redundant files
+
+### ⛏️📈 Upgraded ESLint to Newest Version ([#344](https://github.com/MapColonies/ts-server-boilerplate/pull/344))
+Upgraded ESLint to the latest version, improving linting capabilities and ensuring compatibility with ESLint v9
