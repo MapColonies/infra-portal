@@ -9,7 +9,7 @@ When starting a new project based on the boilerplate, you need to change and ren
 The following steps will guide you through the process of creating a new project based on the boilerplate.
 
 1. Create a new repository in GitHub. Make sure to set the boilerplate as the template repository.
-   ![creating new repository](../../knowledge-base/ts-server-boilerplate/img/create-repo-boilerplate-dark.png)
+   ![creating new repository](static/img/create-repo-boilerplate-dark.png)
 2. Clone the new repository to your local machine.
 
 ```bash

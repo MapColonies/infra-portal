@@ -11,7 +11,7 @@ The boilerplate is available in the [MapColonies™ GitHub repository](https://g
 
 When creating a new project, you can use the boilerplate as a template repository in GitHub.
 
-![create-repo-boilerplate](./img//create-repo-boilerplate-dark.png)
+![create-repo-boilerplate](static/img/create-repo-boilerplate-dark.png)
 
 Check the [Getting Started](../../guides/ts-server-boilerplate/readme.md) guide for more information.
 
