@@ -24,8 +24,7 @@ By using swc, we can compile the TypeScript code to JavaScript faster than using
 
 :::note
 
-If you need to change swc settings, it can be done by edition the `.swcrc` file.
-
+If you need to change swc settings, it can be done by editing the `.swcrc` file.
 :::
 
 ### Configuration files
