@@ -3,8 +3,7 @@
 This is the official MapColonies™ boilerplate for a TypeScript server using Express.js.
 The boilerplate includes many features and packages in order to make the development process easier and faster and ensure common practices and standards.
 
-## Where do i find it?
-
+## Where do I find it?
 The boilerplate is available in the [MapColonies™ GitHub repository](https://github.com/MapColonies/ts-server-boilerplate)
 
 ## How do i create a new project using the boilerplate?
@@ -33,7 +32,7 @@ We can break down the boilerplate into the following sections:
 
 ### Code
 The code is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Express.js](https://expressjs.com/) framework. The code is organized in a modular way, with each resource having its own directory and files.
-The boilerplate provides a basic structure for the code, with packages that provide features that gives a good starting point for a new project.
+The boilerplate provides a basic structure for the code, with packages that provide features that give a good starting point for a new project.
 
 For more information on the code structure and the packages used, check the [following link](./code.md).
 
@@ -44,7 +43,7 @@ The tests are split into unit tests and integration tests, and provide a good st
 For more information on the tests and the packages used, check the [following link](./tests.md).
 
 ### The repository configuration and validation
-In order to all the features to work there are multitude of packages and configurations that are already set up in the boilerplate.
+In order for all the features to work correctly, there are a multitude of packages and configurations that are already set up in the boilerplate.
 They handle stuff like linting, formatting, testing, and more. Without all those files, maintaining standard and quality code would be a nightmare.
 
 For more information on the repository configuration and validation, check the [following link](./repo.md).

@@ -4,7 +4,7 @@ title: Code
 sidebar_position: 1
 ---
 
-The boilerplate code is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Express.js](https://expressjs.com/) framework. Some of the source code goal is to provide a basic structure for the code, with packages that provide features that gives a good starting point for a new project. The business logic itself resides in the in resource directories under the `src/` directory. In the boilerplate, the resources are `resourceName` and `anotherResource`, but you can rename them to match your project.
+The boilerplate code is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Express.js](https://expressjs.com/) framework. Some of the source code goal is to provide a basic structure for the code, with packages that provide features that give a good starting point for a new project. The business logic itself resides in the resource directories under the `src/` directory. In the boilerplate, the resources are `resourceName` and `anotherResource`, but you can rename them to match your project.
 
 ## index
 
@@ -42,19 +42,19 @@ The metrics middleware exposes NodeJS, express and custom metrics to [Prometheus
 
 For more information check the [MapColonies Telemetry package](../packages/telemetry/README.md).
 
-### http logger
+### HTTP logger
 
 The HTTP logger middleware is responsible for logging the requests and responses. The logger is configured to use the application logger to log those requests.
 
 For more information check the [express-access-log-middleware package](../packages/express-access-log-middleware/README.md).
 
-### openapi validator
+### OpenAPI validator
 
 The boilerplate validates all the requests using the [express-openapi-validator package](https://cdimascio.github.io/express-openapi-validator-documentation/). The package uses the OpenAPI schema to validate the requests.
 
-### error handler
+### Error handler
 
-The error handler is responsible for handling the errors that occur in the application. The error handler is configured to return a JSON response with the error message and the status code.
+The error handler is responsible for handling the errors that occur in the application. It is configured to return a `JSON` response with the error message and the status code.
 
 For more information check the [error-express-handler package](../packages/error-express-handler/README.md).
 
@@ -69,9 +69,9 @@ For more information check the [`tsyringe` package documentation](https://github
 
 ## Config
 
-The boilerplate is configured with the MapColonies configuration package. The package is used to manage the configuration of the application and to load the configuration from a central server or environment variables.
+The boilerplate is configured to use the MapColonies configuration package. The package is used to manage the configuration of the application and to load it from a central server or environment variables.
 
-The config is defined under `src/common/config.ts` file and uses the schema defined for the boilerplate. As you implement your own service, you should create a new schema that matches your service configuration and extends the boilerplate's one.
+The config is defined under `src/common/config.ts` file and uses the schema defined for the boilerplate in the MapColonies [`schemas` package](https://github.com/MapColonies/schemas). As you implement your own service, you should create a new schema that matches your service configuration and extends the boilerplate's one.
 
 Check the following resources for more information:
 
@@ -85,7 +85,7 @@ The boilerplate comes with multiple options to monitor and observe your applicat
 
 ### Logger
 
-The logger used by the boiler plate is MapColonies [`js-logger`](../packages/js-logger/README.md). The logger is available for usage by injecting it into your class using the `@inject` decorator.
+The logger used by the boilerplate is MapColonies [`js-logger`](../packages/js-logger/README.md). The logger is available for usage by injecting it into your class using the `@inject` decorator.
 
 The logger is also configured to log the requests and responses using the `express-access-log-middleware` package as explained [here](#http-logger).
 
@@ -97,8 +97,7 @@ Information about the metrics middleware is also available [here](#metrics-middl
 
 ### Tracing
 
-The boilerplate is instrumented using [OpenTelemetry](https://opentelemetry.io/). To ease with the implementation of tracing, the package uses the [Telemetry package](../packages//telemetry/README.md) that handles the initialization and configuration of the OpenTelemetry SDK. In addition the package also exposes helpers which you can use to instrument your code.
-
+The boilerplate is instrumented using [OpenTelemetry](https://opentelemetry.io/). To ease with the implementation of tracing, the package uses the [Telemetry package](../packages/telemetry/README.md) that handles the initialization and configuration of the OpenTelemetry SDK. In addition the package also exposes helpers which you can use to instrument your code.
 The tracing is defined in the `src/common/tracing.ts` file and loaded in the `src/instrumentation.mts` file.
 
 :::warning

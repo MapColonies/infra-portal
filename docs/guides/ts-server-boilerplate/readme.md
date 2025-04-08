@@ -19,7 +19,7 @@ git clone https://github.com/MapColonies/my-new-amazing-repo.git
 &nbsp;&nbsp;&nbsp;&nbsp;or if you prefer using ssh:
 
 ```bash ssh
-git clone git@github.com:MapColonies/ts-server-boilerplate.git
+git clone git@github.com:MapColonies/my-new-amazing-repo.git
 ```
 
 3. Set the name of the project in the `package.json` and `package-lock.json` files. Change the `name` field to match your project's name.

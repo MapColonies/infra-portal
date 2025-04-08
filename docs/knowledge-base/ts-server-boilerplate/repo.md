@@ -63,7 +63,7 @@ The `.vscode/extensions.json` file contains recommended extensions for this proj
 
 ## EditorConfig
 
-[EditorConfig] is a tool that helps maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs. The configuration file for EditorConfig is located in the `.editorconfig` file.
+EditorConfig is a tool that helps maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs. The configuration file for EditorConfig is located in the `.editorconfig` file.
 
 The `.editorconfig` file contains settings that should be consistent across all of MapColonies™ projects, such as: end-of-line characters, indentation, and charset.
 
@@ -85,7 +85,7 @@ For complete documentation, check the [npmrc documentation](https://docs.npmjs.c
 
 ## nvmrc
 
-[nvm](https://github.com/nvm-sh/nvm) - short for Node Version Manager - is a tool that allows you to install and manage multiple versions of Node.js on the same machine. The `.nvmrc` file contains the Node.js version that should be used for this project.
+[nvm](https://github.com/nvm-sh/nvm), short for Node Version Manager, is a tool that allows you to install and manage multiple versions of Node.js on the same machine. The `.nvmrc` file contains the Node.js version that should be used for this project.
 
 Run the following command in the repository root directory to use the Node.js version specified in the `.nvmrc` file:
 
@@ -97,7 +97,7 @@ nvm use
 
 [Prettier](https://prettier.io/docs/) is an opinionated code formatter that enforces a consistent code style across your codebase. The configuration file for Prettier is located in the `.prettierrc` file.
 
-If you need to change the configuration, you can do so by editing the `.prettierrc` file, And if you want to ignore some files or directories from being formatted by Prettier, you can add them to the `.prettierignore` file.
+If you need to change the configuration, you can do so by editing the `.prettierrc` file. If you want to ignore some files or directories from being formatted by Prettier, you can add them to the `.prettierignore` file.
 
 The configuration is taken from the [MapColonies™ Prettier configuration](../packages/prettier-config/README.md) package.
 
