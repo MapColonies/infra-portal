@@ -125,6 +125,12 @@ export default async function createConfigAsync() {
             position: 'left',
             label: 'Guides',
           },
+          {
+            type: "docSidebar",
+            sidebarId: "whatWeDidSidebar",
+            position: "left",
+            label: "What We Did",
+          },
           // { to: "/blog", label: "Blog", position: "left" },
           {
             href: 'https://github.com/MapColonies/infra-portal',
@@ -143,10 +149,13 @@ export default async function createConfigAsync() {
                 label: 'Knowledge Base',
                 to: '/docs/knowledge-base',
               },
-
               {
                 label: 'Guides',
                 to: '/docs/guides',
+              },
+              {
+                label: 'What We Did',
+                to: '/docs/what-we-did',
               },
             ],
           },
