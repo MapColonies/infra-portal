@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_map_colonies_openapi_helpers=self.webpackChunk_map_colonies_openapi_helpers||[]).push([[6749],{6749:(e,p,s)=>{s.d(p,{createArchitectureServices:()=>c.S});var c=s(9403);s(3894)}}]);
