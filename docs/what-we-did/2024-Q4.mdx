@@ -21,22 +21,41 @@ reducing manual efforts and increasing consistency across your services.
 ## 📊 Monitoring
 
 ### 📈 Upgrading The Entire Monitoring Stack 🚀
-We took a major step forward by upgrading our entire monitoring stack.  
-It’s now fully compatible with the latest versions, ensuring improved performance and stability.
+We’ve given our entire monitoring stack a big refresh!  
+With the latest versions now in place, you’ll notice better performance, cleaner interfaces, and a few awesome new features to make your life easier.
 
-| Tool           | Version  |
-|----------------|----------|
-| Grafana      | 11.4.0   |
-| Prometheus     | 3.0.1    |
-| Alertmanager   | 0.27.0   |
-| OTEL-Collector | 0.115.1  |
-| Tempo        | 2.6.0    |
+| Tool           | Previous Version | New Version |
+|----------------|------------------|-------------|
+| [Grafana](https://grafana.com/docs/grafana/latest/release-notes)        | 9.4.7            | 11.4.0      |
+| [Prometheus](https://prometheus.io/blog/2024/11/14/prometheus-3-0)     | 2.46.0           | 3.0.1       |
+| [Alertmanager](https://prometheus.io/docs/alerting/latest/overview)   | 0.25.0           | 0.27.0      |
+| [OTEL-Collector](https://opentelemetry.io/docs/collector/) | 0.77.0           | 0.115.1     |
+| [Tempo](https://grafana.com/docs/tempo/latest/release-notes/)          | 2.3.0            | 2.6.0       |
+
+Interesting Adds:  
+🧭 Tempo:
+* Performance enhancements
+* You can now filter traces by properties (like span ID) for faster debugging and navigation
+![tempo filtering by properties](./img/2024-q4/tempo-filtering.png)
+
+
+🔍 Prometheus:
+* Brand [UI](https://prometheus.io/blog/2024/11/14/prometheus-3-0/#new-ui) — cleaner, simpler, and built from scratch
+* [Massive Performance enhancements](https://prometheus.io/blog/2024/11/14/prometheus-3-0/#performance) for faster queries and better responsiveness
+
+📊 Grafana:
+* [Subfolders](https://grafana.com/docs/grafana/latest/whatsnew/whats-new-in-v10-0/#subfolders) support to better organize your dashboards
+* [Easier data source selection](https://grafana.com/docs/grafana/latest/whatsnew/whats-new-in-v10-0/#select-data-sources-more-easily)
+* [Explore mode](https://grafana.com/docs/grafana/latest/whatsnew/whats-new-in-v10-0/#query-multiple-data-sources-in-explore) now supports querying multiple data sources at once
+* [Span filtering in traces](https://grafana.com/docs/grafana/latest/whatsnew/whats-new-in-v10-0/#span-filtering-for-traces) for a better tracing experience
+* [Format Time transformation](https://grafana.com/docs/grafana/latest/whatsnew/whats-new-in-v10-1/#format-time-transformation) can make you set a cleaner and more readable format
 
 ### Kube State Metrics
 [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics) (KSM) is a tool that collects 
 metrics about the state of Kubernetes objects like Pods, Nodes, and Deployments. 
 It provides valuable insights into our cluster's health, helping us monitor and troubleshoot more effectively. 
 KSM integrates seamlessly with Prometheus, making it easy to use with our existing monitoring setup.
+![Kube State Metrics Usage Example](./img/2024-q4/ksm.png)
 
 :::tip
 With KSM, you can monitor the state of Pods and receive alerts if any are in a crash loop.  
@@ -83,6 +102,7 @@ Well, now you can! No more mysteries!
 After the pipeline is triggered and deployed the changed chart, in the slack message, in addition to the status of the deployment, 
 you will get also the developer name that made the change that triggered the deployment.
 Be nice when you blame him 😨
+![Slack Message](./img/2024-q4/blame.png)
 
 ---
 
