@@ -2,10 +2,12 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { PluginOptions } from '@docusaurus/types';
 import { RemoteContentPluginOptions } from 'docusaurus-plugin-remote-content';
-import { $, cd, tmpdir, within } from 'zx';
+import { $, tmpdir } from 'zx';
 import { TypeDocOptions } from 'typedoc';
 import { PluginOptions as TypedocMarkdownOptions } from 'typedoc-plugin-markdown';
 import { PluginOptions as DocusaurusTypedocOptions } from 'docusaurus-plugin-typedoc';
+
+const DEST_BASE_FOLDER = process.cwd();
 
 export interface GithubSource {
   type: 'github';
@@ -221,40 +223,41 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
   const plugins: [string, PluginOptions][] = [];
 
   for (const source of typedocSources) {
-    const destDir = path.join(tempDir, source.name);
-    await within(async () => {
-      cd(tempDir);
-      if (!fs.existsSync(destDir)) {
-        await $`git clone --depth 1 --branch ${source.branch} https://github.com/${source.repo}.git `;
-      }
-      cd(source.name);
-      await $`npm ci --omit=""`;
-    });
+    const gitDestDir = path.join(tempDir, source.name);
+    if (!fs.existsSync(gitDestDir)) {
+      await $({ cwd: tempDir })`git clone --depth 1 --branch ${source.branch} https://github.com/${source.repo}.git `;
+    }
+
+    await $({ cwd: path.join(tempDir, source.name) })`npm ci --ignore-scripts --loglevel error --omit=""`;
 
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
-    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
+    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & {visited?: boolean}> = {};
     possibleTypedocConfigs.forEach((fileName) => {
-      const configPath = path.join(destDir, fileName);
+      const configPath = path.join(gitDestDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
-
 
       if (doesConfigPathExists) {
         extraConfig = require(configPath);
-        extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
+
+        if (!extraConfig.visited) {
+          extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(gitDestDir, entry));
+          extraConfig.visited = true;
+        }
       }
     });
 
+    const { visited: touched, ...extraConfigWithoutTouched} = extraConfig;
     plugins.push([
       'docusaurus-plugin-typedoc',
       {
         id: source.name,
-        entryPoints: [path.join(destDir, 'src', 'index.ts')],
+        entryPoints: [path.join(gitDestDir, 'src', 'index.ts')],
         ...baseTypedocOptions,
-        ...extraConfig,
-        tsconfig: path.join(destDir, 'tsconfig.json'),
-        basePath: path.join(destDir, 'src'),
-        out: `${source.targetDir}/typedoc`,
+        ...extraConfigWithoutTouched,
+        tsconfig: path.join(gitDestDir, 'tsconfig.json'),
+        basePath: path.join(gitDestDir, 'src'),
+        out: path.join(DEST_BASE_FOLDER, source.targetDir, 'typedoc'),
       },
     ]);
   }
