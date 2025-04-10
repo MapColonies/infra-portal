@@ -1,13 +1,20 @@
+import path from 'node:path';
+import fs from 'node:fs';
 import { PluginOptions } from '@docusaurus/types';
 import { RemoteContentPluginOptions } from 'docusaurus-plugin-remote-content';
+import { $, cd, tmpdir, within } from 'zx';
+import { TypeDocOptions } from 'typedoc';
+import { PluginOptions as TypedocMarkdownOptions } from 'typedoc-plugin-markdown';
+import { PluginOptions as DocusaurusTypedocOptions } from 'docusaurus-plugin-typedoc';
 
-interface GithubSource {
+export interface GithubSource {
   type: 'github';
   name: string;
   repo: string;
   branch: string;
   documents: string[];
   targetDir: string;
+  typedoc?: boolean;
 }
 
 interface Source {
@@ -32,7 +39,7 @@ function githubSourceToSource(source: GithubSource): Source {
   };
 }
 
-const sources: (GithubSource | Source)[] = [
+export const sources: (GithubSource | Source)[] = [
   {
     type: 'github',
     documents: ['README.md'],
@@ -40,6 +47,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'telemetry',
     repo: 'MapColonies/telemetry',
     targetDir: 'docs/knowledge-base/packages/telemetry',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -48,6 +56,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'error-express-handler',
     repo: 'MapColonies/error-express-handler',
     targetDir: 'docs/knowledge-base/packages/error-express-handler',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -56,20 +65,24 @@ const sources: (GithubSource | Source)[] = [
     name: 'eslint-config',
     repo: 'MapColonies/eslint-config',
     targetDir: 'docs/knowledge-base/packages/eslint-config',
-  },{
+  },
+  {
     type: 'github',
     documents: ['README.md'],
     branch: 'master',
     name: 'express-access-log-middleware',
     repo: 'MapColonies/express-access-log-middleware',
     targetDir: 'docs/knowledge-base/packages/express-access-log-middleware',
-  },{
+    typedoc: true,
+  },
+  {
     type: 'github',
     documents: ['README.md'],
     branch: 'master',
     name: 'js-logger',
     repo: 'MapColonies/js-logger',
     targetDir: 'docs/knowledge-base/packages/js-logger',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -78,6 +91,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'openapi-express-viewer',
     repo: 'MapColonies/openapi-express-viewer',
     targetDir: 'docs/knowledge-base/packages/openapi-express-viewer',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -94,6 +108,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'read-pkg',
     repo: 'MapColonies/read-pkg',
     targetDir: 'docs/knowledge-base/packages/read-pkg',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -102,6 +117,7 @@ const sources: (GithubSource | Source)[] = [
     name: 'config',
     repo: 'MapColonies/config',
     targetDir: 'docs/knowledge-base/packages/config',
+    typedoc: true,
   },
   {
     type: 'github',
@@ -118,7 +134,8 @@ const sources: (GithubSource | Source)[] = [
     name: 'openapi-helpers',
     repo: 'MapColonies/openapi-helpers',
     targetDir: 'docs/knowledge-base/packages/openapi-helpers',
-  }
+    typedoc: true,
+  },
 ];
 
 type ModifyContent = (
@@ -161,35 +178,85 @@ function modifyContentBuilder(source: Source): ModifyContent {
     content =
       '---\ncustom_edit_url: null\n---\n' +
       content +
-      `:::note\nThis page was generated from a remote source. you can find it on ${new URL(
-        filename,
-        source.fileLinkPath
-      )}\n:::`;
+      `:::note\nThis page was generated from a remote source. you can find it on ${new URL(filename, source.fileLinkPath)}\n:::`;
 
     return { filename, content };
   };
 }
 
 export function remotePluginGenerator(): [string, PluginOptions][] {
-  const processedSources = sources.map(source => {
+  const processedSources = sources.map((source) => {
     if (source.type === 'github') {
       return githubSourceToSource(source);
     }
     return source;
   });
-  return processedSources.map(
-    (source): [string, RemoteContentPluginOptions & PluginOptions] => {
-      return [
-        'docusaurus-plugin-remote-content',
-        {
-          name: source.name,
-          documents: source.documents,
-          outDir: source.targetDir,
-          sourceBaseUrl: source.fileDownloadPath,
-          modifyContent: modifyContentBuilder(source),
-        },
-      ];
-    }
-  );
+  return processedSources.map((source): [string, RemoteContentPluginOptions & PluginOptions] => {
+    return [
+      'docusaurus-plugin-remote-content',
+      {
+        name: source.name,
+        documents: source.documents,
+        outDir: source.targetDir,
+        sourceBaseUrl: source.fileDownloadPath,
+        modifyContent: modifyContentBuilder(source),
+      },
+    ];
+  });
 }
 // plugins: [["docusaurus-plugin-remote-content", {name: 'telemetry', sourceBaseUrl: 'https://raw.githubusercontent.com/MapColonies/telemetry/refs/heads/master', outDir: 'docs/telemetry', documents: ['README.md']}]],
+
+const baseTypedocOptions: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {
+  readme: 'none',
+  hidePageTitle: false,
+  outputFileStrategy: 'members',
+  cleanOutputDir: true,
+  hidePageHeader: false,
+};
+
+export async function typedocPluginGenerator(): Promise<[string, PluginOptions][]> {
+  const typedocSources = sources.filter((source): source is GithubSource => source.type === 'github' && source.typedoc);
+  const tempDir = tmpdir('typedoc');
+
+  const plugins: [string, PluginOptions][] = [];
+
+  for (const source of typedocSources) {
+    const destDir = path.join(tempDir, source.name);
+    await within(async () => {
+      cd(tempDir);
+      if (!fs.existsSync(destDir)) {
+        await $`git clone --depth 1 --branch ${source.branch} https://github.com/${source.repo}.git `;
+      }
+      cd(source.name);
+      await $`npm ci --omit=""`;
+    });
+
+    const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
+
+    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions> = {};
+    possibleTypedocConfigs.forEach((fileName) => {
+      const configPath = path.join(destDir, fileName);
+      const doesConfigPathExists = fs.existsSync(configPath);
+
+
+      if (doesConfigPathExists) {
+        extraConfig = require(configPath);
+        extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
+      }
+    });
+
+    plugins.push([
+      'docusaurus-plugin-typedoc',
+      {
+        id: source.name,
+        entryPoints: [path.join(destDir, 'src', 'index.ts')],
+        ...baseTypedocOptions,
+        ...extraConfig,
+        tsconfig: path.join(destDir, 'tsconfig.json'),
+        basePath: path.join(destDir, 'src'),
+        out: `${source.targetDir}/typedoc`,
+      },
+    ]);
+  }
+  return plugins;
+}

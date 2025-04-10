@@ -3,6 +3,15 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [master]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'static/**'
+      - 'blog/**'
+      - 'docusaurus.config.ts'
+      - 'sidebars.js'
+      - 'remoteFetch.ts'
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -11,8 +20,8 @@ env:
   BASE_URL: '/infra-portal/'
 
 jobs:
-  build:
-    name: Build Docusaurus
+  deploy:
+    name: Build Docusaurus and deploy to pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,22 +42,11 @@ jobs:
         with:
           path: build
 
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Build output to publish to the `gh-pages` branch:
+          folder: build # The folder the action should deploy.
+          clean-exclude: pr-preview/
+          force: false

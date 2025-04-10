@@ -126,7 +126,7 @@ For more information check out the relevant docs in [config](https://github.com/
   "description": "My domain's schema",
   "allOf": [
     {
-      "$ref": "https://mapcolonies.com/common/boilerplate/v4"
+      "$ref": "https://mapcolonies.com/common/boilerplate/v2"
     },
     {
       "type": "object",
@@ -379,6 +379,8 @@ async function initConfig(offlineMode?:boolean): Promise<void> {
 
 ## Next steps
 Now that you finished writing your schema, you can submit a PR to the schemas repo and ask for it to be reviewed.
+
+You can also check the [default configs](./default-config.mdx) guide to learn how to define default configs for your schema.
 
 We hope this guide was helpful and you were able to integrate the MapColonies™ Config Management system into your service.
 
