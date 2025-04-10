@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_map_colonies_openapi_helpers=self.webpackChunk_map_colonies_openapi_helpers||[]).push([[636],{636:(e,p,s)=>{s.d(p,{createPieServices:()=>a.f});var a=s(126);s(3894)}}]);
