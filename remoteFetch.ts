@@ -232,7 +232,7 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
 
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
-    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & {visited?: boolean}> = {};
+    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & {processedEntryPoints?: boolean}> = {};
     possibleTypedocConfigs.forEach((fileName) => {
       const configPath = path.join(gitDestDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
@@ -240,21 +240,21 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
       if (doesConfigPathExists) {
         extraConfig = require(configPath);
 
-        if (!extraConfig.visited) {
+        if (!extraConfig.processedEntryPoints) {
           extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(gitDestDir, entry));
-          extraConfig.visited = true;
+          extraConfig.processedEntryPoints = true;
         }
       }
     });
 
-    const { visited: touched, ...extraConfigWithoutTouched} = extraConfig;
+    const { processedEntryPoints, ...extraConfigWithoutFlag} = extraConfig;
     plugins.push([
       'docusaurus-plugin-typedoc',
       {
         id: source.name,
         entryPoints: [path.join(gitDestDir, 'src', 'index.ts')],
         ...baseTypedocOptions,
-        ...extraConfigWithoutTouched,
+        ...extraConfigWithoutFlag,
         tsconfig: path.join(gitDestDir, 'tsconfig.json'),
         basePath: path.join(gitDestDir, 'src'),
         out: path.join(DEST_BASE_FOLDER, source.targetDir, 'typedoc'),
