@@ -136,6 +136,15 @@ export const sources: (GithubSource | Source)[] = [
     targetDir: 'docs/knowledge-base/packages/openapi-helpers',
     typedoc: true,
   },
+  {
+    type: 'github',
+    documents: ['README.md'],
+    branch: 'master',
+    name: 'commitlint-config',
+    repo: 'MapColonies/commitlint-config',
+    targetDir: 'docs/knowledge-base/packages/commitlint-config',
+    typedoc: false,
+  },
 ];
 
 type ModifyContent = (
@@ -237,7 +246,6 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
     possibleTypedocConfigs.forEach((fileName) => {
       const configPath = path.join(destDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
-
 
       if (doesConfigPathExists) {
         extraConfig = require(configPath);
