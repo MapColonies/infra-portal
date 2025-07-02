@@ -274,6 +274,58 @@ The following schema
 
 If both properties are provided, the schema will be invalid.
 
+#### Using `oneOf` with discriminators
+
+The `discriminator` keyword (introduced in JSON Schema draft 2019-09) enhances `oneOf` by explicitly identifying which property determines the correct schema to use. This is particularly valuable for polymorphic data structures where different object types have different property requirements and default values.
+
+```json
+{
+  "storage": {
+    "type": "object",
+    "discriminator": {
+      "propertyName": "provider"
+    },
+    "required": ["provider"],
+    "oneOf": [
+      {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "s3"
+          },
+          "credentials": {
+            "type": "string",
+            "default": "someExampleValue"
+          }
+        }
+      },
+      {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "fs"
+          },
+          "credentials": {
+            "type": "number",
+            "default": 100
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+In this example, the `discriminator.propertyName` value of `"provider"` indicates which property identifies the appropriate schema. When `provider` equals `"s3"`, the validator knows to use the first schema (where `credentials` is a string defaulting to `"someExampleValue"`). When `provider` equals `"fs"`, it uses the second schema (where `credentials` is a number defaulting to `100`).
+
+Without a discriminator, the validator would need to try each schema sequentially, which is less efficient and produces less specific error messages. The discriminator pattern also enables type-safe handling of different object variants in strongly-typed languages.
+
+:::note
+Note that while the `default` keyword specifies default values for each variant, not all JSON Schema validators or tools automatically apply these defaults. Some may treat them as annotations only. Check your validation library's documentation for how defaults are handled.
+:::
+
+For more documentation on discriminators, see the [Ajv JSON Schema documentation](https://ajv.js.org/json-schema.html#discriminator).
+
 ## Strings
 
 ### Formats
