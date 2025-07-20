@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MapColonies Deployment Configuration Schema",
+  "description": "Schema for deployment config in OpenShift (for auto deploy)",
+  "type": "object",
+  "required": ["name", "releaseName", "namespace", "version", "enabled", "valuesFiles"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "description": "The name of the Helm Chart",
+      "type": "string"
+    },
+    "version": {
+      "description": "The version of the Helm chart to be deployed",
+      "type": "string"
+    },
+    "releaseName": {
+      "description": "The release name for the deployment",
+      "type": "string"
+    },
+    "namespace": {
+      "description": "The target namespace for the deployment",
+      "type": "string"
+    },
+    "enabled": {
+      "description": "If set to false, the deployment will not be automatically deployed",
+      "type": "boolean"
+    },
+    "valuesFiles": {
+      "description": "A list of relative paths to YAML values files (current directory is the location of the deployment.json file)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
