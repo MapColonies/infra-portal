@@ -1,0 +1,86 @@
+---
+title: 🎉 2025-Q3 Overview
+sidebar_position: 2
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+
+---
+
+## 📊 Monitoring & Observability
+
+### 🪵 Welcome [Loki](https://grafana.com/docs/loki/latest): Our New Logging Solution
+We're excited to complete our observability! Alongside **[Prometheus](https://prometheus.io)** for metrics and **[Tempo](https://grafana.com/docs/tempo/latest)** 
+for traces, we've now integrated **Loki** as our official logging solution.
+
+Loki will aggregate logs from all our services, providing a centralized place to search, analyze, and debug.  
+Logs will be processed in OpenTelemetry format via [Alloy](https://grafana.com/docs/alloy/latest).
+
+To get started, you can enable log scraping for your service by simply adding the following label to your pods: `mapcolonies.io/alloy-api-logs`.  
+After that, you can see the logs immediately [here](https://grafana.mapcolonies.net/a/grafana-lokiexplore-app/explore)
+
+:::info
+In the future, we will release a dedicated NPM logger package, so in the meantime, DO NOT set this label on your NodeJS services.
+:::
+
+---
+
+## 🛡️ Authentication
+
+### 🔑 Token Kiosk for Temporary Access
+We've launched the **Token Kiosk**, a new service for issuing temporary tokens to B2C clients. 
+This is especially useful for applications like ArcGIS-Pro and ArcMap, where preventing token sharing across different machines is a security priority.
+
+**Key Features:**
+* **Secure Access**: The service generates temporary tokens and can distinguish between different devices to ensure tokens aren't shared.
+* **SSO Integration**: It uses an SSO to authenticate users securely.
+* **User-Friendly UI**: A simple, Hebrew-language interface allows users to generate a token, view an expiration countdown, and copy the token with a single click.
+* **Token Lifecycle**: Tokens are valid for one week by default, and all issuance is logged in a database for tracking.
+
+Feel free to tell your friends and show them the kiosk [here](https://kiosk.mapcolonies.net)😉
+
+![Token Kiosk](./img/2025-q3/token-kiosk.png)
+
+---
+
+## 💸 Infrastructure & Cost Optimization
+
+### 📉 Weekend Auto-Scaler
+To help reduce costs, we've implemented a new **auto-scaling tool**. This tool automatically downscales all deployments over the weekend.  
+Don't worry, the tool scales them back up to their original replica counts first thing on Sunday morning.  
+
+Whenever the tool starts working, it reports everything to our slack channel *infra-notifications* so if anything goes wrong, we'll be the first one to know and fix it.
+
+This simple change allows us to optimize our resource usage and save money without impacting performance during the work week.
+
+---
+
+## 🚀 CI/CD Improvements
+
+### 🕵️ Jenkins Observability
+Ever had a pipeline fail without a clear reason?  
+We've enhanced our Jenkins setup with improved observability.  
+This will make it significantly easier to debug pipeline issues, detect errors proactively, and understand performance bottlenecks, 
+leading to a more stable and reliable CI/CD environment.
+
+---
+
+## 🗃️ Databases
+
+### 🔒 Postgres with SSL for Local Development
+We've published a [new repository](https://github.com/MapColonies/postgres-ssl) containing instructions on how to easily deploy **Postgres with SSL**.  
+This allows developers to test their services in an environment that more closely mirrors production, 
+ensuring that database connections are secure and properly configured before deployment.
+
+What are you waiting for?😱 Go deploy your secured postgres!!
+
+---
+
+## 🚦 Service Health & Status
+
+### ✨ New Status Page Initiative
+We've begun work on a centralized **Status Page** for the entire MapColonies project. This page will be the single source of truth for questions like:
+* What's the operational status of each team's services?
+* What alerts are currently active?
+* What is the uptime for key applications?
+
+This is a collaborative effort, and soon we will be working closely with all teams to build out their respective sections on the page.  
