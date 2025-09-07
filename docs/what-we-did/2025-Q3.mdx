@@ -45,7 +45,7 @@ Feel free to tell your friends and show them the kiosk [here](https://kiosk.mapc
 ## 💸 Infrastructure & Cost Optimization
 
 ### 📉 Weekend Auto-Scaler
-To help reduce costs, we've implemented a new **auto-scaling tool**. This tool automatically downscales all deployments over the weekend.  
+To help reduce costs, we've implemented a new **auto-scaling tool**. This tool automatically downscales all non-prod deployments over the weekend.  
 Don't worry, the tool scales them back up to their original replica counts first thing on Sunday morning.  
 
 Whenever the tool starts working, it reports everything to our slack channel *infra-notifications* so if anything goes wrong, we'll be the first one to know and fix it.
