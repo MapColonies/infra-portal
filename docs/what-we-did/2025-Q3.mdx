@@ -45,7 +45,7 @@ Feel free to tell your friends and show them the kiosk [here](https://kiosk.mapc
 ## 💸 Infrastructure & Cost Optimization
 
 ### 📉 Weekend Auto-Scaler
-To help reduce costs, we've implemented a new **auto-scaling tool**. This tool automatically downscales all non-prod deployments over the weekend.  
+To help reduce costs, we've implemented a new **auto-scaling tool**. This tool automatically downscales all non-prod deployments over the weekend (Azure only, not relevant to in-networks).  
 Don't worry, the tool scales them back up to their original replica counts first thing on Sunday morning.  
 
 Whenever the tool starts working, it reports everything to our slack channel *infra-notifications* so if anything goes wrong, we'll be the first one to know and fix it.
@@ -68,6 +68,7 @@ leading to a more stable and reliable CI/CD environment.
 
 ### 🔒 Postgres with SSL for Local Development
 We've published a [new repository](https://github.com/MapColonies/postgres-ssl) containing instructions on how to easily deploy **Postgres with SSL**.  
+The repo contains also a walkthrough and friendly guide for all the complex steps, from generating all the certs files to import and use them.  
 This allows developers to test their services in an environment that more closely mirrors production, 
 ensuring that database connections are secure and properly configured before deployment.
 
