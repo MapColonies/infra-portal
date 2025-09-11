@@ -116,3 +116,15 @@ This is a collaborative effort, and soon we will be working closely with all tea
 * Programmatic support is now available - you can import and use the generators directly in your code
 
 You can find the full documentation here: [MapColonies openapi-helpers package](https://github.com/MapColonies/openapi-helpers).
+
+---
+
+## 🕍 Boilerplate
+
+### 🔧 ts-server-boilerplate: PR and Build & Push workflows refactor
+Refactored the ts-server-boilerplate CI to maximize reuse and make changes easier for developers:
+
+**Before:** ts-server-boilerplate workflows called reusable workflows in the shared-workflow repo.
+**Now:** workflows call multiple reusable actions directly from the shared-workflow repo, keeping steps visible and easy to tweak in-repo.
+
+Now developers can more easily adjust steps per service while still using our standardized actions.
