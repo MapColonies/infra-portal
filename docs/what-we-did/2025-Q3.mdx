@@ -15,7 +15,7 @@ for traces, we've now integrated **Loki** as our official logging solution.
 Loki will aggregate logs from all our services, providing a centralized place to search, analyze, and debug.  
 Logs will be processed in OpenTelemetry format via [Alloy](https://grafana.com/docs/alloy/latest).
 
-To get started, you can enable log scraping for your service by simply adding the following label to your pods: `mapcolonies.io/alloy-api-logs`.  
+To get started, you can enable log scraping for your service by simply adding the following label to your pods: `mapcolonies.io/alloy-api-logs: "true"`.  
 After that, you can see the logs immediately [here](https://grafana.mapcolonies.net/a/grafana-lokiexplore-app/explore)
 
 :::info
