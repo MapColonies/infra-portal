@@ -121,10 +121,7 @@ You can find the full documentation here: [MapColonies openapi-helpers package](
 
 ## 🕍 Boilerplate
 
-### 🔧 ts-server-boilerplate: PR and Build & Push workflows refactor
-Refactored the ts-server-boilerplate CI to maximize actions reuse and make changes easier for developers:
-
-**Before:** ts-server-boilerplate workflows called reusable workflows in the shared-workflow repo.
-**Now:** workflows call multiple reusable actions directly from the shared-workflow repo, keeping steps visible and easy to tweak in-repo.
-
-Now developers can more easily adjust steps per service while still using our standardized actions.
+### 🏗️ CI Refactor: Building with Actions
+Following up on our Q2 initiative to provide reusable actions ("songs") instead of monolithic workflows ("playlists"), we've updated the boilerplate's CI pipeline.  
+Instead of referencing an external workflow, the CI is now built directly within the boilerplate repository itself, 
+calling the specific actions it needs. This makes the CI process more transparent, flexible, and easier for you to customize.
