@@ -71,6 +71,14 @@ We've enhanced our Jenkins setup with improved observability.
 This will make it significantly easier to debug pipeline issues, detect errors proactively, and understand performance bottlenecks, 
 leading to a more stable and reliable CI/CD environment.
 
+### 🛡️ Safer Deployments with Gatekeeper Guardrails
+To help improve consistency, we've enabled Gatekeeper to act as a friendly guardrail for our deployments. 
+It checks if your Helm charts have all the required labels and annotations needed for monitoring and automation.
+
+Don't worry, it won't block you!
+For now, it only shows a warning if something is missing, giving you a gentle nudge in the right direction.
+To make it easy, you can add all the required labels using our mc-labels-and-annotations Helm library.
+
 ---
 
 ## 🗃️ Databases
@@ -128,29 +136,3 @@ Refactored the ts-server-boilerplate CI to maximize actions reuse and make chang
 **Now:** workflows call multiple reusable actions directly from the shared-workflow repo, keeping steps visible and easy to tweak in-repo.
 
 Now developers can more easily adjust steps per service while still using our standardized actions.
-
----
-
-## 🧭 Security & Governance  
-
-### 🧱 Gatekeeper Constraints Helm Chart  
-We’ve added a new Helm chart, **`gatekeeper-constraints`**, to help keep our OpenShift clusters consistent and easier to manage.  
-
-✅ **What it does**  
-- Checks that Pods include the **required labels and annotations**.  
-- Runs in **WARN (audit-only) mode** – you’ll see violations, but they won’t block your deployments.  
-
-📌 **Required Annotations**  
-- `prometheus.io/path`  
-- `prometheus.io/port`  
-- `prometheus.io/scrape`  
-
-📌 **Required Labels**  
-- `mapcolonies.io/part-of`  
-- `app.kubernetes.io/instance`  
-- `mapcolonies.io/owner`  
-- `mapcolonies.io/environment`  
-- `app.kubernetes.io/version`  
-- `mapcolonies.io/component`  
-- `app.kubernetes.io/managed-by`  
-- `app.kubernetes.io/name`  
