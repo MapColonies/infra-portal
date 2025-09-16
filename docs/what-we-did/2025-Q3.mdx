@@ -71,6 +71,14 @@ We've enhanced our Jenkins setup with improved observability.
 This will make it significantly easier to debug pipeline issues, detect errors proactively, and understand performance bottlenecks, 
 leading to a more stable and reliable CI/CD environment.
 
+### 🛡️ Safer Deployments with Gatekeeper Guardrails
+To help improve consistency, we've enabled Gatekeeper to act as a friendly guardrail for our deployments. 
+It checks if your Helm charts have all the required labels and annotations needed for monitoring and automation.
+
+Don't worry, it won't block you!
+For now, it only shows a warning if something is missing, giving you a gentle nudge in the right direction.
+To make it easy, you can add all the required labels using our mc-labels-and-annotations Helm library.
+
 ---
 
 ## 🗃️ Databases
