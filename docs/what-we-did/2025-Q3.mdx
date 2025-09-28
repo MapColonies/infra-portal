@@ -86,6 +86,19 @@ Don't worry, it won't block you!
 For now, it only shows a warning if something is missing, giving you a gentle nudge in the right direction.
 To make it easy, you can add all the required labels using our mc-labels-and-annotations Helm library.
 
+### 💾 Easy Access to Shared Data in Any Namespace
+Ever needed to access our integration shared data from your own namespace?  
+We've made it simple and created a new Jenkins pipeline called `duplicate-shared-pvc`.  
+Just run the pipeline and provide your namespace name. 
+It will automatically create a new PV and PVC right in your namespace, pointing to the central shared disk.  
+This gives you easy access to all the data you need without any duplication of disks.
+
+You can find the pipeline [here](https://jenkins.mapcolonies.net/job/duplicate-shared-pvc/build?delay=0sec).
+
+:::info
+After all the PVC migrations are done, the old disks will be deleted
+:::
+
 ---
 
 ## 🗃️ Databases
