@@ -377,6 +377,29 @@ async function initConfig(offlineMode?:boolean): Promise<void> {
 
 3. Check that the service works as expected.
 
+:::note
+
+The value you put in place of `<your-new-schema>` comes directly from the
+name generated for your schema based on its `$id`.
+
+Every schema exported by `@map-colonies/schemas` follows this rule:
+
+Schema ID:
+```ts
+https://mapcolonies.com/my-domain/my-schema/v1
+```
+Becomes the exported names:
+  ```myDomainMySchemaV1``` &
+  ```myDomainMySchemaV1Type```
+
+So in your service’s config.ts you should write the following in order to match your schema:
+```ts
+import { myDomainMySchemaV1, myDomainMySchemaV1Type } from '@map-colonies/schemas';
+```
+
+:::
+
+
 ## Next steps
 Now that you finished writing your schema, you can submit a PR to the schemas repo and ask for it to be reviewed.
 
