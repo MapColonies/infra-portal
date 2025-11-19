@@ -389,10 +389,10 @@ Schema ID:
 https://mapcolonies.com/my-domain/my-schema/v1
 ```
 Becomes the exported names:
-  myDomainMySchemaV1
-  myDomainMySchemaV1Type
+  ```myDomainMySchemaV1``` &
+  ```myDomainMySchemaV1Type```
 
-So in your service’s config.ts you will write to match your scehma:
+So in your service’s config.ts you should write the following in order to match your scehma:
 ```ts
 import { myDomainMySchemaV1, myDomainMySchemaV1Type } from '@map-colonies/schemas';
 ```
