@@ -156,6 +156,15 @@ export const sources: (GithubSource | Source)[] = [
     targetDir: 'docs/knowledge-base/packages/jobnik-sdk',
     typedoc: true,
   },
+  {
+    type: 'github',
+    documents: ['README.md'],
+    branch: 'master',
+    name: 'jobnik-worker-boilerplate',
+    repo: 'MapColonies/jobnik-worker-boilerplate',
+    targetDir: 'docs/knowledge-base/jobnik/boilerplate',
+    typedoc: false,
+  },
 ];
 
 type ModifyContent = (
