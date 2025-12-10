@@ -28,6 +28,7 @@ The Job Manager acts as the central orchestration service and the single source 
 - **State Management:** Enforces valid state transitions using internal state machines. This prevents invalid operations, such as adding tasks to a completed stage or processing a cancelled job.
 - **Persistence:** Stores all workflow data, status history, and operational metadata in a PostgreSQL database.
 - **Queue Management:** Implements priority-based task dequeuing logic, ensuring high-priority jobs are processed first.
+- **Task Health Management:** Monitors and handles 'forgotten' tasks to ensure no work becomes stale. This includes detecting tasks that have been in-progress for too long and recovering from worker failures.
 - **Observability:** Emits standardized metrics (Prometheus) and distributed traces (OpenTelemetry) to monitor system health and request flows.
 
 [Link to Job Manager Repository](https://github.com/MapColonies/jobnik-manager)
