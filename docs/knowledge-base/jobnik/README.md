@@ -12,7 +12,7 @@ Jobnik is a distributed job management ecosystem designed to handle complex, hie
 
 The architecture consists of three main pillars:
 
-1.  **Job Manager:** The central service responsible for state and persistence.
+1.  **Jobnik Manager:** The central service responsible for state and persistence.
 2.  **Jobnik SDK:** The library handling communication, resilience, and type safety.
 3.  **Worker Boilerplate:** A standardized scaffolding for building task-processing services.
 
