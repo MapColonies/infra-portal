@@ -88,7 +88,7 @@ autonumber
         participant Worker as Worker Service<br/>(Boilerplate + SDK)
     end
 
-    box rgba(120, 120, 120, 0.7) "User Implementation" "Jobnik Core"
+    box rgba(120, 120, 120, 0.7) "Jobnik Core"
         participant Manager as Job Manager<br/>(REST API)
         participant DB as PostgreSQL
     end
@@ -120,6 +120,7 @@ autonumber
     activate Worker
     Worker->>Worker: Execute Business Logic
 
+    Note over Worker: Report Execution Result
     alt Success
         Worker->>Manager: Update Status: COMPLETED
     else Failure
