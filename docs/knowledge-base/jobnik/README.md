@@ -18,7 +18,7 @@ The architecture consists of three main pillars:
 
 ---
 
-## 1. Job Manager
+## 1. Jobnik Manager
 
 The Job Manager acts as the central orchestration service and the single source of truth for the system. It exposes a RESTful API that enables external services to create jobs, track progress, and manage task queues.
 
