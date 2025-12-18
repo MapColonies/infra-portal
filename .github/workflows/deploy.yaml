@@ -4,20 +4,19 @@ on:
   push:
     branches: [master]
     paths:
-      - 'docs/**'
-      - 'src/**'
-      - 'static/**'
-      - 'blog/**'
-      - 'docusaurus.config.ts'
-      - 'sidebars.js'
-      - 'remoteFetch.ts'
-
+      - "docs/**"
+      - "src/**"
+      - "static/**"
+      - "blog/**"
+      - "docusaurus.config.ts"
+      - "sidebars.js"
+      - "remoteFetch.ts"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
-  BASE_URL: '/infra-portal/'
+  BASE_URL: "/infra-portal/"
 
 jobs:
   deploy:
@@ -29,7 +28,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies

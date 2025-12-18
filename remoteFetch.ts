@@ -147,6 +147,24 @@ export const sources: (GithubSource | Source)[] = [
     targetDir: 'docs/knowledge-base/packages/commitlint-config',
     typedoc: false,
   },
+  {
+    type: 'github',
+    documents: ['README.md'],
+    branch: 'master',
+    name: 'jobnik-sdk',
+    repo: 'MapColonies/jobnik-sdk',
+    targetDir: 'docs/knowledge-base/packages/jobnik-sdk',
+    typedoc: true,
+  },
+  {
+    type: 'github',
+    documents: ['README.md'],
+    branch: 'master',
+    name: 'jobnik-worker-boilerplate',
+    repo: 'MapColonies/jobnik-worker-boilerplate',
+    targetDir: 'docs/knowledge-base/jobnik/boilerplate',
+    typedoc: false,
+  },
 ];
 
 type ModifyContent = (
@@ -241,7 +259,7 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
 
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
-    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & {processedEntryPoints?: boolean}> = {};
+    let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & { processedEntryPoints?: boolean }> = {};
     possibleTypedocConfigs.forEach((fileName) => {
       const configPath = path.join(gitDestDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
@@ -256,7 +274,7 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
       }
     });
 
-    const { processedEntryPoints, ...extraConfigWithoutFlag} = extraConfig;
+    const { processedEntryPoints, ...extraConfigWithoutFlag } = extraConfig;
     plugins.push([
       'docusaurus-plugin-typedoc',
       {
@@ -264,7 +282,7 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
         entryPoints: [path.join(gitDestDir, 'src', 'index.ts')],
         ...baseTypedocOptions,
         ...extraConfigWithoutFlag,
-        tsconfig: path.join(gitDestDir, 'tsconfig.json'),
+        tsconfig: path.join(gitDestDir, 'tsconfig.build.json'),
         basePath: path.join(gitDestDir, 'src'),
         out: path.join(DEST_BASE_FOLDER, source.targetDir, 'typedoc'),
       },
