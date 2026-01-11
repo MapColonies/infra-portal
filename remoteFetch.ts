@@ -19,6 +19,15 @@ export interface GithubSource {
   typedoc?: boolean;
 }
 
+export interface InfraPackagesSource {
+  type: 'infra-packages';
+  name: string;
+  package: string;
+  documents: string[];
+  targetDir: string;
+  typedoc?: boolean;
+}
+
 interface Source {
   type: 'normal';
   name: string;
@@ -41,7 +50,19 @@ function githubSourceToSource(source: GithubSource): Source {
   };
 }
 
-export const sources: (GithubSource | Source)[] = [
+function infraPackagesSourceToSource(source: InfraPackagesSource): Source {
+  return {
+    type: 'normal',
+    name: source.name,
+    fileDownloadPath: `https://raw.githubusercontent.com/MapColonies/infra-packages/refs/heads/master/packages/${source.package}`,
+    fileLinkPath: `https://github.com/MapColonies/infra-packages/blob/master/packages/${source.package}`,
+    documents: source.documents,
+    rawLinkPath: `https://github.com/MapColonies/infra-packages/raw/refs/heads/master/packages/${source.package}`,
+    targetDir: source.targetDir,
+  };
+}
+
+export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
   {
     type: 'github',
     documents: ['README.md'],
@@ -52,28 +73,25 @@ export const sources: (GithubSource | Source)[] = [
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'error-express-handler',
     name: 'error-express-handler',
-    repo: 'MapColonies/error-express-handler',
     targetDir: 'docs/knowledge-base/packages/error-express-handler',
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'eslint-config',
     name: 'eslint-config',
-    repo: 'MapColonies/eslint-config',
     targetDir: 'docs/knowledge-base/packages/eslint-config',
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'express-access-log-middleware',
     name: 'express-access-log-middleware',
-    repo: 'MapColonies/express-access-log-middleware',
     targetDir: 'docs/knowledge-base/packages/express-access-log-middleware',
     typedoc: true,
   },
@@ -96,11 +114,10 @@ export const sources: (GithubSource | Source)[] = [
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'prettier-config',
     name: 'prettier-config',
-    repo: 'MapColonies/prettier-config',
     targetDir: 'docs/knowledge-base/packages/prettier-config',
   },
   {
@@ -122,12 +139,11 @@ export const sources: (GithubSource | Source)[] = [
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
-    name: 'tsconfig',
-    repo: 'MapColonies/tsconfig',
-    targetDir: 'docs/knowledge-base/packages/tsconfig',
+    package: 'typescript-config',
+    name: 'typescript-config',
+    targetDir: 'docs/knowledge-base/packages/typescript-config',
   },
   {
     type: 'github',
@@ -139,11 +155,10 @@ export const sources: (GithubSource | Source)[] = [
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'commitlint-config',
     name: 'commitlint-config',
-    repo: 'MapColonies/commitlint-config',
     targetDir: 'docs/knowledge-base/packages/commitlint-config',
     typedoc: false,
   },
@@ -218,6 +233,9 @@ export function remotePluginGenerator(): [string, PluginOptions][] {
     if (source.type === 'github') {
       return githubSourceToSource(source);
     }
+    if (source.type === 'infra-packages') {
+      return infraPackagesSourceToSource(source);
+    }
     return source;
   });
   return processedSources.map((source): [string, RemoteContentPluginOptions & PluginOptions] => {
@@ -244,32 +262,37 @@ const baseTypedocOptions: Partial<TypeDocOptions & TypedocMarkdownOptions & Docu
 };
 
 export async function typedocPluginGenerator(): Promise<[string, PluginOptions][]> {
-  const typedocSources = sources.filter((source): source is GithubSource => source.type === 'github' && source.typedoc);
+  const typedocSources = sources.filter(
+    (source): source is GithubSource | InfraPackagesSource => (source.type === 'github' || source.type === 'infra-packages') && source.typedoc
+  );
   const tempDir = tmpdir('typedoc');
+
+  const infraPackagesDir = await cloneGithubRepo(tempDir, { repo: 'MapColonies/infra-packages', branch: 'master', name: 'infra-packages' }, true);
 
   const plugins: [string, PluginOptions][] = [];
 
   for (const source of typedocSources) {
-    const gitDestDir = path.join(tempDir, source.name);
-    if (!fs.existsSync(gitDestDir)) {
-      await $({ cwd: tempDir })`git clone --depth 1 --branch ${source.branch} https://github.com/${source.repo}.git `;
+    let destDir = '';
+    if (source.type === 'github') {
+      destDir = await cloneGithubRepo(tempDir, source);
+    } else if (source.type === 'infra-packages') {
+      destDir = path.join(infraPackagesDir, 'packages', source.package);
     }
-
-    await $({ cwd: path.join(tempDir, source.name) })`npm ci --ignore-scripts --loglevel error --omit=""`;
-
     const possibleTypedocConfigs = ['typedoc.config.js', 'typedoc.json'];
 
     let extraConfig: Partial<TypeDocOptions & TypedocMarkdownOptions & DocusaurusTypedocOptions & { processedEntryPoints?: boolean }> = {};
     possibleTypedocConfigs.forEach((fileName) => {
-      const configPath = path.join(gitDestDir, fileName);
+      const configPath = path.join(destDir, fileName);
       const doesConfigPathExists = fs.existsSync(configPath);
 
       if (doesConfigPathExists) {
         extraConfig = require(configPath);
 
         if (!extraConfig.processedEntryPoints) {
-          extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(gitDestDir, entry));
           extraConfig.processedEntryPoints = true;
+          if (extraConfig.entryPoints && Array.isArray(extraConfig.entryPoints)) {
+            extraConfig.entryPoints = extraConfig.entryPoints.map((entry: string) => path.join(destDir, entry));
+          }
         }
       }
     });
@@ -279,14 +302,26 @@ export async function typedocPluginGenerator(): Promise<[string, PluginOptions][
       'docusaurus-plugin-typedoc',
       {
         id: source.name,
-        entryPoints: [path.join(gitDestDir, 'src', 'index.ts')],
+        entryPoints: [path.join(destDir, 'src', 'index.ts')],
         ...baseTypedocOptions,
         ...extraConfigWithoutFlag,
-        tsconfig: path.join(gitDestDir, 'tsconfig.build.json'),
-        basePath: path.join(gitDestDir, 'src'),
+        tsconfig: path.join(destDir, 'tsconfig.build.json'),
+        basePath: path.join(destDir, 'src'),
         out: path.join(DEST_BASE_FOLDER, source.targetDir, 'typedoc'),
       },
     ]);
   }
   return plugins;
+}
+async function cloneGithubRepo(tempDir: string, source: { repo: string; branch: string; name: string }, pnpm?: boolean): Promise<string> {
+  const destDir = path.join(tempDir, source.name);
+  if (!fs.existsSync(destDir)) {
+    await $({ cwd: tempDir })`git clone --depth 1 --branch ${source.branch} https://github.com/${source.repo}.git `;
+  }
+  if (pnpm) {
+    await $({ cwd: destDir })`pnpm install --loglevel error`;
+  } else {
+    await $({ cwd: destDir })`npm ci --ignore-scripts --loglevel error --omit=""`;
+  }
+  return destDir;
 }
