@@ -40,7 +40,7 @@ When adding a new resource, you should create a new router and add it to the `sr
 
 The metrics middleware exposes NodeJS, express and custom metrics to [Prometheus](https://prometheus.io/). The metrics are exposed at the `/metrics` endpoint.
 
-For more information check the [MapColonies Telemetry package](../packages/telemetry/README.md).
+For more information check the [MapColonies Prometheus package](../packages/prometheus/README.md).
 
 ### HTTP logger
 
@@ -97,7 +97,7 @@ Information about the metrics middleware is also available [here](#metrics-middl
 
 ### Tracing
 
-The boilerplate is instrumented using [OpenTelemetry](https://opentelemetry.io/). To ease with the implementation of tracing, the package uses the [Telemetry package](../packages/telemetry/README.md) that handles the initialization and configuration of the OpenTelemetry SDK. In addition the package also exposes helpers which you can use to instrument your code.
+The boilerplate is instrumented using [OpenTelemetry](https://opentelemetry.io/). To ease with the implementation of tracing, the package uses the [Tracing package](../packages/tracing/README.md) that handles the initialization and configuration of the OpenTelemetry SDK. In addition the package [Tracing utils package](../packages/tracing-utils/README.md) exposes helpers which you can use to instrument your code.
 The tracing is defined in the `src/common/tracing.ts` file and loaded in the `src/instrumentation.mts` file.
 
 :::warning

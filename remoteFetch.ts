@@ -64,12 +64,35 @@ function infraPackagesSourceToSource(source: InfraPackagesSource): Source {
 
 export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
-    name: 'telemetry',
-    repo: 'MapColonies/telemetry',
-    targetDir: 'docs/knowledge-base/packages/telemetry',
+    package: 'tracing',
+    name: 'tracing',
+    targetDir: 'docs/knowledge-base/packages/tracing',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'tracing-utils',
+    name: 'tracing-utils',
+    targetDir: 'docs/knowledge-base/packages/tracing-utils',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'prometheus',
+    name: 'prometheus',
+    targetDir: 'docs/knowledge-base/packages/prometheus',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'semantic-conventions',
+    name: 'semantic-conventions',
+    targetDir: 'docs/knowledge-base/packages/semantic-conventions',
     typedoc: true,
   },
   {
@@ -96,20 +119,18 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'js-logger',
     name: 'js-logger',
-    repo: 'MapColonies/js-logger',
     targetDir: 'docs/knowledge-base/packages/js-logger',
     typedoc: true,
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'openapi-express-viewer',
     name: 'openapi-express-viewer',
-    repo: 'MapColonies/openapi-express-viewer',
     targetDir: 'docs/knowledge-base/packages/openapi-express-viewer',
     typedoc: true,
   },
@@ -121,11 +142,10 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
     targetDir: 'docs/knowledge-base/packages/prettier-config',
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'read-pkg',
     name: 'read-pkg',
-    repo: 'MapColonies/read-pkg',
     targetDir: 'docs/knowledge-base/packages/read-pkg',
     typedoc: true,
   },
@@ -146,11 +166,10 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
     targetDir: 'docs/knowledge-base/packages/typescript-config',
   },
   {
-    type: 'github',
+    type: 'infra-packages',
     documents: ['README.md'],
-    branch: 'master',
+    package: 'openapi-helpers',
     name: 'openapi-helpers',
-    repo: 'MapColonies/openapi-helpers',
     targetDir: 'docs/knowledge-base/packages/openapi-helpers',
     typedoc: true,
   },
@@ -323,5 +342,6 @@ async function cloneGithubRepo(tempDir: string, source: { repo: string; branch: 
   } else {
     await $({ cwd: destDir })`npm ci --ignore-scripts --loglevel error --omit=""`;
   }
+  await $({ cwd: destDir })`npm run build`;
   return destDir;
 }

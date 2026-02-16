@@ -160,7 +160,7 @@ For more information on how to configure the `package.json` file, check the [off
 
 ## tsconfig
 
-The `tsconfig.json` file contains the configuration for the TypeScript compiler. The configuration is taken from the [MapColonies™ TypeScript configuration](../packages/tsconfig/README.md) package.
+The `tsconfig.json` file contains the configuration for the TypeScript compiler. The configuration is taken from the [MapColonies™ TypeScript configuration](../packages/typescript-config/README.md) package.
 
 There are two main configurations:
 
