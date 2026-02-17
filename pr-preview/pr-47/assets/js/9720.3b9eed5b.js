@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkinfra_portal=self.webpackChunkinfra_portal||[]).push([[9720],{39720:(e,r,a)=>{a.d(r,{createArchitectureServices:()=>c.S});var c=a(49936);a(19369)}}]);
