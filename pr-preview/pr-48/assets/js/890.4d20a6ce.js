@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkinfra_portal=self.webpackChunkinfra_portal||[]).push([[890],{10890:(e,a,r)=>{r.d(a,{createInfoServices:()=>s.v});var s=r(97021);r(19369)}}]);
