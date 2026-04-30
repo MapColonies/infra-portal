@@ -31,7 +31,6 @@ The implementation of a Jobnik-based workflow consists of the following steps:
 3. Defining your custom job and stage types
 4. Implementing a Producer service (creating work)
 5. Implementing a Worker service (processing work)
-6. Testing and deploying your services
 
 Below, each step is explained in detail.
 
@@ -217,7 +216,7 @@ stateDiagram-v2
     [*] --> CREATED
     CREATED --> PENDING: system/created
     
-    PENDING --> IN_PROGRESS: system/dequeue
+    PENDING --> IN_PROGRESS: worker/dequeue
     
     IN_PROGRESS --> COMPLETED: user/worker
     IN_PROGRESS --> FAILED: user/worker
@@ -463,7 +462,7 @@ A **Task** is an atomic unit of work to be executed by a worker. Each task has i
 <TabItem value="create" label="Creating a Task">
 
 ```typescript
-const task = await producer.createTask(stage.id, {
+const task = await producer.createTasks(stage.id, resize', [{
   data: {                          // Task-specific data
     sourceUrl: 'https://example.com/image1.jpg',
     targetPath: '/output/resized/image1.jpg',
@@ -474,7 +473,7 @@ const task = await producer.createTask(stage.id, {
     batchId: 'batch-001'
   },
   maxAttempts: 3                   // Optional: Maximum retry attempts (default: 3)
-});
+}]);
 ```
 
 </TabItem>
@@ -633,7 +632,7 @@ const files = [
 ];
 
 for (const file of files) {
-  await producer.createTask(validationStage.id, {
+  await producer.createTasks(validationStage.id, 'validate-images', [{
     data: {
       sourceUrl: file.url,
       fileSizeBytes: file.size,
@@ -643,7 +642,7 @@ for (const file of files) {
       uploadIndex: files.indexOf(file),
       attemptNumber: 1
     }
-  });
+  }]);
 }
 
 // 4. Create another Stage - image resizing (will be assigned order: 2)
@@ -1145,510 +1144,6 @@ export async function setupWorker(
 
 ---
 
-## Configuration
-
-Configure your services using environment variables or config files:
-
-<Tabs>
-<TabItem value="env" label=".env">
-
-```bash
-# Jobnik Manager
-JOBNIK_BASE_URL=https://jobnik-manager.example.com
-
-# Worker Configuration
-WORKER_CONCURRENCY=5
-WORKER_RETRY_INITIAL_DELAY_MS=1000
-WORKER_RETRY_MAX_DELAY_MS=60000
-
-# Observability
-LOG_LEVEL=info
-TELEMETRY_TRACING_ENABLED=true
-TELEMETRY_TRACING_URL=http://otlp-collector:4318/v1/traces
-```
-
-</TabItem>
-<TabItem value="config" label="config/default.json">
-
-```json
-{
-  "jobnik": {
-    "baseUrl": "https://jobnik-manager.example.com",
-    "worker": {
-      "concurrency": 5,
-      "backoffOptions": {
-        "initialBaseRetryDelayMs": 1000,
-        "maxDelayMs": 60000,
-        "backoffFactor": 2
-      }
-    }
-  },
-  "telemetry": {
-    "logger": {
-      "level": "info",
-      "prettyPrint": false
-    },
-    "tracing": {
-      "isEnabled": true,
-      "url": "http://otlp-collector:4318/v1/traces"
-    }
-  }
-}
-```
-
-</TabItem>
-</Tabs>
-
----
-
-## Testing your implementation
-
-Jobnik provides comprehensive testing capabilities at multiple levels. For production-grade E2E test examples, see the [Jobnik E2E Test Suite](https://github.com/MapColonies/jobnik-e2e).
-
-### Unit Testing Task Handlers
-
-Test your task handler logic in isolation using mocked SDK interfaces:
-
-<Tabs>
-<TabItem value="test" label="tests/image-resize.handler.spec.ts">
-
-```typescript
-import { describe, it, expect, vi } from 'vitest';
-import { ImageResizeHandler } from '../src/worker/image-resize.handler';
-import type { Task, TaskHandlerContext } from '@map-colonies/jobnik-sdk';
-
-describe('ImageResizeHandler', () => {
-  it('should successfully process a resize task', async () => {
-    const handler = new ImageResizeHandler();
-    
-    const mockTask: Task<any> = {
-      id: 'task-123',
-      stageId: 'stage-123',
-      data: {
-        sourceUrl: 'https://example.com/image.jpg',
-        targetPath: '/output/resized.jpg',
-        fileName: 'image.jpg',
-      },
-      userMetadata: { retryCount: 0 },
-      status: 'IN_PROGRESS',
-      attempts: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const mockContext: TaskHandlerContext<any, any, any, any> = {
-      logger: {
-        info: vi.fn(),
-        error: vi.fn(),
-        warn: vi.fn(),
-        debug: vi.fn(),
-      },
-      signal: new AbortController().signal,
-      job: { 
-        id: 'job-123', 
-        name: 'image-processing', 
-        data: { uploadId: 'test-123', userId: 'user-1', totalFiles: 1 },
-        userMetadata: { priority: 'HIGH' },
-        status: 'IN_PROGRESS',
-        priority: 'HIGH',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      stage: {
-        id: 'stage-123',
-        jobId: 'job-123',
-        type: 'resize-images',
-        data: { targetWidth: 800, targetHeight: 600, quality: 85 },
-        userMetadata: { processedCount: 0 },
-        status: 'IN_PROGRESS',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      updateStageUserMetadata: vi.fn(),
-    } as any;
-
-    await expect(
-      handler.handleResizeTask(mockTask, mockContext)
-    ).resolves.not.toThrow();
-
-    expect(mockContext.logger.info).toHaveBeenCalledWith(
-      'Starting image resize',
-      expect.any(Object)
-    );
-  });
-
-  it('should handle errors and log appropriately', async () => {
-    const handler = new ImageResizeHandler();
-    
-    const mockTask: Task<any> = {
-      id: 'task-456',
-      stageId: 'stage-123',
-      data: {
-        sourceUrl: 'https://example.com/invalid.jpg',
-        targetPath: '/output/resized.jpg',
-        fileName: 'invalid.jpg',
-      },
-      userMetadata: { retryCount: 1 },
-      status: 'IN_PROGRESS',
-      attempts: 2,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const mockContext: TaskHandlerContext<any, any, any, any> = {
-      logger: {
-        info: vi.fn(),
-        error: vi.fn(),
-        warn: vi.fn(),
-        debug: vi.fn(),
-      },
-      signal: new AbortController().signal,
-      job: { id: 'job-123', name: 'image-processing', data: {} } as any,
-      stage: { id: 'stage-123', type: 'resize-images', data: {} } as any,
-      updateStageUserMetadata: vi.fn(),
-    } as any;
-
-    // Simulate error in processing
-    vi.spyOn(handler as any, 'resizeImage').mockRejectedValue(
-      new Error('Failed to download image')
-    );
-
-    await expect(
-      handler.handleResizeTask(mockTask, mockContext)
-    ).rejects.toThrow('Failed to download image');
-
-    expect(mockContext.logger.error).toHaveBeenCalledWith(
-      'Image resize failed',
-      expect.objectContaining({
-        taskId: 'task-456',
-        fileName: 'invalid.jpg'
-      })
-    );
-  });
-});
-```
-
-</TabItem>
-</Tabs>
-
-### Integration Testing with Jobnik Manager
-
-Test the full workflow against a real or test Jobnik Manager instance:
-
-<Tabs>
-<TabItem value="simple" label="tests/simple-workflow.spec.ts">
-
-```typescript
-import { describe, it, expect, beforeAll } from 'vitest';
-import { JobnikSDK } from '@map-colonies/jobnik-sdk';
-import { Registry } from 'prom-client';
-
-describe('Simple Workflow', () => {
-  let sdk: JobnikSDK;
-
-  beforeAll(() => {
-    sdk = new JobnikSDK({
-      baseUrl: process.env.JOBNIK_MANAGER_BASE_URL || 'http://localhost:8080',
-      metricsRegistry: new Registry(),
-    });
-  });
-
-  it('should create job with stage and task', async () => {
-    const producer = sdk.getProducer();
-
-    // Create job
-    const job = await producer.createJob({
-      name: 'image-processing',
-      data: { uploadId: 'test-123', userId: 'user-1', totalFiles: 1 },
-      userMetadata: { priority: 'HIGH', requestTimestamp: new Date().toISOString() },
-      priority: 'HIGH',
-    });
-
-    expect(job.id).toBeDefined();
-    expect(job.name).toBe('image-processing');
-    expect(job.status).toBe('PENDING');
-
-    // Create stage
-    const stage = await producer.createStage(job.id, {
-      type: 'resize-images',
-      data: { targetWidth: 800, targetHeight: 600, quality: 85 },
-      userMetadata: { format: 'jpg' },
-    });
-
-    expect(stage.id).toBeDefined();
-    expect(stage.jobId).toBe(job.id);
-    expect(stage.type).toBe('resize-images');
-
-    // Create task
-    const task = await producer.createTask(stage.id, {
-      data: {
-        sourceUrl: 'https://example.com/test.jpg',
-        targetPath: '/output/test.jpg',
-        fileName: 'test.jpg',
-      },
-      userMetadata: { retryCount: 0 },
-    });
-
-    expect(task.id).toBeDefined();
-    expect(task.stageId).toBe(stage.id);
-    expect(task.status).toBe('PENDING');
-  });
-});
-```
-
-</TabItem>
-<TabItem value="multi-stage" label="tests/multi-stage-workflow.spec.ts">
-
-```typescript
-import { describe, it, expect, beforeAll } from 'vitest';
-import { JobnikSDK } from '@map-colonies/jobnik-sdk';
-import { Registry } from 'prom-client';
-
-describe('Multi-Stage Workflow', () => {
-  let sdk: JobnikSDK;
-
-  beforeAll(() => {
-    sdk = new JobnikSDK({
-      baseUrl: process.env.JOBNIK_MANAGER_BASE_URL || 'http://localhost:8080',
-      metricsRegistry: new Registry(),
-    });
-  });
-
-  it('should create job with multiple stages', async () => {
-    const producer = sdk.getProducer();
-
-    // Create job
-    const job = await producer.createJob({
-      name: 'data-pipeline',
-      data: { pipelineId: 'pipeline-001', source: 's3://input' },
-      userMetadata: { owner: 'data-team' },
-      priority: 'MEDIUM',
-    });
-
-    // Create validation stage
-    const validationStage = await producer.createStage(job.id, {
-      type: 'validate-data',
-      data: { schema: 'v1', strictMode: true },
-      userMetadata: { validatedCount: 0 },
-    });
-
-    // Create tasks for validation
-    const validationTasks = await Promise.all([
-      producer.createTask(validationStage.id, {
-        data: { file: 'data1.json' },
-        userMetadata: { index: 0 },
-      }),
-      producer.createTask(validationStage.id, {
-        data: { file: 'data2.json' },
-        userMetadata: { index: 1 },
-      }),
-    ]);
-
-    expect(validationTasks).toHaveLength(2);
-
-    // Create processing stage
-    const processingStage = await producer.createStage(job.id, {
-      type: 'process-data',
-      data: { algorithm: 'v2', batchSize: 100 },
-      userMetadata: { processedCount: 0 },
-    });
-
-    // Create tasks for processing
-    const processingTasks = await Promise.all([
-      producer.createTask(processingStage.id, {
-        data: { file: 'data1.json', outputPath: '/output/data1.parquet' },
-        userMetadata: { index: 0 },
-      }),
-      producer.createTask(processingStage.id, {
-        data: { file: 'data2.json', outputPath: '/output/data2.parquet' },
-        userMetadata: { index: 1 },
-      }),
-    ]);
-
-    expect(processingTasks).toHaveLength(2);
-
-    // Verify job structure
-    expect(job.id).toBeDefined();
-    expect(validationStage.jobId).toBe(job.id);
-    expect(processingStage.jobId).toBe(job.id);
-  });
-});
-```
-
-</TabItem>
-<TabItem value="priority" label="tests/priority-queue.spec.ts">
-
-```typescript
-import { describe, it, expect, beforeAll } from 'vitest';
-import { JobnikSDK } from '@map-colonies/jobnik-sdk';
-import { Registry } from 'prom-client';
-
-describe('Priority Queue Management', () => {
-  let sdk: JobnikSDK;
-
-  beforeAll(() => {
-    sdk = new JobnikSDK({
-      baseUrl: process.env.JOBNIK_MANAGER_BASE_URL || 'http://localhost:8080',
-      metricsRegistry: new Registry(),
-    });
-  });
-
-  it('should respect job priority when dequeuing tasks', async () => {
-    const producer = sdk.getProducer();
-
-    // Create LOW priority job
-    const lowPriorityJob = await producer.createJob({
-      name: 'background-job',
-      data: { type: 'cleanup' },
-      priority: 'LOW',
-    });
-
-    const lowPriorityStage = await producer.createStage(lowPriorityJob.id, {
-      type: 'cleanup-task',
-      data: { target: 'temp-files' },
-    });
-
-    await producer.createTask(lowPriorityStage.id, {
-      data: { file: 'temp1.txt' },
-    });
-
-    // Create HIGH priority job
-    const highPriorityJob = await producer.createJob({
-      name: 'urgent-job',
-      data: { type: 'critical-update' },
-      priority: 'HIGH',
-    });
-
-    const highPriorityStage = await producer.createStage(highPriorityJob.id, {
-      type: 'urgent-task',
-      data: { urgency: 'critical' },
-    });
-
-    await producer.createTask(highPriorityStage.id, {
-      data: { action: 'update-config' },
-    });
-
-    // Both jobs created, priority determines dequeue order
-    expect(lowPriorityJob.priority).toBe('LOW');
-    expect(highPriorityJob.priority).toBe('HIGH');
-  });
-});
-```
-
-</TabItem>
-</Tabs>
-
-### End-to-End Testing
-
-For comprehensive E2E testing examples including:
-- Multi-stage workflows
-- Retry mechanisms and error recovery
-- Priority queue management
-- Pause/resume operations
-- Job abortion and cleanup
-- Distributed tracing validation
-
-See the **[Jobnik E2E Test Suite](https://github.com/MapColonies/jobnik-e2e)** repository which provides:
-
-```bash
-# Clone the E2E test suite
-git clone https://github.com/MapColonies/jobnik-e2e.git
-cd jobnik-e2e
-
-# Install dependencies
-npm ci
-
-# Start test environment with Docker Compose
-docker compose up -d
-
-# Run all E2E tests
-npm test
-
-# Run specific test suite
-npm test -- simple.spec.ts
-
-# Run tests matching pattern
-npm test -- -t "retry"
-```
-
-**Available E2E Test Suites:**
-- `simple.spec.ts` - Basic job execution
-- `multipleStagesWorkflow.spec.ts` - Multi-stage pipelines
-- `retry.spec.ts` - Retry mechanisms
-- `pause.spec.ts` - Pause/resume operations
-- `abort.spec.ts` - Job abortion
-- `priority.spec.ts` - Priority queue management
-- `deleteJob.spec.ts` - Job deletion
-- `sharedStageTypes.spec.ts` - Shared stage definitions
-- `wait.spec.ts` - Asynchronous operations
-
----
-
-## Deployment
-
-### Using Docker
-
-<Tabs>
-<TabItem value="dockerfile" label="Dockerfile">
-
-```dockerfile
-FROM node:24-alpine AS builder
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-FROM node:24-alpine
-
-WORKDIR /app
-
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY package*.json ./
-
-ENV NODE_ENV=production
-
-CMD ["node", "dist/index.js"]
-```
-
-</TabItem>
-<TabItem value="compose" label="docker-compose.yaml">
-
-```yaml
-version: '3.8'
-
-services:
-  worker:
-    build: .
-    environment:
-      - JOBNIK_BASE_URL=http://jobnik-manager:3000
-      - WORKER_CONCURRENCY=5
-      - LOG_LEVEL=info
-    depends_on:
-      - jobnik-manager
-    restart: unless-stopped
-```
-
-</TabItem>
-</Tabs>
-
-### Using Kubernetes/Helm
-
-If you used the Worker Boilerplate, Helm charts are included:
-
-```bash
-# Deploy worker
-helm install my-image-worker ./helm \
-  --set env.jobnik.baseUrl=https://jobnik-manager.prod.example.com \
-  --set env.worker.concurrency=10
-```
-
----
-
 ## Monitoring and Observability
 
 ### Metrics
@@ -1678,18 +1173,6 @@ Enable distributed tracing in your config:
 ```
 
 Traces automatically propagate through Jobs → Stages → Tasks.
-
-### Logging
-
-Use structured logging provided by the SDK:
-
-```typescript
-context.logger.info('Processing started', {
-  taskId: task.id,
-  fileName: task.data.fileName,
-  jobId: context.job.id,
-});
-```
 
 ---
 
