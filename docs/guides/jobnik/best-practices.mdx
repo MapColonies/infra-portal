@@ -19,37 +19,52 @@ This guide provides recommendations and patterns for building robust, scalable, 
 
 ### Keep Jobs Focused
 
-Each job should represent a single logical workflow. Don't combine unrelated operations into one job.
+A **job** represents a single high-level business process (e.g., "create map"). It is broken down into **stages**, each representing a distinct phase of that process (e.g., "process tiles", "upload tiles"). Each stage then contains **tasks** — the individual units of work within that phase (e.g., one task per tile).
+
+Don't combine unrelated high-level processes into one job.
 
 <Tabs>
 <TabItem value="good" label="✅ Good">
 
 ```typescript
-// Separate jobs for different workflows
-await producer.createJob({
-  name: 'image-processing',
-  data: { uploadId: 'upload-123' }
+// A single coherent job: "create map"
+// Each stage is a meaningful phase of the overall process
+const job = await producer.createJob({
+  name: 'create-map',
+  data: { mapId: 'map-123', region: 'north' }
 });
 
-await producer.createJob({
-  name: 'user-notification',
-  data: { userId: 'user-456' }
+// Phase 1: process all raw tiles (one task per tile)
+const processingStage = await producer.createStage(job.id, {
+  type: 'process-tiles',
+  data: { resolution: 'high' }
 });
+await producer.createTasks(processingStage.id, rawTiles.map(tile => ({ data: { tileId: tile.id } })));
+
+// Phase 2: upload the processed tiles (one task per tile)
+const uploadStage = await producer.createStage(job.id, {
+  type: 'upload-tiles',
+  data: { bucket: 'maps-bucket', targetPath: '/maps/north' }
+});
+await producer.createTasks(uploadStage.id, processedTiles.map(tile => ({ data: { tileId: tile.id } })));
 ```
 
 </TabItem>
 <TabItem value="bad" label="❌ Bad">
 
 ```typescript
-// Don't mix unrelated operations
-await producer.createJob({
-  name: 'image-processing-and-notification',
-  data: {
-    uploadId: 'upload-123',
-    userId: 'user-456',
-    shouldSendEmail: true
-  }
+// Don't bundle unrelated high-level processes into one job
+const job = await producer.createJob({
+  name: 'create-map-and-send-report',
+  data: { mapId: 'map-123', userId: 'user-456' }
 });
+
+await producer.createStage(job.id, { type: 'process-tiles', data: { resolution: 'high' } });
+await producer.createStage(job.id, { type: 'upload-tiles', data: { bucket: 'maps-bucket' } });
+
+// Unrelated process — should be a separate job triggered after this one completes
+await producer.createStage(job.id, { type: 'send-report-email', data: { template: 'map-ready' } });
+await producer.createStage(job.id, { type: 'update-billing', data: { planId: 'pro' } });
 ```
 
 </TabItem>
@@ -106,17 +121,26 @@ await producer.createStage(jobId, {
 
 ### Store References, Not Large Payloads
 
-Store URLs, IDs, and paths in task data, not large files or blobs.
+Store URLs, IDs, and paths in task data, not large files or blobs. Keep in mind that referencing external resources introduces a dependency on their availability and consistency — if a resource changes or is replaced while tasks are still in flight, different tasks may operate on different versions. For advanced use cases, consider including a version identifier in the **stage** `data` (shared across all tasks in the stage) to pin all tasks to the same resource version.
 
 <Tabs>
 <TabItem value="good" label="✅ Good">
 
 ```typescript
+// Stage data holds shared config, including the resource version
+await producer.createStage(jobId, {
+  type: 'resize-images',
+  data: {
+    sourceVersion: 'v3',  // All tasks in this stage use the same version
+    processingConfig: { width: 800, height: 600 }
+  }
+});
+
+// Task data holds only per-item references
 await producer.createTask(stageId, {
   data: {
-    imageUrl: 's3://bucket/images/original/file.jpg',
-    targetPath: 's3://bucket/images/resized/file.jpg',
-    processingConfig: { width: 800, height: 600 }
+    imageUrl: 's3://bucket/images/v3/original/file.jpg',
+    targetPath: 's3://bucket/images/v3/resized/file.jpg'
   }
 });
 ```

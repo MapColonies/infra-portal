@@ -293,12 +293,12 @@ State transitions often cascade through the hierarchy:
 
 ### Best Practices for State Management
 
-1. **Let the system manage most transitions**: Trust the automatic state machine - don't try to manually control system-managed states
+1. **System-managed transitions are non-negotiable**: The state machine is enforced by the Manager
 2. **Use PAUSED for temporary suspension**: If you need to temporarily stop work, use job-level PAUSED status
 3. **Use WAITING for approval workflows**: If a stage needs manual approval, the system can set it to WAITING, then user can resume via PENDING
 4. **Handle ABORTED gracefully**: Workers should check task/job status and handle abortion scenarios
 5. **Monitor for FAILED states**: Set up alerting for jobs/stages that enter FAILED state
-6. **Respect stage ordering**: Don't try to skip or reorder stages - the system enforces sequential execution
+6. **Respect stage ordering**: Skipping or reordering stages is impossible - the system strictly enforces sequential execution
 
 ---
 
