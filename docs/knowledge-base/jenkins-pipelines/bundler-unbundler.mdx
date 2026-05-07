@@ -2,27 +2,24 @@
 title: Bundler & Unbundler
 toc_min_heading_level: 2
 toc_max_heading_level: 6
-
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+# 📦 Bundler & Unbundler (Knowledge Base)
 
-The bundler and unbundler workflows are intended to help our dev team to bring in the artifacts which were built in the release flow in an easy way to our internal deployments.
-
-We utilize Jenkins for the bundler and unbundler. 
-
+The **Bundler** and **Unbundler** Jenkins workflows exist to solve a critical problem: securely and easily transferring built artifacts across network boundaries into our internal deployments. 🌉
 
 ![Bundler and Unbundler](/img/jenkins-pipelines/bundler-unbundler.png) 
 
-## Bundler pipeline
+## 🗜️ The Bundler Pipeline
 
-The [bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/) has 1 parameter which is the `artifacts.json` file.
+The [Bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/) is an automated packing tool. It scoops up Docker tarballs, Helm packages, and full Git repositories and compresses them into a single, clean ZIP file! 🤐
 
-Here's an example of the `artifacts.json` 
+It requires just one parameter to run: an `artifacts.json` file.
 
-
+**Example `artifacts.json`:**
 ```json
 {
   "docker": {
@@ -51,35 +48,30 @@ Here's an example of the `artifacts.json`
 }
 ```  
 
-The bundler pipeline will bundle all the artifacts (docker tar balls, helm packages, git repos) into 1 zip file.
-
-:::info
-Watch out! The bundle will be removed after 1 week!
+:::info 🧹 Auto-Cleanup
+Watch out! To save space, your generated bundle ZIP will be automatically deleted after exactly 1 week!
 :::
 
+### 🛡️ The `.bundlerrc` Whitelist Feature
+When the bundler processes a Git repository, it looks for a `.bundlerrc` file in the root directory. 
+* **If it exists:** It acts as a strict whitelist! Only the files and directories explicitly declared in `.bundlerrc` are saved into the ZIP. 
+* **If it is missing:** The bundler grabs the entire repository contents.
 
-### .bundlerrc Feature
-Repositories that include a `.bundlerrc` file in their root directory will be processed with this file as a whitelist.
-Only the files and directories explicitly declared in the `.bundlerrc` file will be saved in the final ZIP file.
-Repositories without a `.bundlerrc` file will have their entire contents saved in the ZIP file.
-
-```text title=".bundlerrc"
+```text title=".bundlerrc Example"
 helm/
 README.md
 scripts/
 ```
 
-### Slack notification
-Once the bundler is done it'll send a slack message to the `<team>-notifications` channel based on the user logged in.
+### 📩 Slack Notifications
+Once the bundler finishes its heavy lifting, it instantly pings your team's Slack `<team>-notifications` channel with a download link! 
 
 ![Bundler slack message](/img/jenkins-pipelines/bundler-slack.png)
 
-## Unbundler pipeline
+## 📤 The Unbundler Pipeline
 
-The unbundler pipeline is happening in other networks we have.
-After copying over the `bundle` file to the relevant network, there will be an unbundler pipeline on the jenkins.
+The **Unbundler** pipeline lives on the other side of the fence, inside our destination networks. 
 
-The unbundler pipeline is performing the following:
-
-* For each docker tar ball it'll attempt to push the docker image with the same tag to all the docker registries available in all the sites.
-* For each helm package it'll attempt to push the helm package with the same version and name to all the helm registries available in all the sites.
+After you manually copy your `bundle` ZIP over to the secure network, the Unbundler pipeline takes over to unpack and distribute everything automatically:
+* 🐳 **Docker:** It extracts every Docker tarball and pushes the images (with their original tags) to all available Docker registries in the local site.
+* ☸️ **Helm:** It extracts every Helm package and pushes them (with exact versions and names) to all available Helm registries in the local site.

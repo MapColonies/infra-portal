@@ -4,21 +4,27 @@ toc_min_heading_level: 2
 toc_max_heading_level: 2
 ---
 
-One of the biggest advantages of using the configuration management system is that it allows you to manage your configurations in a more organized way.
-When creating a config instance, its possible to pass a reference to another config instance. This is useful when you want to reuse a configuration in multiple places.
+# 🔗 Config References
 
-## How does it work
+One of the biggest superpowers of our config management system is **References**! 🦸‍♂️
 
-When you pass a reference to another config instance, the configuration manager will parse and save the references so it can be resolved later.
-When the configuration is resolved, the configuration manager will replace the reference with the actual configuration.
+Instead of copy-pasting the same settings everywhere, you can pass a reference to an existing config instance. This keeps your configurations incredibly organized, DRY (Don't Repeat Yourself), and highly reusable.
 
-For the server to understand a reference it needs to include both the config name and the version of the config. It's also possible to set the version as `latest` to always get the latest version of the referenced config.
+## ⚙️ How It Works
 
-When the final configuration is resolved, the referenced config will be merged with the current configuration under the same hierarchy.
+When you inject a reference into your config, the configuration manager detects it, parses it, and saves it to be resolved later. 
 
-## Reference structure
+When your service finally requests its configuration, the manager performs a dynamic lookup and completely replaces your reference with the actual, live configuration! 🪄 
 
-In order to use a reference, you need to pass an object with the following structure:
+The manager needs two things to understand your reference:
+1. The **name** of the config you want.
+2. The **version** of that config (you can safely use `"latest"` to always grab the newest version).
+
+The manager takes the referenced config and smoothly merges it into your current configuration right at the exact hierarchy level where you placed the reference.
+
+## 🏗️ Reference Structure
+
+To wire up a reference, you just drop in an object formatted exactly like this:
 
 ```json
 {
@@ -29,15 +35,14 @@ In order to use a reference, you need to pass an object with the following struc
 }
 ```
 
-:::tip
-
-In the `config-ui` config editor, you can press `Ctrl + Space` to insert a snippet with the reference structure.
-
+:::tip Pro Tip!
+Working in the `config-ui` editor? Just press `Ctrl + Space` to instantly drop in a handy reference snippet! ⌨️⚡
 :::
 
-## Example usage
-Let's say we want to create a configuration for a database connection for our app.
-We know there is already a configuration for the database connection in the `db-partial` config that is only missing the database name.
+## 💡 Example Usage
+
+Imagine you are setting up a database connection for your shiny new app. 
+You know there is already a solid base configuration called `db-partial`, which has everything you need *except* the actual database name.
 
 ```json title="db-partial"
 {
@@ -48,7 +53,7 @@ We know there is already a configuration for the database connection in the `db-
 }
 ```
 
-We can create a new configuration that references the `db-partial` config and only sets the database name.
+Instead of copying it, you create a new configuration that simply references `db-partial` and tacks on your specific database name:
 
 ```json title="db-full"
 {
@@ -60,7 +65,7 @@ We can create a new configuration that references the `db-partial` config and on
 }
 ```
 
-The resolved configuration will be:
+**The Final Result:** When your app fetches the config, it magically receives the fully resolved object! 🎉
 
 ```json
 {
