@@ -59,6 +59,9 @@ await producer.createJob({
 
 Stage names should clearly indicate the type of work being performed.
 
+<Tabs>
+<TabItem value="good" label="✅ Good">
+
 ```typescript
 // Clear, descriptive stage names
 await producer.createStage(jobId, {
@@ -76,6 +79,30 @@ await producer.createStage(jobId, {
   data: { bucket }
 });
 ```
+
+</TabItem>
+<TabItem value="bad" label="❌ Bad">
+
+```typescript
+// Vague, unclear stage names
+await producer.createStage(jobId, {
+  type: 'stage1',
+  data: { validationRules }
+});
+
+await producer.createStage(jobId, {
+  type: 'process',
+  data: { dimensions }
+});
+
+await producer.createStage(jobId, {
+  type: 'finish',
+  data: { bucket }
+});
+```
+
+</TabItem>
+</Tabs>
 
 ### Store References, Not Large Payloads
 
@@ -125,12 +152,9 @@ export interface ImageProcessingJob {
     data: {
       uploadId: string;
       userId: string;
-      sourceLocation: string;
-      targetLocation: string;
     };
     userMetadata: {
       priority: 'HIGH' | 'MEDIUM' | 'LOW'; // Use unions for enums
-      uploadedAt: string; // ISO timestamp
     };
   };
 }
@@ -138,56 +162,20 @@ export interface ImageProcessingJob {
 export interface ImageStages {
   'resize': {
     data: {
-      readonly width: number; // Use readonly when appropriate
+      readonly width: number;
       readonly height: number;
-      readonly quality: number;
-      readonly format: 'jpg' | 'png' | 'webp';
     };
     userMetadata: {
       processedCount: number;
-      failedCount: number;
     };
     task: {
       data: {
         sourceUrl: string;
         targetPath: string;
-        fileName: string;
       };
       userMetadata: {
         attempts: number;
-        lastAttemptAt?: string;
       };
-    };
-  };
-}
-```
-
-### Version Your Types
-
-When your data structures evolve, version them appropriately:
-
-```typescript
-// v1 types
-export interface ImageProcessingJobV1 {
-  'image-processing': {
-    data: {
-      uploadId: string;
-      userId: string;
-    };
-    userMetadata: Record<string, never>;
-  };
-}
-
-// v2 types with additional fields
-export interface ImageProcessingJobV2 {
-  'image-processing': {
-    data: {
-      uploadId: string;
-      userId: string;
-      organizationId: string; // New field
-    };
-    userMetadata: {
-      requestContext: RequestContext; // New field
     };
   };
 }
@@ -232,37 +220,6 @@ export class ImageProcessor {
 }
 ```
 
-### Use Structured Logging
-
-Include relevant context in all log statements:
-
-```typescript
-context.logger.info('Task processing started', {
-  taskId: task.id,
-  stageId: context.stage.id,
-  jobId: context.job.id,
-  fileName: task.data.fileName,
-  attempt: task.userMetadata.attempts
-});
-
-try {
-  await this.processImage(task.data);
-  
-  context.logger.info('Task completed successfully', {
-    taskId: task.id,
-    processingTime: Date.now() - startTime
-  });
-} catch (error) {
-  context.logger.error('Task failed', {
-    taskId: task.id,
-    error: error.message,
-    stack: error.stack,
-    data: task.data
-  });
-  throw error;
-}
-```
-
 ### Implement Idempotency
 
 Tasks may be retried. Ensure your handlers are idempotent:
@@ -304,9 +261,9 @@ public async processTask(task: Task<ImageTask>, context: TaskHandlerContext): Pr
 </TabItem>
 </Tabs>
 
-### Update Stage Metadata Strategically
+### Update Metadata Strategically
 
-Use stage metadata to track progress, but avoid excessive updates:
+Use metadata to track progress, but avoid excessive updates:
 
 ```typescript
 export class BatchProcessor {
@@ -339,11 +296,6 @@ export class BatchProcessor {
 Set worker concurrency based on your task characteristics:
 
 ```typescript
-// CPU-bound tasks (image processing, video encoding)
-const cpuBoundWorker = sdk.createWorker('image-resize', handler, {
-  concurrency: Math.max(1, os.cpus().length - 1) // Leave one CPU free
-});
-
 // I/O-bound tasks (API calls, file transfers)
 const ioBoundWorker = sdk.createWorker('api-integration', handler, {
   concurrency: 20 // Can be much higher
@@ -360,31 +312,25 @@ const mixedWorker = sdk.createWorker('data-pipeline', handler, {
 When creating many tasks, batch them for better performance:
 
 <Tabs>
-<TabItem value="good" label="✅ Batched">
+<TabItem value="good" label="Good">
 
 ```typescript
 // Create tasks in batches
 const BATCH_SIZE = 100;
-const tasks = [...]; // 10,000 tasks
+const allTasksData = [...]; // 10,000 tasks
 
-for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-  const batch = tasks.slice(i, i + BATCH_SIZE);
-  const promises = batch.map(taskData =>
-    producer.createTask(stageId, taskData)
-  );
-  await Promise.all(promises);
-  
-  // Optional: Small delay between batches to avoid overwhelming the manager
-  await new Promise(resolve => setTimeout(resolve, 100));
+for (let i = 0; i < allTasksData.length; i += BATCH_SIZE) {
+  const batch = allTasksData.slice(i, i + BATCH_SIZE);
+  await producer.createTasks(stageId, batch);
 }
 ```
 
 </TabItem>
-<TabItem value="bad" label="❌ Sequential">
+<TabItem value="bad" label="Bad">
 
 ```typescript
 // Don't create tasks one by one
-for (const taskData of tasks) {
+for (const taskData of allTasksData) {
   await producer.createTask(stageId, taskData); // Slow!
 }
 ```
@@ -458,123 +404,6 @@ public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, 
 </TabItem>
 </Tabs>
 
-### Categorize Errors
-
-Distinguish between retryable and non-retryable errors:
-
-```typescript
-export class RetryableError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'RetryableError';
-  }
-}
-
-export class PermanentError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'PermanentError';
-  }
-}
-
-public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, any, any>): Promise<void> {
-  try {
-    await this.callExternalAPI(task.data);
-  } catch (error) {
-    if (error.statusCode === 429) {
-      // Rate limited - retryable
-      throw new RetryableError('Rate limit exceeded');
-    } else if (error.statusCode === 404) {
-      // Resource not found - permanent failure
-      throw new PermanentError(`Resource not found: ${task.data.url}`);
-    }
-    throw error;
-  }
-}
-```
-
----
-
-## Monitoring and Alerting
-
-### Define Key Metrics
-
-Track business-relevant metrics in addition to SDK metrics:
-
-```typescript
-import { Counter, Histogram, Gauge } from 'prom-client';
-
-export class ImageProcessorMetrics {
-  private readonly processingDuration: Histogram;
-  private readonly failuresByReason: Counter;
-  private readonly queueDepth: Gauge;
-
-  constructor(registry: Registry) {
-    this.processingDuration = new Histogram({
-      name: 'image_processing_duration_seconds',
-      help: 'Image processing duration',
-      labelNames: ['size_category', 'format'],
-      registers: [registry]
-    });
-
-    this.failuresByReason = new Counter({
-      name: 'image_processing_failures_total',
-      help: 'Total processing failures by reason',
-      labelNames: ['reason', 'format'],
-      registers: [registry]
-    });
-  }
-
-  public recordProcessing(durationMs: number, format: string, sizeCategory: string): void {
-    this.processingDuration
-      .labels(sizeCategory, format)
-      .observe(durationMs / 1000);
-  }
-}
-```
-
-### Set Up Alerts
-
-Configure alerts for critical conditions:
-
-```yaml
-# prometheus-alerts.yaml
-groups:
-  - name: jobnik_worker_alerts
-    interval: 30s
-    rules:
-      - alert: HighTaskFailureRate
-        expr: |
-          rate(jobnik_worker_tasks_failed_total[5m]) > 0.1
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High task failure rate"
-          description: "Worker {{ $labels.worker_name }} has a failure rate of {{ $value }}"
-
-      - alert: WorkerStuck
-        expr: |
-          jobnik_worker_active_tasks > 0 AND
-          rate(jobnik_worker_tasks_completed_total[10m]) == 0
-        for: 10m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Worker appears stuck"
-          description: "Worker has active tasks but no completions in 10 minutes"
-
-      - alert: QueueBacklog
-        expr: |
-          jobnik_manager_queue_depth > 1000
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Large task queue backlog"
-          description: "Queue has {{ $value }} pending tasks"
-```
-
 ---
 
 ## Testing Best Practices
@@ -604,123 +433,6 @@ describe('WorkerService', () => {
     const service = new WorkerService(mockSDK);
     // Test your logic
   });
-});
-```
-
-### Integration Tests with Real Manager
-
-Test against a real Jobnik Manager instance:
-
-```typescript
-describe('Integration Tests', () => {
-  let sdk: JobnikSDK;
-  
-  beforeAll(() => {
-    sdk = new JobnikSDK({
-      baseUrl: process.env.TEST_JOBNIK_URL || 'http://localhost:3000',
-      metricsRegistry: new Registry()
-    });
-  });
-
-  it('should complete full workflow', async () => {
-    const producer = sdk.getProducer();
-    
-    // Create job
-    const job = await producer.createJob({
-      name: 'test-job',
-      data: { testId: 'test-123' }
-    });
-    
-    // Create stage with tasks
-    const stage = await producer.createStage(job.id, {
-      type: 'test-stage',
-      data: { config: 'test' }
-    });
-    
-    await producer.createTask(stage.id, {
-      data: { taskData: 'test' }
-    });
-    
-    // Start worker
-    const worker = sdk.createWorker('test-stage', async (task) => {
-      // Simple test task
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
-    
-    await worker.start();
-    
-    // Wait for completion
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    await worker.stop();
-  }, 30000);
-});
-```
-
----
-
-## Security Best Practices
-
-### Validate Input Data
-
-Never trust task data without validation:
-
-```typescript
-import { z } from 'zod';
-
-const TaskDataSchema = z.object({
-  sourceUrl: z.string().url(),
-  targetPath: z.string().regex(/^s3:\/\/.+/),
-  fileName: z.string().max(255)
-});
-
-public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, any, any>): Promise<void> {
-  // Validate input
-  const validationResult = TaskDataSchema.safeParse(task.data);
-  
-  if (!validationResult.success) {
-    context.logger.error('Invalid task data', {
-      taskId: task.id,
-      errors: validationResult.error.errors
-    });
-    throw new PermanentError('Invalid task data');
-  }
-  
-  const { sourceUrl, targetPath, fileName } = validationResult.data;
-  await this.process(sourceUrl, targetPath, fileName);
-}
-```
-
-### Sanitize File Paths
-
-Prevent path traversal attacks:
-
-```typescript
-import * as path from 'path';
-
-function sanitizeFilePath(inputPath: string, allowedDirectory: string): string {
-  const normalizedPath = path.normalize(inputPath);
-  const fullPath = path.join(allowedDirectory, normalizedPath);
-  
-  // Ensure the path is within the allowed directory
-  if (!fullPath.startsWith(allowedDirectory)) {
-    throw new PermanentError('Invalid file path');
-  }
-  
-  return fullPath;
-}
-```
-
-### Use Secure Connections
-
-Always use HTTPS for production:
-
-```typescript
-const sdk = new JobnikSDK({
-  baseUrl: process.env.NODE_ENV === 'production'
-    ? 'https://jobnik-manager.prod.example.com'
-    : 'http://localhost:3000',
-  metricsRegistry: registry
 });
 ```
 
@@ -761,91 +473,6 @@ public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, 
   await this.doWork();
 }
 ```
-
-### ❌ Storing Mutable State in Task Data
-
-Don't modify task data structure:
-
-```typescript
-// BAD: Trying to modify task
-task.data.processedAt = new Date(); // This won't persist!
-
-// GOOD: Use stage metadata or external storage
-await context.updateStageUserMetadata({
-  processedAt: new Date().toISOString()
-});
-```
-
-### ❌ Ignoring Metrics
-
-Don't skip observability:
-
-```typescript
-// BAD: No visibility into performance
-public async processTask(task: Task<any>): Promise<void> {
-  await this.doWork(task);
-  // No metrics, no logs, no way to debug issues
-}
-
-// GOOD: Comprehensive observability
-public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, any, any>): Promise<void> {
-  const startTime = Date.now();
-  context.logger.info('Task started', { taskId: task.id });
-  
-  try {
-    await this.doWork(task);
-    
-    const duration = Date.now() - startTime;
-    this.metrics.recordSuccess(duration);
-    context.logger.info('Task completed', { taskId: task.id, duration });
-  } catch (error) {
-    this.metrics.recordFailure(error.message);
-    context.logger.error('Task failed', { taskId: task.id, error });
-    throw error;
-  }
-}
-```
-
----
-
-## Checklist for Production Readiness
-
-Before deploying to production, ensure:
-
-### Configuration
-- [ ] Environment variables are properly set
-- [ ] Secrets are stored securely (not in config files)
-- [ ] Connection URLs use HTTPS in production
-- [ ] Appropriate concurrency levels configured
-- [ ] Retry backoff tuned for your workload
-
-### Code Quality
-- [ ] All types are strictly defined
-- [ ] Input validation implemented
-- [ ] Error handling comprehensive
-- [ ] Graceful shutdown implemented
-- [ ] Idempotency guaranteed
-
-### Observability
-- [ ] Structured logging in place
-- [ ] Custom metrics defined
-- [ ] Distributed tracing enabled
-- [ ] Health check endpoints exposed
-- [ ] Alerts configured
-
-### Testing
-- [ ] Unit tests cover core logic
-- [ ] Integration tests validate workflow
-- [ ] Load testing performed
-- [ ] Failure scenarios tested
-- [ ] Recovery mechanisms validated
-
-### Deployment
-- [ ] Docker images built and tested
-- [ ] Helm charts configured
-- [ ] Resource limits set appropriately
-- [ ] Auto-scaling configured if needed
-- [ ] Rollback plan documented
 
 ---
 
