@@ -2,24 +2,26 @@
 title: Bundler & Unbundler
 toc_min_heading_level: 2
 toc_max_heading_level: 6
-
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
- 
 
-## Bundler/Unbundler
- 
+# 📦 Bundler & Unbundler
+
+Moving complex artifacts across network boundaries? The Bundler and Unbundler pipelines completely automate the heavy lifting! 🚀
+
 ![Bundler and Unbundler](/img/jenkins-pipelines//bundler-unbundler.png) 
 
-### Bundler pipeline
+---
 
-The [bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/) has 1 parameter which is the `artifacts.json` file.
+## 🗜️ The Bundler Pipeline
 
-Here's an example of the `artifacts.json` 
+The [Bundler Pipeline](https://jenkins.mapcolonies.net/job/bundler/) gathers up all your requested Docker images, Helm charts, and Git repositories into a single, clean ZIP archive. 
 
+It requires exactly one parameter: an `artifacts.json` file telling it what to grab.
 
+**Example `artifacts.json`:**
 ```json
 {
   "docker": {
@@ -47,26 +49,30 @@ Here's an example of the `artifacts.json`
 }
 ```  
 
-In order to trigger the [bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/) you'll need to follow the steps below:  
+### How to trigger the Bundler:
 
-* Go to the bundler pipeline
-* Click on `Build with parameters`  
-![Bundler build with parameters](/img/jenkins-pipelines//bundler-build-with-params-1.png)
-* Click on `Choose File` and upload the `artifacts.json` from you local computer.  
-![Bundler browse artifacts file](/img/jenkins-pipelines//bundler-browse-file-2.png)
-* Click the Build button
-![Bundler build button](/img/jenkins-pipelines//bundler-build-3.png)
-* After the bundler will finish it'll send a slack message to the `<team>-notifications` channel based on the user logged in.
-![Bundler slack message](/img/jenkins-pipelines//bundler-slack.png)
-* Click on the download link in the slack message and download the bundle zip file which you'll use later on in the unbundler in the relevant network.
+1. Head over to the [Bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/).
+2. Click **Build with parameters**.
+   ![Bundler build with parameters](/img/jenkins-pipelines//bundler-build-with-params-1.png)
+3. Click **Choose File** and upload your local `artifacts.json`.
+   ![Bundler browse artifacts file](/img/jenkins-pipelines//bundler-browse-file-2.png)
+4. Smash that **Build** button!
+   ![Bundler build button](/img/jenkins-pipelines//bundler-build-3.png)
+5. Sit back and relax. When the pipeline finishes, it automatically fires off a Slack message to your team's notifications channel! 📩
+   ![Bundler slack message](/img/jenkins-pipelines//bundler-slack.png)
+6. Click the download link in Slack to grab your ZIP bundle. Keep this safe—you will need it for the Unbundler in the target network.
 
+---
 
-### Unbundler pipeline
+## 📤 The Unbundler Pipeline
 
-In order to trigger the unbundler, open the jenkins instance in the relevant network where you want to to unbundle and click on the unbundler pipeline and follow the steps bellow.
+Once you have crossed into the target network, the Unbundler pipeline unpacks your archive and automatically pushes all the artifacts into the local registries!
 
-* Click on `Build with Parameters`
-* Click on `Choose file` and select the bundler zip file from your computer
-![Unbundler browse file](/img/jenkins-pipelines//unbundler-browse-file-1.png)
-* Click the `build` button
-* Once the bundler is done you'll be able to find all the artifacts which were in the bundle zip file in all the registries in the specific network you're working on.
+### How to trigger the Unbundler:
+
+1. Open the Jenkins instance located in the target network and locate the Unbundler pipeline.
+2. Click **Build with Parameters**.
+3. Click **Choose file** and upload the ZIP bundle you downloaded earlier.
+   ![Unbundler browse file](/img/jenkins-pipelines//unbundler-browse-file-1.png)
+4. Hit **Build**! 🚀
+5. Once complete, you will find all your Docker images, Helm charts, and Git repositories securely pushed into their respective local registries within the new network.

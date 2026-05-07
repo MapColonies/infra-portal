@@ -11,24 +11,27 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide covers how to ensure your application logs are properly collected and sent to Loki. 
-For advanced collector configurations, refer to the [official Grafana Alloy documentation](https://grafana.com/docs/alloy/latest/).
+# 🪵 Alloy Logs Guide
 
-## Method 1: Pushing Logs Directly (Recommended)
+Let's make sure your application logs successfully make it into Loki! 
 
-The standard and recommended way to get your application logs into our observability stack is by configuring your service to push them directly to our internal Alloy endpoint.
+*(For complex collector configurations, hit up the [official Grafana Alloy documentation](https://grafana.com/docs/alloy/latest/).)*
 
-* **Internal Endpoint:** `http://infra-alloy`
+## 🎯 Method 1: Pushing Logs Directly (Recommended!)
 
-Make sure you configure the appropriate port:
-* 4317 - grpc
-* 4318 - http
+The cleanest, fastest, and strictly recommended way to ship your application logs into our stack is by configuring your service to push them directly to our internal Alloy endpoint. 🚀
 
-## Method 2: Scraping via Pod Labels
+* 🌐 **Internal Endpoint:** `http://infra-alloy`
 
-This method should only be used for 3rd-party services or legacy applications that do not have the native ability to push logs directly over the network.
+Ensure you are pointing to the correct port for your protocol:
+* **4317** - gRPC
+* **4318** - HTTP
 
-To tell Alloy to scrape these pods, add the following custom label to the deployment template:
+## 🧲 Method 2: Scraping via Pod Labels (Legacy/3rd-Party)
+
+*Wait!* Only use this method for stubborn 3rd-party services or legacy applications that physically cannot push logs over the network.
+
+To force Alloy to scrape logs from these pods, just stick this custom label onto your deployment template:
 
 **Label Key:** `mapcolonies.io/alloy-api-logs`  
 **Label Value:** `"true"`
@@ -37,13 +40,13 @@ To tell Alloy to scrape these pods, add the following custom label to the deploy
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  # Deployment labels - Not here ❌
+  # ❌ Do NOT put it here in the Deployment labels
   labels:
     app.kubernetes.io/name: SOME_NAME
 spec:
   template:
     metadata:
-      # Pod labels - Here ✅
+      # ✅ Put it right here in the Pod labels!
       labels:
         mapcolonies.io/alloy-api-logs: 'true'
 ```

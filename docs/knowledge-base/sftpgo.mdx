@@ -11,31 +11,36 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-SFTP-Go is our central service for managing and transferring files across our various storage environments. It provides a secure, robust, and unified gateway for interacting with our data.
+**SFTP-Go** is our unified central gateway for managing and securely transferring files across all storage environments. It keeps our data secure, robust, and cleanly abstracted.
 
 ## ⚙️ How It Works
 
-Rather than having applications or users interact directly with the raw underlying storage infrastructure (such as cloud buckets or raw disks), SFTP-Go acts as an intelligent middleman:
+Instead of forcing you to wrestle directly with raw storage infrastructure (like cloud buckets or raw disks), SFTP-Go acts as your intelligent middleman:
 
-* **Unified Gateway:** It allows you to access different storage backends using standard file transfer protocols (like SFTP, FTP/S, or WebDAV) or via a web interface.
-* **Virtual Mapping:** It maps virtual folders to our actual physical or cloud storage locations, keeping the underlying infrastructure cleanly abstracted.
-* **Access Control:** It handles permissions, user quotas, and access limits to ensure our storage remains secure and well-organized.
+* 🌍 **Unified Gateway:** Access different storage backends seamlessly using standard protocols (SFTP, FTP/S, WebDAV) or right through the web UI.
+* 🗺️ **Virtual Mapping:** It cleverly maps virtual folders to physical or cloud storage locations, hiding the complex infrastructure underneath.
+* 🔐 **Access Control:** It automatically handles permissions, user quotas, and access limits to keep our storage secure and organized.
 
 ## 🖥️ User Interfaces
 
-You do not need to interact with the storage APIs directly. You can manage your files and configurations through the SFTP-Go interface:
+Skip the raw APIs! You can manage files and configurations effortlessly through the SFTP-Go interface:
 
-* **WebAdmin UI:** A user-friendly dashboard where you can view storage connections, manage virtual folders, set up access rules, and monitor your file transfers.
+* **WebAdmin UI:** A polished, user-friendly dashboard for viewing storage connections, managing virtual folders, setting up access rules, and tracking active file transfers.
+
 
 ---
 
 ## 📊 Monitoring
 
 ### 📁 Sub-Folder Size Exporter
-To ensure we have granular visibility into our storage usage, we monitor the sub-folders inside the SFTP-Go root directory. 
+We need granular visibility into our storage usage. To achieve this, we monitor the sub-folders located directly inside the SFTP-Go root directory.
 
-We deployed a custom `node_exporter` that runs a background script. 
-This script scans the pvc directory, calculates its total size, and measures the size of each immediate subdirectory (raster, 3d, vector and so on). 
-These metrics are then exported, allowing us to build detailed dashboards and set up proactive alerts for storage capacity.
+We deployed a custom `node_exporter` powered by a background script. 
+This script:
+1. Scans the PVC directory.
+2. Calculates the total size.
+3. Measures the size of each immediate subdirectory (e.g., `raster`, `3d`, `vector`).
+
+These metrics are then exported, giving us the power to build detailed dashboards and configure proactive alerts for storage capacity! 🚀
 
 ![SFTP-Go Storage Dashboard](/img/sftpgo/sub-folder-size-panel.png)

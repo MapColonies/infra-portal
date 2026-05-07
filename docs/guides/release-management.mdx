@@ -8,31 +8,52 @@ toc_min_heading_level: 2
 toc_max_heading_level: 5
 ---
 
-# The CI/CD Workflow Transition
+# 🚀 The CI/CD Workflow Transition
 
-We are shifting to a highly automated 5-layer release process. Here is what you need to do right now, and what the automated future looks like.
+We are shifting to a highly automated, 5-layer release process! Here is exactly what you need to do right now, and a sneak peek at our automated future.
 
-## Phase 1: What to do TODAY
-Currently, we are establishing the foundation. Your immediate action items as a development team are:
-1. **Build your Helmfile:** Begin writing your `helmfile.yaml` configurations in the new `site-values` repository.
-2. **Maintain existing Umbrellas:** You may continue to use your umbrellas in the `helm-charts` repository during this phase. Do not delete them yet!
+## 🏗️ Phase 1: What to do TODAY
+
+Right now, we are building the foundation. Your immediate action items are simple but crucial:
+
+1. **Build your Helmfile:** Start writing your `helmfile.yaml` configurations inside the new `site-values` repository.
+2. **Maintain existing Umbrellas:** You can keep using your existing umbrellas in the `helm-charts` repository for now.
 
 ---
 
-## Phase 2: The Upcoming Automation (Target Workflow)
-Once the CI/CD pipelines are fully wired to the `site-values` repository, code promotion will follow this 5-layer loop:
+## 🤖 Phase 2: The Upcoming Automation (Target Workflow)
 
-### 1. Developers Layer (Auto-Dev Loop)
-A developer merges a feature PR into the `next` branch. A GitHub Action builds the artifacts and auto-updates the `site-values` repo, triggering Jenkins to deploy to `dev`.
+Once our CI/CD pipelines are fully wired to the `site-values` repository, code promotion will follow this smooth 5-layer loop:
 
-### 2. QA Layer (Release Candidate Loop)
-A team lead manually merges an open `release-please` PR to create an RC tag. This triggers a PR in `site-values` for the QA Lead to approve, which deploys the RC to the `qa` environment.
+### 1. 👩‍💻 Developers Layer (Auto-Dev Loop)
+- A developer merges a feature PR into the `next` branch. 
+- A GitHub Action automatically builds the artifacts and updates the `site-values` repo.
+- This instantly triggers Jenkins to deploy the changes to `dev`.
 
-### 3. Product Layer (Integration Deploy)
-The product team reviews the QA-approved PR and merges it. Jenkins deploys the code to the `integration` environment.
+![dev loop](/img/release-management/dev-loop.png)
 
-### 4. Production Release Layer (Master Deploy)
-After Product approval, the RC is merged into `master`. `release-please` creates the final tag, and a "Prod PR" is opened in the `site-values` repo.
+### 2. 🧪 QA Layer (Release Candidate Loop)
+- A team lead manually merges an open `release-please` PR to stamp an **RC tag**. 
+- This fires off a PR in `site-values`.
+- Once the QA Lead approves, the RC deploys directly to the `qa` environment.
 
-### 5. Customer Package Layer (Shipping)
-The Manager merges the Prod PR. Jenkins deploys to `prod`, and our new GHA `bundler` automatically creates the `.tar.gz` archive with all charts, images, and `.bundlerrc.json` dependencies.
+![qa loop](/img/release-management/qa-loop.png)
+
+### 3. 🛠️ Product Layer (Integration Deploy)
+- The product team reviews and merges the QA-approved PR. 
+- Jenkins takes over and deploys the code straight to the `integration` environment.
+
+![integration loop](/img/release-management/integration-loop.png)
+
+### 4. 🚀 Production Release Layer (Master Deploy)
+- After Product gives the green light, the RC merges into `master`. 
+- `release-please` drops the final tag, and a "Prod PR" opens in the `site-values` repo.
+
+![prod loop](/img/release-management/prod-loop.png)
+
+### 5. 📦 Customer Package Layer (Shipping)
+- The Manager merges the Prod PR. 
+- Jenkins deploys to `prod`.
+- Our brand-new GHA `bundler` automatically spins up the `.tar.gz` archive packed with all charts, images, and `.bundlerrc.json` dependencies! 🎉
+
+![release stage](/img/release-management/release-stage.png)

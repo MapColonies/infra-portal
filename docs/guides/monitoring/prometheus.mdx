@@ -11,20 +11,26 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide covers how to integrate your services with our Prometheus setup. For advanced PromQL querying or general concepts, refer to the [official Prometheus documentation](https://prometheus.io/docs/introduction/overview/).
+# 📈 Prometheus How-To Guides
 
-## Ensuring Your Service is Scraped
+Let's get your metrics scraped and your alerts firing! 
 
-We utilize standard Kubernetes annotations to instruct Prometheus on what to scrape.  
-To ensure Prometheus picks up your metrics, your **pods** (not deployments) must reside in one of the monitored namespaces and include these annotations:
+*(Looking for advanced PromQL magic? See the [official Prometheus documentation](https://prometheus.io/docs/introduction/overview/).)*
+
+## 🧲 Ensuring Your Service is Scraped
+
+We keep it simple: we use standard Kubernetes annotations to tell Prometheus exactly what to scrape. 
+
+To ensure your metrics make it to the dashboard, your **pods** (not your deployments!) must live in a monitored namespace and wear these three annotations:
 * `prometheus.io/scrape`
 * `prometheus.io/port`
 * `prometheus.io/path`
 
-## Managing Prometheus Alerts
+## 🚨 Managing Prometheus Alerts
 
-Our Prometheus alert rules are defined centrally as code. These rules use PromQL expressions to evaluate conditions over time. 
+We manage our Prometheus alerts centrally as code! These rules use PromQL expressions to constantly evaluate conditions over time.
 
+**Here is what a rule looks like:**
 ```yaml title="Alerts Config"
 alerting_rules.yml:
   groups:
@@ -40,5 +46,5 @@ alerting_rules.yml:
             summary: "A certificate ({{ $labels.instance }}) is about to expire in 30 days!"
 ```
 
-To add, update, or remove an alert, create a Pull Request [here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/alerts-values.yaml) 
-with your new or modified alert rule and notify Infra team to review and apply the upgrade.
+**Want to add or change an alert?** 
+No problem! Just open a Pull Request [right here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/alerts-values.yaml) with your shiny new rule, and ping the Infra team to review and deploy it! 🚀

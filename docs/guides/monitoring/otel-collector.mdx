@@ -11,25 +11,29 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide covers how to send your application traces to our observability stack. For general concepts and supported languages, refer to the [official OpenTelemetry documentation](https://opentelemetry.io/docs/collector/).
+# 📡 OpenTelemetry Collector Guides
 
-## Sending Traces
+Time to get your traces flowing! This guide will show you exactly how to hook your applications into our observability stack. 
 
-Your services should be configured to send distributed traces exclusively to the **External OpenTelemetry Collector**.
+*(Curious about supported languages? See the [official OpenTelemetry documentation](https://opentelemetry.io/docs/collector/).)*
 
-* **Service Endpoint:** `http://infra-otel`
+## 📤 Sending Traces
 
-Make sure you configure the appropriate port:
-* 4317 - grpc
-* 4318 - http
+To get your distributed traces recorded, your services must be configured to point exclusively to the **External OpenTelemetry Collector**.
 
-## Trace Filtering
+* 🌐 **Service Endpoint:** `http://infra-otel`
 
-You do not need to manually filter out health checks or Prometheus scrape endpoints (like `/metrics` or `/health`) within your application's telemetry configuration. 
+Just pick the port that matches your protocol:
+* **4317** - gRPC
+* **4318** - HTTP
 
-Our **Internal Collector** is configured to automatically drop spans related to these URLs:
+## 🧹 Automatic Trace Filtering (We do it for you!)
+
+Great news: You do **not** need to write messy code to filter out noisy health checks or Prometheus scrape endpoints (like `/metrics` or `/health`) in your app! 🎉
+
+Our **Internal Collector** is already configured to automatically drop spans hitting these common URLs:
 * `health`
 * `liveness`
 * `metrics`
 
-This ensures our tracing backend remains uncluttered and cost-effective, without requiring duplicate configuration across every microservice.
+Why? This keeps our tracing backend fast, uncluttered, and cost-effective, saving you from writing duplicate filtering logic across all your microservices! 🚀

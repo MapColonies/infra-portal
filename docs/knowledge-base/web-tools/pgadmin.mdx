@@ -10,22 +10,22 @@ toc_max_heading_level: 5
 
 # 🐘 Centralized pgAdmin
 
-We use a centralized **pgAdmin** deployment to manage and interact with all of our PostgreSQL databases across different environments. 
+We rely on a robust, **centralized pgAdmin** deployment to manage and interact with all our PostgreSQL databases across various environments. 
 
 ## 🌟 Why Centralized?
-Previously, every developer had to install pgAdmin locally and manually configure all the database hosts on their own machines.  
-This led to wasted setup time and frequent communication breakdowns when connection strings or hosts changed. 
 
-By moving to a central stack, we achieved:
-* **Zero Local Setup:** No need to install database clients or extensions on your local machine.
-* **Single Source of Truth:** Database hosts and connections are managed centrally. If a host moves or changes, it is updated in one place for everyone.
-* **Immediate Access:** New developers can instantly reach all relevant hosts without passing connection strings back and forth.
+In the past, every developer had to install pgAdmin locally and manually juggle database host connections. This led to wasted setup time and broken connection strings whenever infrastructure shifted. 
+
+By moving to a central stack, we instantly unlocked:
+* ⚡ **Zero Local Setup:** No need to install database clients, configure drivers, or manage extensions on your local machine!
+* 🗺️ **A Single Source of Truth:** Database hosts and connections are managed centrally by the infrastructure team. If a host moves, it updates everywhere simultaneously.
+* 🤝 **Immediate Access:** New developers can instantly connect to all relevant hosts on day one without asking around for connection strings.
 
 ## 🚀 Getting Started
 
-Just go to our pgAdmin route and enjoy!
+Simply hit our pgAdmin route, log in, and you are ready to query!
 
-:::tip
-Because the hosts are centrally managed, you should see all the relevant databases pre-configured when you log in.  
-If you are missing access to a specific database, please reach out to the Infra team!
+:::tip Instant Access
+Because our hosts are centrally managed, you will see all your relevant databases pre-configured the moment you log in.  
+If you are missing access to a specific database or environment, just ping the Infra team!
 :::

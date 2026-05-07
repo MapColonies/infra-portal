@@ -11,27 +11,28 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide covers how developers interact with Alertmanager. 
-For a deeper understanding of its core concepts, refer to the [official Alertmanager documentation](https://prometheus.io/docs/alerting/latest/alertmanager/).
+# 🚨 Alertmanager Guides
 
-## Viewing and Managing Active Alerts
+Welcome! This guide covers exactly how you, as a developer, will interact with Alertmanager to keep tabs on your services. 
 
-While you cannot change the global routing rules, you have full access to the Alertmanager UI to view and manage active alerts.
+*(Want the deep technical dive? Check out the [official Alertmanager documentation](https://prometheus.io/docs/alerting/latest/alertmanager/).)*
 
-1. Open [Alertmanager](https://alertmanager.mapcolonies.net).
-2. The main dashboard will show all currently firing alerts, grouped by their labels.
-3. If an alert is a known issue being worked on, you can click **Silence** to temporarily suppress notifications for that specific alert group. 
-This helps reduce alert fatigue for the rest of the team.
+## 👀 Viewing and Managing Active Alerts
+
+While you cannot edit global routing rules, you have full power to view and manage active alerts directly through the UI!
+
+1. Jump into [Alertmanager](https://alertmanager.mapcolonies.net).
+2. Check the main dashboard to see all currently firing alerts neatly grouped by their labels.
+3. 🤫 **Silencing:** Is an alert already a known issue your team is fixing? Click **Silence** to temporarily mute notifications for that alert group. Your teammates will thank you for reducing the alert fatigue!
 
 ![Alertmanager active alert](/img/monitoring/alertmanager/alertmanager-alert.png)
 
-## Requesting Routing Changes
+## 🔀 Requesting Routing Changes
 
-:::note Infrastructure Managed
-The routing configuration (deciding which alerts go to which Slack channels or emails) is global and centrally managed by the **infra team**.
+:::note 🏗️ Infrastructure Managed
+Alert routing (deciding which alerts blast to which Slack channels or emails) is handled globally by the **infra team**.
 :::
 
-Developers currently have **read-only access** to the existing routing configurations. You do not need to configure routing for your applications yourself. 
+Currently, developers have **read-only access** to routing configurations. You don't have to worry about configuring routing for your apps!
 
-If your team needs a new Slack channel added, or if you want specific service alerts routed to a different destination, 
-please contact the **infra team** to discuss adjusting the global configuration.
+**Need a change?** If your team spun up a new Slack channel, or you need specific service alerts sent to a new destination, just ping the **infra team** and they will adjust the global configuration for you. 🤝
