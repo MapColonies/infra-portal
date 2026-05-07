@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_map_colonies_openapi_helpers=self.webpackChunk_map_colonies_openapi_helpers||[]).push([[1235],{1365:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-pages","id":"default"}')}}]);

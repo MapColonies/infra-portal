@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_map_colonies_openapi_helpers=self.webpackChunk_map_colonies_openapi_helpers||[]).push([[374],{374:(e,p,s)=>{s.r(p)}}]);
