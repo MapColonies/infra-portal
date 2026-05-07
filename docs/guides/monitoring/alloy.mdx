@@ -1,0 +1,49 @@
+---
+id: alloy-guide
+title: Alloy Guides
+sidebar_label: Alloy
+sidebar_class_name: monitoring
+slug: /guides/monitoring/Alloy
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to ensure your application logs are properly collected and sent to Loki. 
+For advanced collector configurations, refer to the [official Grafana Alloy documentation](https://grafana.com/docs/alloy/latest/).
+
+## Method 1: Pushing Logs Directly (Recommended)
+
+The standard and recommended way to get your application logs into our observability stack is by configuring your service to push them directly to our internal Alloy endpoint.
+
+* **Internal Endpoint:** `http://infra-alloy`
+
+Make sure you configure the appropriate port:
+* 4317 - grpc
+* 4318 - http
+
+## Method 2: Scraping via Pod Labels
+
+This method should only be used for 3rd-party services or legacy applications that do not have the native ability to push logs directly over the network.
+
+To tell Alloy to scrape these pods, add the following custom label to the deployment template:
+
+**Label Key:** `mapcolonies.io/alloy-api-logs`  
+**Label Value:** `"true"`
+
+```yaml title="Deployment Template"
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  # Deployment labels - Not here ❌
+  labels:
+    app.kubernetes.io/name: SOME_NAME
+spec:
+  template:
+    metadata:
+      # Pod labels - Here ✅
+      labels:
+        mapcolonies.io/alloy-api-logs: 'true'
+```

@@ -1,0 +1,22 @@
+---
+id: postgres-exporter
+title: Postgres Exporter
+sidebar_label: Postgres Exporter
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/exporters/postgres-exporter
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Postgres Exporter provides critical visibility into the health and performance of our central PostgreSQL database.
+
+## Monitoring Scope
+
+We maintain a single, centrally managed PostgreSQL instance for the environment. 
+The Postgres Exporter is configured globally by the infrastructure team to connect to this database and 
+expose standard performance metrics (such as active connections, transaction rates, and buffer behavior) to Prometheus.
+
+Because we rely entirely on standard, built-in metrics, we maintain a consistent baseline for database observability without the overhead of maintaining custom queries.

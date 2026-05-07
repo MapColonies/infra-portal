@@ -1,0 +1,38 @@
+---
+id: release-management-guide
+title: The 5-Layer CI/CD Workflow (Target)
+sidebar_label: Release Management
+sidebar_class_name: release-management
+slug: /guides/release-management
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# The CI/CD Workflow Transition
+
+We are shifting to a highly automated 5-layer release process. Here is what you need to do right now, and what the automated future looks like.
+
+## Phase 1: What to do TODAY
+Currently, we are establishing the foundation. Your immediate action items as a development team are:
+1. **Build your Helmfile:** Begin writing your `helmfile.yaml` configurations in the new `site-values` repository.
+2. **Maintain existing Umbrellas:** You may continue to use your umbrellas in the `helm-charts` repository during this phase. Do not delete them yet!
+
+---
+
+## Phase 2: The Upcoming Automation (Target Workflow)
+Once the CI/CD pipelines are fully wired to the `site-values` repository, code promotion will follow this 5-layer loop:
+
+### 1. Developers Layer (Auto-Dev Loop)
+A developer merges a feature PR into the `next` branch. A GitHub Action builds the artifacts and auto-updates the `site-values` repo, triggering Jenkins to deploy to `dev`.
+
+### 2. QA Layer (Release Candidate Loop)
+A team lead manually merges an open `release-please` PR to create an RC tag. This triggers a PR in `site-values` for the QA Lead to approve, which deploys the RC to the `qa` environment.
+
+### 3. Product Layer (Integration Deploy)
+The product team reviews the QA-approved PR and merges it. Jenkins deploys the code to the `integration` environment.
+
+### 4. Production Release Layer (Master Deploy)
+After Product approval, the RC is merged into `master`. `release-please` creates the final tag, and a "Prod PR" is opened in the `site-values` repo.
+
+### 5. Customer Package Layer (Shipping)
+The Manager merges the Prod PR. Jenkins deploys to `prod`, and our new GHA `bundler` automatically creates the `.tar.gz` archive with all charts, images, and `.bundlerrc.json` dependencies.

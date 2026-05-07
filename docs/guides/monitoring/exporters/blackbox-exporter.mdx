@@ -1,0 +1,21 @@
+---
+id: blackbox-exporter-guide
+title: Blackbox Exporter Guides
+sidebar_label: Blackbox Exporter
+sidebar_class_name: monitoring-guides
+slug: /guides/monitoring/exporters/blackbox
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to add your service endpoints to our active probing configuration. For advanced probing modules and configurations, refer to the [official Blackbox Exporter documentation](https://github.com/prometheus/blackbox_exporter).
+
+## Adding a New Endpoint to Monitor
+
+Endpoints are not discovered automatically by the Blackbox Exporter. To instruct the exporter to start probing a new URL, 
+create a Pull Request [here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/alerts-values.yaml) with your new or modified endpoint rule and notify Infra team to review and apply the upgrade.
+
+Once merged, Prometheus will automatically reload the configuration and the Blackbox Exporter will begin probing your endpoint.

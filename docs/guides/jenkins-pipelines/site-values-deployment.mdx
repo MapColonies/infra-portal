@@ -1,0 +1,52 @@
+---
+id: site-values-deployment-guide
+title: Site Values Auto Deployment
+sidebar_label: Site Values Deployment
+sidebar_class_name: pipelines-guides
+slug: /guides/pipelines/site-values-deployment
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to structure your configurations and troubleshoot the `site-values-deployment` pipeline.
+
+## Standard Deployment Workflow
+
+To trigger a standard deployment, simply push your configuration changes to the **`master`** branch.
+
+For example, if you want to update Loki in the development environment:
+1. Modify the `infra/loki/dev.yaml` file.
+2. Commit and push the change to `master`.
+3. The pipeline will automatically detect the change, map it to the `infra-loki` release, and deploy *only* that release to the dev environment.
+
+## File and Directory Structure
+
+To ensure the pipeline detects your changes properly, you must follow the expected Helmfile directory structure. The pipeline supports nested Helmfiles (e.g., a main `infra/helmfile.yaml.gotmpl` and a sub-helmfile at `infra/exporters/helmfile.yaml.gotmpl`).
+
+A standard service should be organized like this:
+
+```text
+team-folder/
+├── helmfile.yaml.gotmpl          # Defines the releases
+├── service-name/
+│   ├── base.yaml.gotmpl          # Base config (applies everywhere)
+│   ├── dev.yaml                  # Dev-specific config
+│   ├── prod.yaml                 # Prod-specific config
+│   └── dev/                      # Additional dev-specific overrides
+│       └── additional-config.yaml
+```
+
+## Running a Dry Run
+
+If you want to preview what the pipeline *would* change without actually applying anything to the cluster, you can run the pipeline manually in Jenkins and set the **`DRY_RUN`** parameter to `true`. The pipeline will execute a `helmfile diff` and output the results, but will skip the final apply stage.
+
+## Troubleshooting
+
+If your deployment does not behave as expected, check the following common issues:
+
+* **No changes were detected:** Ensure the file you modified is located within a monitored team folder and is explicitly listed in the `values` section of your release in the `helmfile.yaml.gotmpl`. Also, verify that the filename matches the target environment's naming patterns.
+* **Too many releases deployed:** Review your file naming conventions. Ensure you haven't accidentally placed environment-specific configurations into a base file, which would trigger deployments globally.
+* **A dynamic stage failed:** If a stage fails during the apply process, it will not automatically retry. You can manually enable the **`DEBUG_LOGGING=true`** parameter in Jenkins to print detailed trace information and matching logic to help identify the root cause.

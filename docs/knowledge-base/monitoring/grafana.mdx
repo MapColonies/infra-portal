@@ -2,7 +2,6 @@
 id: Grafana
 title: Grafana
 sidebar_label: Grafana
-sidebar_position: 4
 sidebar_class_name: monitoring
 slug: /knowledge-base/monitoring/Grafana
 toc_min_heading_level: 2
@@ -14,28 +13,40 @@ import TabItem from '@theme/TabItem';
 
 # Grafana
 
-You can use Grafana at https://grafana.mapcolonies.net.
+You can access Libot's Grafana at [https://grafana.mapcolonies.net](https://grafana.mapcolonies.net).
 
-Grafana is a visualization tool that allows you to query, visualize, and analyze metrics from multiple data sources,
-such as Prometheus, as well as trace data from Tempo.
+Grafana is our central visualization and observability platform. It allows you to query, visualize, and analyze metrics, logs, and traces 
+from multiple data sources (like Prometheus, Loki, and Tempo) in a single unified interface.
 
-![grafana datasources](./img/grafana/grafana-datasources.png)
+![grafana dashboard](/img/monitoring/grafana/grafana-dashboard.png)
 
-:::tip
-You can read more about Grafana in the [Grafana documentation](https://grafana.com/docs/grafana/latest/)
-:::
+## Authentication
 
-Grafana enables you to create and customize powerful dashboards that give insights into system performance,
-resource usage, and alerting metrics.
+Access to Grafana is secured and streamlined using **GitHub SSO**. You can log in using your standard GitHub credentials.
 
-![grafana dashboard](./img/grafana/grafana-dashboard.png)
+## Installed Plugins
 
-In addition to visualizations, Grafana is also integrated with alerting capabilities, allowing you to trigger alerts
-when certain conditions are met in your metrics data.
+We have extended Grafana's core capabilities with the following plugins:
 
-## Multiple Data Sources
+* **[`grafana-github-datasource`](https://grafana.com/grafana/plugins/grafana-github-datasource/)**: 
+Allows us to pull data directly from GitHub into our dashboards.
+* **[`magnesium-wordcloud-panel`](https://grafana.com/grafana/plugins/magnesium-wordcloud-panel/)**: 
+Provides custom visual panels for generating word clouds from log or metric data.
+* **[`redis-app`](https://grafana.com/grafana/plugins/redis-app/)**: 
+A comprehensive application plugin that includes ready-to-use dashboards and a dedicated UI for querying Redis directly.
 
-Grafana supports connecting to multiple data sources, allowing you to visualize and analyze data from various platforms
-like Prometheus, Elasticsearch, and Tempo in to a single dashboard. 
+## AI Integration
 
-For a full list of supported data sources, check out the [Grafana documentation on data sources](https://grafana.com/docs/grafana/latest/datasources/#built-in-core-data-sources).
+We have integrated an LLM directly into Grafana via the Model Context Protocol (MCP) using a custom service account.  
+This allows you to interact with Grafana using natural language to generate or modify dashboards. 
+
+To ensure the safety of our core production dashboards, we are currently operating in a **grace period**.  
+During this time, the AI is strictly restricted to creating and modifying resources *only* within the designated **`AI`** folder. 
+
+For instructions on how to set up this connection in your AI client, please see the **[Adding Grafana MCP to an LLM Guide](../../guides/monitoring/grafana.mdx#adding-grafana-mcp-to-an-llm)**.
+
+## Infrastructure as Code ([Upcoming](https://mapcolonies.atlassian.net/browse/MAPCO-10563))
+
+Currently, alerts and dashboards are managed within the UI.  
+However, we are in the process of migrating to a fully automated GitOps approach using Grafana sidecar ConfigMaps.  
+Once complete, all dashboards and alerts will be provisioned automatically from our infrastructure repositories.

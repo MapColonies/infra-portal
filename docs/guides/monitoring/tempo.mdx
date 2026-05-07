@@ -1,0 +1,32 @@
+---
+id: tempo-guide
+title: Tempo
+sidebar_label: Tempo
+sidebar_class_name: monitoring
+slug: /guides/monitoring/Tempo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to interact with our tracing data. For a deeper dive into Tempo's querying language (TraceQL), 
+refer to the [official Grafana Tempo documentation](https://grafana.com/docs/tempo/latest/).
+
+## Visualizing Traces in Grafana
+
+Since Tempo acts purely as a backend, all of your trace analysis will happen inside Grafana. 
+
+To find and analyze traces:
+1. Open Grafana and navigate to the **Explore** tab (the compass icon in the left sidebar).
+2. In the data source dropdown at the top left, select **Tempo**.
+3. You can query traces in two main ways:
+   * **Trace ID:** If you have a specific Trace ID (e.g., from an error log), paste it directly into the search bar to pull up the exact request waterfall.
+   * **Search Explorer:** Use the visual query builder to search for traces based on tags, service names, or duration.
+
+## Trace to Logs (Exploration)
+
+When analyzing a trace waterfall, look closely at individual spans. If a small document icon appears next to a span, 
+clicking it will seamlessly pivot you directly to the relevant logs in **Loki** for that exact moment in time! 
+This is a powerful way to see exactly what an application was logging during a slow or failed request.

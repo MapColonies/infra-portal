@@ -1,0 +1,21 @@
+---
+id: cert-exporter
+title: Cert Exporter
+sidebar_label: Cert Exporter
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/exporters/cert-exporter
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Cert Exporter automatically monitors the expiration dates of TLS certificates across our environment. 
+By exposing certificate validity as Prometheus metrics, it ensures we are proactively alerted before any certificates expire, preventing unexpected service downtime.
+
+## Scanning and Discovery
+
+The Cert Exporter is configured by the infrastructure team to scan designated namespaces across the cluster. 
+While it monitors these areas continuously, certain resources—specifically raw Kubernetes Secrets containing 
+TLS certificates—require explicit tagging to be recognized and parsed by the exporter's discovery engine.

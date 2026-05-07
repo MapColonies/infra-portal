@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MapColonies Infra metadata file",
+  "description": "Schema for metadata file used by MapColonies Infra to deploy Helm charts and bundle packages",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "description": "The owner of the repo",
+      "type": "string",
+      "enum": ["infra", "raster", "vector", "3d", "common", "app", "dem"]
+    },
+    
+  },
+  "definitions": {
+    "docker": {
+      
+    }
+  }
+  
+}

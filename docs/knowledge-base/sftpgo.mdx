@@ -1,0 +1,41 @@
+---
+id: sftpgo
+title: SFTP-Go
+sidebar_label: SFTP-Go
+sidebar_class_name: sftpgo
+slug: /knowledge-base/sftpgo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+SFTP-Go is our central service for managing and transferring files across our various storage environments. It provides a secure, robust, and unified gateway for interacting with our data.
+
+## ⚙️ How It Works
+
+Rather than having applications or users interact directly with the raw underlying storage infrastructure (such as cloud buckets or raw disks), SFTP-Go acts as an intelligent middleman:
+
+* **Unified Gateway:** It allows you to access different storage backends using standard file transfer protocols (like SFTP, FTP/S, or WebDAV) or via a web interface.
+* **Virtual Mapping:** It maps virtual folders to our actual physical or cloud storage locations, keeping the underlying infrastructure cleanly abstracted.
+* **Access Control:** It handles permissions, user quotas, and access limits to ensure our storage remains secure and well-organized.
+
+## 🖥️ User Interfaces
+
+You do not need to interact with the storage APIs directly. You can manage your files and configurations through the SFTP-Go interface:
+
+* **WebAdmin UI:** A user-friendly dashboard where you can view storage connections, manage virtual folders, set up access rules, and monitor your file transfers.
+
+---
+
+## 📊 Monitoring
+
+### 📁 Sub-Folder Size Exporter
+To ensure we have granular visibility into our storage usage, we monitor the sub-folders inside the SFTP-Go root directory. 
+
+We deployed a custom `node_exporter` that runs a background script. 
+This script scans the pvc directory, calculates its total size, and measures the size of each immediate subdirectory (raster, 3d, vector and so on). 
+These metrics are then exported, allowing us to build detailed dashboards and set up proactive alerts for storage capacity.
+
+![SFTP-Go Storage Dashboard](/img/sftpgo/sub-folder-size-panel.png)

@@ -1,0 +1,45 @@
+---
+id: site-values-deployment
+title: Site Values Auto Deployment
+sidebar_label: Site Values Auto Deployment
+sidebar_class_name: pipelines
+slug: /knowledge-base/pipelines/site-values-deployment
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `site-values-deployment` pipeline is our Continuous Deployment (CD) solution for automatically applying infrastructure and application changes to our Kubernetes environments. Unlike older deployment methods, this pipeline is driven by **Helmfile** and is designed to be highly efficient by only deploying exact releases that have changed.
+
+Currently, this pipeline exclusively monitors the **`master`** branch for automated deployments.
+
+## Smart Change Detection
+
+The pipeline relies on a smart detection algorithm to minimize deployment time and risk:
+* **Git Diff Analysis:** When changes are pushed, the pipeline compares the current commit with the previously deployed commit to identify exactly which files were modified.
+* **Release Mapping:** It reads your `helmfile.yaml.gotmpl` configurations to map those modified files to specific application or infrastructure releases.
+* **Targeted Execution:** Instead of deploying entire team scopes, it dynamically generates parallel deployment stages *only* for the specific releases affected by your changes.
+
+## Environment-Aware Processing
+
+The pipeline intelligently filters changes based on the target environment (e.g., `dev`, `prod`, `stage`, `qa`, `integration`). 
+
+It categorizes files into two main types:
+* **Environment-Agnostic (Base):** Files like `base.yaml` or `base.yaml.gotmpl` apply to all environments. Changing one of these will trigger a deployment for the affected release across any targeted environment.
+* **Environment-Specific:** Files explicitly named for an environment (e.g., `dev.yaml`) or placed in environment folders (e.g., `loki/dev/config.yaml`) will only trigger deployments when the pipeline is targeting that specific environment. 
+
+## Monitored Scopes
+
+The pipeline monitors and processes changes made within the following designated team folders:
+* `infra` 
+* `3d` 
+* `raster` 
+* `vector` 
+* `app` 
+* `dem` 
+
+## Notifications
+
+Throughout the deployment lifecycle, the pipeline will send automated updates to your designated Slack channels. It sends an initial message detailing exactly which charts are queued for deployment, followed by a final success or failure notification containing a link to the Jenkins build logs.

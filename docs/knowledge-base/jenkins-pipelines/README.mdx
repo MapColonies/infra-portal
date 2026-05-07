@@ -1,0 +1,23 @@
+---
+id: jenkins-pipelines-readme
+title: Jenkins Pipelines Overview
+sidebar_label: Jenkins Pipelines
+sidebar_class_name: jenkins-pipelines
+slug: /knowledge-base/jenkins-pipelines
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+While GitHub Actions handles our Continuous Integration (CI) and artifact building, we utilize **Jenkins** as our primary engine for Continuous Deployment (CD) and executing utility automation tasks across our clusters[cite: 4].
+
+## Our Jenkins Pipeline Stack
+
+We maintain a suite of Jenkins pipelines designed to automate deployments, manage environments, and move artifacts securely. 
+
+* **[site-values-deployment](./site-values-deployment.mdx):** Our core CD pipeline. It intelligently monitors the `helm-charts` repository and dynamically deploys only the specific infrastructure and application releases that have changed.
+* **[duplicate-shared-pvc](./duplicate-shared-pvc.mdx):** A utility pipeline that creates a localized shortcut to our central shared ingestion disk, allowing your namespace read-only access to large datasets without duplicating them.
+* **[bundler](./bundler.mdx):** Packages Docker images, Helm charts, and Git repositories into a single secure ZIP file based on an `artifacts.json` whitelist, preparing them for transfer to air-gapped or restricted networks.
+* **[unbundler](./unbundler.mdx):** The counterpart to the bundler. It runs in the target network, extracting the zipped artifacts and pushing them to the local registries.

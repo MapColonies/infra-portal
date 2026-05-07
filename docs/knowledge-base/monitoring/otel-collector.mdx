@@ -1,0 +1,26 @@
+---
+id: opentelemetry-collector
+title: OpenTelemetry Collector
+sidebar_label: OpenTelemetry Collector
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/OpenTelemetryCollector
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The OpenTelemetry Collector is responsible for gathering, processing, and exporting telemetry data. 
+In our stack, it acts as the dedicated bridge between your services and our tracing backend, **Grafana Tempo**. 
+
+![otel architecture](/img/monitoring/otel/otel-architecture.png)
+
+## Two-Tier Tracing Architecture
+
+To efficiently handle scaling and ensure trace integrity, we use a two-tier OpenTelemetry Collector setup:
+
+* **External Collector (Router):** All application services send their traces here. Because this layer scales up dynamically under load, individual spans belonging to the same trace might hit different pods. To fix this, the external collector's primary logic is to route all spans of the *same trace* to the *same* internal pod.
+* **Internal Collector (Processor):** Only the external collector sends data here. Because spans are properly routed, this layer can reassemble the full trace and span hierarchy. It is also responsible for filtering out irrelevant noise—specifically dropping traces for `health`, `liveness`, and `metrics` endpoints—before exporting the clean data to Tempo.
+
+This approach balances high availability with accurate trace assembly and storage efficiency.

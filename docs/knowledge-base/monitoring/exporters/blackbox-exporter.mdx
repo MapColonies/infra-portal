@@ -1,0 +1,30 @@
+---
+id: blackbox-exporter
+title: Blackbox Exporter
+sidebar_label: Blackbox Exporter
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/exporters/blackbox-exporter
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Blackbox Exporter allows us to monitor the availability and performance of external and internal endpoints. 
+Rather than scraping metrics *from* an application, it actively probes targets from the outside (via HTTP, HTTPS, DNS, TCP, or ICMP) to ensure they are responding correctly and quickly.
+
+## Primary Modules
+
+While the exporter supports many types of probing, our most heavily utilized configuration is the **`http_2xx`** module. 
+This module sends an HTTP GET request to a specified URL and expects a successful 200 OK response. 
+It is our standard way of verifying that web services and APIs are up and serving traffic.
+
+## Built-in Alerting Capabilities
+
+Beyond simple up/down status, the Blackbox Exporter gathers rich metadata during its probes. 
+For example, when probing HTTPS endpoints, it automatically extracts SSL/TLS certificate details. 
+
+We leverage this native capability to power our **`CertExpiration`** alerts. 
+By measuring the difference between the current time and the certificate's expiry timestamp provided by the Blackbox Exporter, 
+Prometheus can proactively alert us before a certificate expires, all without requiring any custom exporter logic.

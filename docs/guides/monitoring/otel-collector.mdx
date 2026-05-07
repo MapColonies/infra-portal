@@ -1,0 +1,35 @@
+---
+id: opentelemetry-collector-guide
+title: OpenTelemetry Collector Guides
+sidebar_label: OpenTelemetry Collector
+sidebar_class_name: monitoring-guides
+slug: /guides/monitoring/OpenTelemetryCollector
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to send your application traces to our observability stack. For general concepts and supported languages, refer to the [official OpenTelemetry documentation](https://opentelemetry.io/docs/collector/).
+
+## Sending Traces
+
+Your services should be configured to send distributed traces exclusively to the **External OpenTelemetry Collector**.
+
+* **Service Endpoint:** `http://infra-otel`
+
+Make sure you configure the appropriate port:
+* 4317 - grpc
+* 4318 - http
+
+## Trace Filtering
+
+You do not need to manually filter out health checks or Prometheus scrape endpoints (like `/metrics` or `/health`) within your application's telemetry configuration. 
+
+Our **Internal Collector** is configured to automatically drop spans related to these URLs:
+* `health`
+* `liveness`
+* `metrics`
+
+This ensures our tracing backend remains uncluttered and cost-effective, without requiring duplicate configuration across every microservice.

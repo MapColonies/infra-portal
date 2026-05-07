@@ -1,0 +1,36 @@
+---
+id: release-management
+title: Release Management
+sidebar_label: Release Management
+sidebar_class_name: release-management
+slug: /knowledge-base/release-management
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+:::caution 🚧 WORK IN PROGRESS
+This document outlines our **Target Architecture** for automated CI/CD and release workflows. 
+
+**Current Transition State:** 
+* The `site-values` repository has been created. 
+* Teams are currently building their `helmfile` configurations. 
+* **Note:** During this transition, teams are still permitted to use their existing umbrella charts in the `helm-charts` repository. Umbrellas will be phased out once the automation loops are fully operational.
+:::
+
+## The Target Vision & Core Concepts
+Our future workflow will be centered around two main types of repositories to establish a clear source of truth.
+
+### Service Repositories
+Each microservice will own its own repository containing both the application's source code and its corresponding Helm chart. 
+
+To keep deployments stable, we will adopt a strict branching strategy:
+* `next` **branch:** The pre-prod branch for new features (auto-deployed to dev).
+* `master` **branch:** The stable branch for QA-approved code.
+* **RC Tags:** Release candidate tags (e.g., `v2.0.1-rc.1`) for QA testing.
+* **Official Tags:** The official production releases (e.g., `v2.0.1`).
+
+### The Site Values Repository (Phase 1 - Active)
+The `site-values` repository acts as the single source of truth for the state of all environments. All deployments and releases will eventually be driven exclusively by changes to this repository via `helmfile.yaml`.
+
+### The Air-Gapped Bundler (Coming Soon)
+To support our on-premise customers, releases will be packaged into a single `.tar.gz` bundle by a GitHub Action. The bundler will gather charts, images, and third-party dependencies using a `.bundlerrc.json` manifest.

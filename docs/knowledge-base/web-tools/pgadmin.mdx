@@ -1,0 +1,31 @@
+---
+id: pgadmin
+title: PgAdmin
+sidebar_label: PgAdmin
+sidebar_class_name: web-tools
+slug: /knowledge-base/web-tools/pgadmin
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# 🐘 Centralized pgAdmin
+
+We use a centralized **pgAdmin** deployment to manage and interact with all of our PostgreSQL databases across different environments. 
+
+## 🌟 Why Centralized?
+Previously, every developer had to install pgAdmin locally and manually configure all the database hosts on their own machines.  
+This led to wasted setup time and frequent communication breakdowns when connection strings or hosts changed. 
+
+By moving to a central stack, we achieved:
+* **Zero Local Setup:** No need to install database clients or extensions on your local machine.
+* **Single Source of Truth:** Database hosts and connections are managed centrally. If a host moves or changes, it is updated in one place for everyone.
+* **Immediate Access:** New developers can instantly reach all relevant hosts without passing connection strings back and forth.
+
+## 🚀 Getting Started
+
+Just go to our pgAdmin route and enjoy!
+
+:::tip
+Because the hosts are centrally managed, you should see all the relevant databases pre-configured when you log in.  
+If you are missing access to a specific database, please reach out to the Infra team!
+:::

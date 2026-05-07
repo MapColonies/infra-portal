@@ -1,0 +1,25 @@
+---
+id: cert-exporter-guide
+title: Cert Exporter Guides
+sidebar_label: Cert Exporter
+sidebar_class_name: monitoring-guides
+slug: /guides/monitoring/exporters/cert
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide covers how to ensure your custom certificates are monitored. For deeper technical details on how the exporter parses certificates, refer to the [official Cert Exporter documentation](https://github.com/joe-elliott/cert-exporter).
+
+## Monitoring Certificates in Secrets
+
+If you have a Kubernetes Secret that contains TLS certificates (for example, a custom Postgres secret), you must explicitly annotate it so the Cert Exporter knows to monitor it.
+
+To do this, add the following annotation to your Secret's metadata:
+
+**Annotation Key:** `cert-manager.io/certificate-name`  
+**Annotation Value:** `<your-certificate-name>`
+
+Once this annotation is applied, the Cert Exporter will automatically extract the certificates from the secret and begin tracking their expiration dates.

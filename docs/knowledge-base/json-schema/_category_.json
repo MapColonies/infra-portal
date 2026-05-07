@@ -1,7 +1,3 @@
 {
-  "label": "JSON Schema",
-  "position": 3,
-  "link": {
-    "type": "generated-index"
-  }
+  "label": "JSON Schema"
 }

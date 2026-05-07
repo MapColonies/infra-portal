@@ -1,0 +1,52 @@
+---
+id: opala
+title: OPAla (OPA Libot Authentication)
+sidebar_label: Authentication
+sidebar_class_name: auth
+slug: /knowledge-base/auth/opala
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+OPAla is our central authentication and authorization system. 
+It is built on the [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) and stores all MapColonies authentication data.
+
+## How It Works
+
+Instead of checking a central database for every user request, OPAla uses a faster "bundling" method:
+
+1. The system watches the database for changes to connections or keys.
+2. When changes happen, it packages the new rules into an OPA bundle and uploads it to S3.
+3. OPA then downloads these bundles to make fast, local access decisions.
+
+## System Services
+
+The backend is powered by three main services:
+
+* **`OPA (Open Policy Agent)`:** The core decision engine that runs alongside your services, 
+downloading the latest bundles and enforcing access rules in real-time.
+* **`auth-manager`:** The main API used to manage and update authentication data in the database.
+* **`auth-cron`:** A background scheduler that checks for database updates and uploads the new bundles to S3.
+* **`token-kiosk`:** A dedicated backend service that handles the generation and retrieval of authentication tokens for B2C clients.
+
+## User Interfaces
+
+You do not need to interact with the backend services directly. You can manage your authentication needs through two simple tools:
+
+* **Auth UI:** A user-friendly dashboard where you can easily search for, create, and manage your authentication data (like clients and connections).
+
+![Auth UI](/img/opala/auth-ui.png)
+
+* **Kiosk UI:** A dedicated visual portal specifically for generating B2C tokens securely (ArcGIS-Pro and ArcMap).
+
+![Kiosk UI](/img/opala/kiosk-ui.png)
+
+## Security and Logging
+
+OPAla includes built-in features to keep your services secure and easy to monitor:
+
+* **Masked Tokens:** Token details are hidden in OPA responses to prevent sensitive data leaks.
+* **Filtered Logs:** To help you spot issues instantly, the system logs only show denied requests. This removes log noise and highlights actual security blocks.
