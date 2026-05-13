@@ -17,31 +17,21 @@ This guide provides recommendations and patterns for building robust, scalable, 
 
 ## Job Design Patterns
 
-### Keep Jobs Focused
+### Keep Stage Focused
 
-A **job** represents a single high-level business process (e.g., "create map"). It is broken down into **stages**, each representing a distinct phase of that process (e.g., "process tiles", "upload tiles"). Each stage then contains **tasks** — the individual units of work within that phase (e.g., one task per tile).
-
-Don't combine unrelated high-level processes into one job.
+Each **stage** should represent a single, distinct phase of work. Don't combine unrelated operations into one stage — if tasks need to both process and upload, split them into separate stages. This improves retry granularity and makes failures easier to diagnose. See [Concepts & Data Structures](/docs/knowledge-base/jobnik/concepts.mdx) for more on the job/stage/task hierarchy.
 
 <Tabs>
 <TabItem value="good" label="✅ Good">
 
 ```typescript
-// A single coherent job: "create map"
-// Each stage is a meaningful phase of the overall process
-const job = await producer.createJob({
-  name: 'create-map',
-  data: { mapId: 'map-123', region: 'north' }
-});
-
-// Phase 1: process all raw tiles (one task per tile)
+// Separate stages for distinct phases of work
 const processingStage = await producer.createStage(job.id, {
   type: 'process-tiles',
   data: { resolution: 'high' }
 });
 await producer.createTasks(processingStage.id, rawTiles.map(tile => ({ data: { tileId: tile.id } })));
 
-// Phase 2: upload the processed tiles (one task per tile)
 const uploadStage = await producer.createStage(job.id, {
   type: 'upload-tiles',
   data: { bucket: 'maps-bucket', targetPath: '/maps/north' }
@@ -53,18 +43,11 @@ await producer.createTasks(uploadStage.id, processedTiles.map(tile => ({ data: {
 <TabItem value="bad" label="❌ Bad">
 
 ```typescript
-// Don't bundle unrelated high-level processes into one job
-const job = await producer.createJob({
-  name: 'create-map-and-send-report',
-  data: { mapId: 'map-123', userId: 'user-456' }
+// Don't combine unrelated operations into one stage
+const mixedStage = await producer.createStage(job.id, {
+  type: 'process-and-upload-tiles', // Doing too much — hard to retry and monitor
+  data: { resolution: 'high', bucket: 'maps-bucket' }
 });
-
-await producer.createStage(job.id, { type: 'process-tiles', data: { resolution: 'high' } });
-await producer.createStage(job.id, { type: 'upload-tiles', data: { bucket: 'maps-bucket' } });
-
-// Unrelated process — should be a separate job triggered after this one completes
-await producer.createStage(job.id, { type: 'send-report-email', data: { template: 'map-ready' } });
-await producer.createStage(job.id, { type: 'update-billing', data: { planId: 'pro' } });
 ```
 
 </TabItem>
@@ -287,27 +270,17 @@ public async processTask(task: Task<ImageTask>, context: TaskHandlerContext): Pr
 
 ### Update Metadata Strategically
 
-Use metadata to track progress, but avoid excessive updates:
+Use stage metadata to store lightweight progress indicators or shared state, not large payloads. Update it only when the value provides meaningful signal:
 
 ```typescript
-export class BatchProcessor {
-  private updateThreshold = 10;
-  private processedCount = 0;
+public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, any, any>): Promise<void> {
+  await this.processSingleItem(task.data);
 
-  public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, any, any>): Promise<void> {
-    await this.processSingleItem(task.data);
-    
-    this.processedCount++;
-    
-    // Update metadata every 10 tasks instead of every task
-    if (this.processedCount % this.updateThreshold === 0) {
-      await context.updateStageUserMetadata({
-        ...context.stage.userMetadata,
-        processedCount: this.processedCount,
-        lastUpdateAt: new Date().toISOString()
-      });
-    }
-  }
+  await context.updateStageUserMetadata({
+    ...context.stage.userMetadata,
+    lastProcessedId: task.data.id,
+    lastUpdateAt: new Date().toISOString()
+  });
 }
 ```
 
@@ -432,33 +405,9 @@ public async processTask(task: Task<any>, context: TaskHandlerContext<any, any, 
 
 ## Testing Best Practices
 
-### Mock the SDK for Unit Tests
+### Test Your Task Handler
 
-Use dependency injection to mock the SDK in tests:
-
-```typescript
-// worker.service.ts
-export class WorkerService {
-  constructor(
-    private readonly sdk: IJobnikSDK<JobTypes, StageTypes>
-  ) {}
-}
-
-// worker.service.spec.ts
-import { describe, it, expect, vi } from 'vitest';
-
-describe('WorkerService', () => {
-  it('should process tasks correctly', () => {
-    const mockSDK = {
-      createWorker: vi.fn(),
-      getProducer: vi.fn()
-    } as any;
-
-    const service = new WorkerService(mockSDK);
-    // Test your logic
-  });
-});
-```
+Test the manager class directly — not the worker wiring. Pass a mocked `TaskHandlerContext` (logger, signal, stage data, `updateStageUserMetadata`) and assert on your business logic outcomes. Keep worker setup out of unit tests.
 
 ---
 
