@@ -30,13 +30,13 @@ const processingStage = await producer.createStage(job.id, {
   type: 'process-tiles',
   data: { resolution: 'high' }
 });
-await producer.createTasks(processingStage.id, rawTiles.map(tile => ({ data: { tileId: tile.id } })));
+await producer.createTasks(processingStage.id, processingStage.type, rawTiles.map(tile => ({ data: { tileId: tile.id } })));
 
 const uploadStage = await producer.createStage(job.id, {
   type: 'upload-tiles',
   data: { bucket: 'maps-bucket', targetPath: '/maps/north' }
 });
-await producer.createTasks(uploadStage.id, processedTiles.map(tile => ({ data: { tileId: tile.id } })));
+await producer.createTasks(uploadStage.id, uploadStage.type, processedTiles.map(tile => ({ data: { tileId: tile.id } })));
 ```
 
 </TabItem>
@@ -120,12 +120,12 @@ await producer.createStage(jobId, {
 });
 
 // Task data holds only per-item references
-await producer.createTask(stageId, {
+await producer.createTasks(stage.id, stage.type, [{
   data: {
     imageUrl: 's3://bucket/images/v3/original/file.jpg',
     targetPath: 's3://bucket/images/v3/resized/file.jpg'
   }
-});
+}]);
 ```
 
 </TabItem>
@@ -133,12 +133,12 @@ await producer.createTask(stageId, {
 
 ```typescript
 // Don't embed large data
-await producer.createTask(stageId, {
+await producer.createTasks(stage.id, stage.type, [{
   data: {
     imageBase64: 'iVBORw0KGgoAAAANSUhEUg...(100KB+)',
     metadata: { ... }
   }
-});
+}]);
 ```
 
 </TabItem>
@@ -318,7 +318,7 @@ const allTasksData = [...]; // 10,000 tasks
 
 for (let i = 0; i < allTasksData.length; i += BATCH_SIZE) {
   const batch = allTasksData.slice(i, i + BATCH_SIZE);
-  await producer.createTasks(stageId, batch);
+  await producer.createTasks(stageId, stageType, batch);
 }
 ```
 
@@ -328,7 +328,7 @@ for (let i = 0; i < allTasksData.length; i += BATCH_SIZE) {
 ```typescript
 // Don't create tasks one by one
 for (const taskData of allTasksData) {
-  await producer.createTask(stageId, taskData); // Slow!
+  await producer.createTasks(stageId, stageType, [taskData]); // Slow!
 }
 ```
 

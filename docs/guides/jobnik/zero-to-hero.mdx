@@ -227,9 +227,11 @@ export class ImageProcessingProducer {
       },
     });
 
-    // Create Tasks for each image
-    const taskPromises = imageUrls.map((url, index) =>
-      producer.createTask(resizeStage.id, {
+    // Create all tasks in a single batch call
+    await producer.createTasks(
+      resizeStage.id,
+      resizeStage.type,
+      imageUrls.map((url, index) => ({
         data: {
           sourceUrl: url,
           targetPath: `/processed/${uploadId}/resized/${index}.jpg`,
@@ -238,10 +240,8 @@ export class ImageProcessingProducer {
         userMetadata: {
           retryCount: 0,
         },
-      })
+      }))
     );
-
-    await Promise.all(taskPromises);
 
     return job.id;
   }
