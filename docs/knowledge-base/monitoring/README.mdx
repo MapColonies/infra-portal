@@ -28,7 +28,9 @@ Here is a high-level look at how telemetry data flows through our ecosystem:
 
 ## 🌟 General Guidelines & Killer Features
 
+<!-- NEEDS TO UNCOMMENT AFTER UPGRADING GRAFANA TO 13
 * 💾 **Save Dashboards via PR:** We run Grafana v12, which unlocks a massive feature: you can save your dashboard edits directly by opening a Pull Request right from the Grafana UI! *(Fully automated GitOps dashboard provisioning is coming [soon](https://mapcolonies.atlassian.net/browse/MAPCO-10563)).*
+-->
 * 🤖 **AI-Powered Dashboards (Grace Period):** We have wired an LLM into Grafana! You can command the AI to auto-generate and modify dashboards for you.  
 **⚠️ Important:** During this grace period, the AI is strictly sandboxed. It can *only* create and modify dashboards inside the `AI` folder. Keep our core dashboards safe!
 * 🔀 **Alert Routing:** Alertmanager pushes notifications to Slack, classified chats, and email based on global configs managed by the **infra team**. Need a new route? Just ask! *(Note: We are migrating to native Grafana Alerts soon!)*
