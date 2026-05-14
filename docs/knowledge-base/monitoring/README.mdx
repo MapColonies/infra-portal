@@ -1,7 +1,8 @@
 ---
-id: MonitoringSchema
-title: MonitoringSchema
-sidebar_position: 1
+id: README
+title: Monitoring Stack Overview
+sidebar_label: Monitoring
+sidebar_class_name: monitoring
 toc_min_heading_level: 2
 toc_max_heading_level: 5
 ---
@@ -9,9 +10,42 @@ toc_max_heading_level: 5
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Monitoring Stack Overview
+# 🔭 Monitoring Stack Overview
 
-The monitoring stack is a Kubernetes-based stack used to observe, monitor, and alert on the health and performance metrics.
-It leverages open-source tools, including **Prometheus**, **Grafana**, **Blackbox Exporter**, **Alertmanager**, and **OpenTelemetry**.
+Welcome to the monitoring stack! This robust, Kubernetes-native setup gives us absolute, X-ray visibility into our cluster's health, infrastructure performance, and application behavior. 📊
 
-![monitoring stack components diagram](./img/monitoring.png)
+We leverage a powerful suite of open-source tools to handle metrics, logs, and traces seamlessly—delivering a unified observability experience!
+
+## 🏗️ Architecture Overview
+
+Here is a high-level look at how telemetry data flows through our ecosystem:
+
+* 📈 **Metrics:** Your Pods and specialized Exporters expose metrics. **Prometheus** aggressively scrapes this data, feeds it to **Grafana** for beautiful visualization, and triggers crucial alerts via **Alertmanager**.
+* 🕸️ **Traces:** Applications blast traces to the **OpenTelemetry Collector** (`infra-otel`). It smartly routes and forwards them to **Tempo** (safely backed by S3) for deep querying in Grafana.
+* 🪵 **Logs:** Application logs are snatched by **Grafana Alloy** (either via pod labels or direct network push) and shipped to **Loki** (backed by S3) for lightning-fast searching.
+
+![monitoring stack components diagram](/img/monitoring/high-level-overview.png)
+
+## 🌟 General Guidelines & Killer Features
+
+<!-- NEEDS TO UNCOMMENT AFTER UPGRADING GRAFANA TO 13
+* 💾 **Save Dashboards via PR:** We run Grafana v12, which unlocks a massive feature: you can save your dashboard edits directly by opening a Pull Request right from the Grafana UI! *(Fully automated GitOps dashboard provisioning is coming [soon](https://mapcolonies.atlassian.net/browse/MAPCO-10563)).*
+-->
+* 🤖 **AI-Powered Dashboards (Grace Period):** We have wired an LLM into Grafana! You can command the AI to auto-generate and modify dashboards for you.  
+**⚠️ Important:** During this grace period, the AI is strictly sandboxed. It can *only* create and modify dashboards inside the `AI` folder. Keep our core dashboards safe!
+* 🔀 **Alert Routing:** Alertmanager pushes notifications to Slack, classified chats, and email based on global configs managed by the **infra team**. Need a new route? Just ask! *(Note: We are migrating to native Grafana Alerts soon!)*
+
+## 📚 Service Documentation
+
+Dive deeper into any piece of the stack using these guides:
+
+* 📊 [Grafana](./grafana.mdx)
+* 📈 [Prometheus](./prometheus.mdx)
+* ⏱️ [Tempo](./tempo.mdx)
+* 🔍 [Loki](./loki.mdx)
+* 📡 [OpenTelemetry Collector](./otel-collector.mdx)
+* 🪵 [Grafana Alloy](./alloy.mdx)
+* 🚨 [Alertmanager](./alertmanager.mdx)
+
+### 🔌 Exporters
+Want to know exactly how we gather metrics from databases or the Kubernetes API? Check out the **[Exporters Directory](./exporters/README.mdx)**! 🚀

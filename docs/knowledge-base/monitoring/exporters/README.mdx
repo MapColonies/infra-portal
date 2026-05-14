@@ -1,0 +1,26 @@
+---
+id: exporters-readme
+title: Exporters Overview
+sidebar_label: Exporters
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/exporters
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**Exporters** are specialized, lightweight adapters that bridge the gap between third-party systems and Prometheus! 🌉
+
+Since not every application natively speaks the Prometheus metrics format, exporters act as translators. They fetch data from external systems, translate it on the fly, and serve it up on a standard `/metrics` endpoint for Prometheus to scrape.
+
+## 🛠️ Our Exporter Stack
+
+We have curated a powerful stack of exporters to give you deep visibility into our infrastructure, databases, and managed services—all without you needing to write custom metric-gathering code! 🚀
+
+* 🌍 **[Blackbox Exporter](./blackbox-exporter.mdx):** Actively probes external and internal HTTP/HTTPS endpoints to monitor uptime, response times, and general availability.
+* 🐘 **[Postgres Exporter](./postgres-exporter.mdx):** Gathers deep performance, connection, and health metrics directly from our central PostgreSQL database.
+* 🛡️ **[Cert Exporter](./cert-exporter.mdx):** Constantly monitors TLS certificate expiration dates across the cluster to prevent unexpected outages.
+* ☸️ **[Kube State Metrics (KSM)](./kube-state-metrics.mdx):** Listens to the Kubernetes API to generate high-fidelity metrics about the state of our deployments, pods, allocations, and nodes.
+* ⚡ **[Redis Exporter](./redis-exporter.mdx):** Exposes memory, connection, and performance metrics for both central and application-specific Redis instances.

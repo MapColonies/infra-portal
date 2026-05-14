@@ -1,0 +1,78 @@
+---
+title: Bundler & Unbundler
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 📦 Bundler & Unbundler
+
+Moving complex artifacts across network boundaries? The Bundler and Unbundler pipelines completely automate the heavy lifting! 🚀
+
+![Bundler and Unbundler](/img/jenkins-pipelines//bundler-unbundler.png) 
+
+---
+
+## 🗜️ The Bundler Pipeline
+
+The [Bundler Pipeline](https://jenkins.mapcolonies.net/job/bundler/) gathers up all your requested Docker images, Helm charts, and Git repositories into a single, clean ZIP archive. 
+
+It requires exactly one parameter: an `artifacts.json` file telling it what to grab.
+
+**Example `artifacts.json`:**
+```json
+{
+  "docker": {
+    "acrarolibotnonprod.azurecr.io": {
+      "3d-gateway": "v2.4.2",
+      "store-trigger": "v1.5.2"
+    },
+    "docker.io": {
+      "bitnami/redis": "7.2.3",
+      "timonwong/uwsgi-exporter": "latest"
+    }
+  },
+  "helm": {
+    "acrarolibotnonprod.azurecr.io": {
+      "gateway": "2.4.2",
+      "store-trigger": "1.5.2"
+    },
+    "https://charts.bitnami.com/bitnami": {
+      "redis": "18.5.0"
+    }
+  },
+  "git": [
+    "MapColonies/helm-charts"
+  ]
+}
+```  
+
+### How to trigger the Bundler:
+
+1. Head over to the [Bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/).
+2. Click **Build with parameters**.
+   ![Bundler build with parameters](/img/jenkins-pipelines/bundler-build-with-params-1.png)
+3. Click **Choose File** and upload your local `artifacts.json`.
+   ![Bundler browse artifacts file](/img/jenkins-pipelines/bundler-browse-file-2.png)
+4. Smash that **Build** button!
+   ![Bundler build button](/img/jenkins-pipelines/bundler-build-3.png)
+5. Sit back and relax. When the pipeline finishes, it automatically fires off a Slack message to your team's notifications channel! 📩
+   ![Bundler slack message](/img/jenkins-pipelines/bundler-slack.png)
+6. Click the download link in Slack to grab your ZIP bundle. Keep this safe—you will need it for the Unbundler in the target network.
+
+---
+
+## 📤 The Unbundler Pipeline
+
+Once you have crossed into the target network, the Unbundler pipeline unpacks your archive and automatically pushes all the artifacts into the local registries!
+
+### How to trigger the Unbundler:
+
+1. Open the Jenkins instance located in the target network and locate the Unbundler pipeline.
+2. Click **Build with Parameters**.
+3. Click **Choose file** and upload the ZIP bundle you downloaded earlier.
+   ![Unbundler browse file](/img/jenkins-pipelines/unbundler-browse-file-1.png)
+4. Hit **Build**! 🚀
+5. Once complete, you will find all your Docker images, Helm charts, and Git repositories securely pushed into their respective local registries within the new network.

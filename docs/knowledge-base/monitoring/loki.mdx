@@ -1,0 +1,28 @@
+---
+id: loki
+title: Loki
+sidebar_label: Loki
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/Loki
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🔍 Loki
+
+You can hunt down Loki data by jumping into the **Explore** tab within [Grafana](https://grafana.mapcolonies.net).
+
+**Loki** is our massive, horizontally scalable, and highly available log aggregation system! 
+
+Unlike traditional logging beasts, Loki is incredibly lightweight and cost-effective. It doesn't waste time indexing the actual contents of your logs; it only indexes a core set of labels for each log stream. ⚡
+
+## 🏗️ Architecture & Storage
+
+* 📥 **Ingestion:** Loki receives massive streams of logs primarily from our **Grafana Alloy** deployment.
+* 💾 **Storage:** We use **S3** as our underlying object storage. This allows us to stash petabytes of log data securely and affordably without wrestling with local storage disks!
+* 🎯 **Usage Focus:** Currently, Loki is our dedicated search engine for troubleshooting via Grafana. We are *not* utilizing Loki Ruler for log-based alerting at this time.
+
+![loki architecture or explore view](/img/monitoring/loki/loki-overview.png)

@@ -1,0 +1,39 @@
+---
+id: release-management
+title: Release Management
+sidebar_label: Release Management
+sidebar_class_name: release-management
+slug: /knowledge-base/release-management
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+:::caution 🚧 WORK IN PROGRESS
+This document outlines our **Target Architecture** for fully automated CI/CD and release workflows. 
+
+**Current Transition State:** 
+* ✅ The `site-values` repository is live. 
+* 🏗️ Teams are actively migrating their `helmfile` configurations. 
+* ⏳ **Note:** You can still use your existing umbrella charts in the `helm-charts` repository for now. However, umbrellas will be officially phased out once the automation loops are fully operational!
+:::
+
+# 🚀 Release Management
+
+## 🎯 The Target Vision & Core Concepts
+
+Our future workflow is laser-focused on establishing a clear, unbreakable source of truth across two main types of repositories.
+
+### 1. 🏗️ Service Repositories
+Every single microservice will own its own dedicated repository. This repo will house both the application's source code and its corresponding Helm chart. 
+
+To keep deployments buttery smooth, we are enforcing a strict branching strategy:
+* 🧪 **`next` branch:** The wild-west pre-prod branch for new features. (Code here is auto-deployed straight to `dev`).
+* 🛡️ **`master` branch:** The rock-solid stable branch exclusively for QA-approved code.
+* 🏷️ **RC Tags:** Release candidate tags (e.g., `v2.0.1-rc.1`) stamped specifically for QA testing.
+* 🌟 **Official Tags:** The gold-standard official production releases (e.g., `v2.0.1`).
+
+### 2. 🗺️ The Site Values Repository (Phase 1 - Active)
+The `site-values` repository is the **single source of truth** for the state of all our environments. Eventually, every single deployment and release will be driven exclusively by changes to the `helmfile.yaml` living in this repository!
+
+### 3. 📦 The Air-Gapped Bundler (Coming Soon)
+To support our highly secure on-premise customers, all releases will eventually be automatically packaged into a single, massive `.tar.gz` bundle by a GitHub Action! The bundler will scoop up all required charts, images, and third-party dependencies strictly defined by a `.bundlerrc.json` manifest.

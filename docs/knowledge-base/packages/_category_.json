@@ -1,6 +1,5 @@
 {
-  "label": "Packages",
-  "position": 3,
+  "label": "NPM-Packages",
   "link": {
     "type": "generated-index"
   }

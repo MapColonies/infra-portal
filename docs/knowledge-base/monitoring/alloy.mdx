@@ -1,0 +1,37 @@
+---
+id: alloy
+title: Alloy
+sidebar_label: Alloy
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/Alloy
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🪵 Grafana Alloy
+
+**Grafana Alloy** is our heavy-duty telemetry collector for logs! 
+Think of it as a massive pipeline: it gathers application and system logs from across our Kubernetes clusters and securely funnels them straight into our Loki storage backend.
+
+*(Note for image update: Please add an image here showing Alloy's place in the log pipeline: Pods -> Alloy -> Loki).*
+![alloy architecture](/img/monitoring/alloy/alloy-architecture.png)
+
+## 🏗️ Architecture & Deployment
+
+To keep things ultra-simple and highly scalable, we run Alloy as a **Standalone Deployment** instead of a DaemonSet. 
+
+Alloy ingests logs in two distinct ways:
+1. 🎯 **Direct Ingestion (Primary):** It exposes a dedicated internal endpoint, allowing your applications to push logs directly to it over the network. **This is our standard, highly recommended approach.**
+2. 🧲 **Dynamic Scraping (Fallback):** It automatically discovers and reads logs from Kubernetes pods via a custom label. This method is strictly reserved as a fallback for stubborn 3rd-party services that can't push logs directly.
+
+## 🧹 Built-in Filtering (Noise Reduction!)
+
+Logs get messy fast. To save on expensive storage costs and keep your search queries lightning-fast, Alloy actively intercepts and drops useless logs before they ever hit Loki!
+
+We currently drop logs hitting these endpoints:
+* `health`
+* `liveness`
+* `metrics`

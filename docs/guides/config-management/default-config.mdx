@@ -1,33 +1,33 @@
 ---
 title: Default config
-sidebar_position: 2
 toc_min_heading_level: 2
 toc_max_heading_level: 2
-
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Default config
+# ⚙️ Default Config
 
-Step by step guide on how to create a [default config](../../knowledge-base/config-management/default-configs.md) for your schema to ease the deployment of your service.
+Welcome! This step-by-step guide will show you how to create a [default config](../../knowledge-base/config-management/default-configs.md) for your schema to make deploying your service an absolute breeze. 🚀
 
-### Assumptions
+### 🧠 Assumptions
 
-This guide assumes that you have an understanding of creating schemas and already created a schema for your service.
-Check out the [Zero to Hero](./zero-to-hero.mdx) guide if you haven't created a schema yet.
+This guide assumes you already understand how to create schemas and have one ready for your service. 
+*Haven't created a schema yet?* No problem! Stop here and check out the [Zero to Hero](./zero-to-hero.mdx) guide first.
 
-The examples in this guide will use the schema `my-schema` with version `v1` that was created in the `Zero to Hero` guide.
+*Note: The examples below use the `my-schema` (version `v1`) created in the Zero to Hero guide.*
 
+## 🛠️ Create Your Default Config
 
-## create your default config
-1. Create a file named `v1.configs.json` in the same folder as your schema file.
+**1. Create the File**  
+Create a new file named `v1.configs.json` in the exact same folder as your schema file.
 ```json title="schemas/my-domain/my-schema/v1.configs.json"
 []
 ```
 
-2. Choose a name for your default config:
+**2. Name Your Config**  
+Choose a clear, descriptive name for your default configuration.
 ```json title="schemas/my-domain/my-schema/v1.configs.json"
 [
   {
@@ -37,7 +37,8 @@ The examples in this guide will use the schema `my-schema` with version `v1` tha
 ]
 ```
 
-3. Add the default config value based on the schema:
+**3. Populate the Values**  
+Add the default values that align perfectly with your schema properties!
 ```json title="schemas/my-domain/my-schema/v1.configs.json"
 [
   {
@@ -45,21 +46,23 @@ The examples in this guide will use the schema `my-schema` with version `v1` tha
     "value": {
       "id": "default-id",
       "name": "default-name",
-      "age": 18
+      "age": 18,
       "isAlive": true
     }
   }
 ]
 ```
 
-## Run validations
-Run the validation script to make sure the default config is valid.
+## ✅ Run Validations
+
+Always validate your work to ensure the default config is perfectly formatted! Run the validation script:
 ```bash
 npm run validate
 ```
 
-## Add a reference to another default config
-If your default config has a [reference](../../knowledge-base/config-management/references.mdx) to another config you created, or a common config you can reference it in the value:
+## 🔗 Add a Reference to Another Config
+
+Need to dry up your code? If your default config relies on a [reference](../../knowledge-base/config-management/references.mdx) to another config or a shared common config, you can easily reference it directly in the `value` object:
 ```json title="schemas/my-domain/my-schema/v1.configs.json"
 [
   {
@@ -76,9 +79,10 @@ If your default config has a [reference](../../knowledge-base/config-management/
 ]
 ```
 
-## Next steps
-Now that you finished writing your default config, you can submit a PR to the schemas repo and ask for it to be reviewed.
+## 🚀 Next Steps
 
-If you have any questions or need help, feel free to ask for help.
+Boom! You are done writing your default config. 🎉 
 
-If you have any suggestions for this guide, please open a pull request.
+1. **Submit a PR** to the schemas repo and request a review from the team.
+2. **Need Help?** Don't hesitate to reach out if you get stuck.
+3. **Have Ideas?** If you have suggestions to improve this guide, please open a pull request!

@@ -1,0 +1,51 @@
+---
+id: opala
+title: OPAla (OPA Libot Authentication)
+sidebar_label: Authentication
+sidebar_class_name: auth
+slug: /knowledge-base/auth/opala
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🔐 OPAla Authentication
+
+**OPAla** is our blazing-fast, centralized authentication and authorization system! 
+Built on top of the powerful [Open Policy Agent (OPA)](https://www.openpolicyagent.org/), it acts as the vault for all MapColonies authentication data.
+
+## ⚙️ How It Works (The Bundling Magic)
+
+Instead of brutally hammering a central database for every single user request, OPAla uses a highly optimized "bundling" approach:
+
+1. 👀 The system quietly watches the database for any changes to connections or API keys.
+2. 📦 When a change happens, it instantly compiles the new rules into an OPA bundle and ships it to S3.
+3. ⚡ OPA sidecars running next to your services download these bundles, allowing them to make instant, local access decisions with zero network latency!
+
+## 🏗️ System Services
+
+Behind the scenes, OPAla relies on a few core services:
+
+* 🛡️ **`OPA (Open Policy Agent)`:** The high-speed decision engine. It runs alongside your services, continuously pulling the latest bundles and enforcing access rules in real-time.
+* 🎛️ **`auth-manager`:** The central API used to manage and tweak authentication data inside the database.
+* ⏱️ **`auth-cron`:** The relentless background scheduler that checks for database updates and uploads fresh bundles to S3.
+* 🎫 **`token-kiosk`:** A dedicated backend service specifically handling the secure generation and retrieval of authentication tokens for B2C clients.
+
+## 🖥️ User Interfaces
+
+Forget wrestling with APIs—managing access is easy via our UI portals!
+
+* **Auth UI:** A sleek, user-friendly dashboard for creating, searching, and managing your authentication data (like clients and connections).
+![Auth UI](/img/opala/auth-ui.png)
+
+* **Kiosk UI:** A secure, dedicated visual portal specifically for generating B2C tokens (like ArcGIS-Pro and ArcMap).
+![Kiosk UI](/img/opala/kiosk-ui.png)
+
+## 🕵️ Security and Logging
+
+OPAla includes built-in, out-of-the-box security features:
+
+* 🎭 **Masked Tokens:** To prevent catastrophic leaks, token details are strictly masked in all OPA responses!
+* 🔇 **Filtered Logs:** We hate log noise. To help you spot real security threats instantly, the system is configured to log *only* denied requests. If a request is blocked, you will see it immediately!

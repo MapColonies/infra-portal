@@ -1,0 +1,159 @@
+---
+id: jobnik
+title: Jobnik
+sidebar_label: Jobnik
+sidebar_class_name: jobnik
+slug: /knowledge-base/jobnik
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![automated factory](/img/jobnik/jobnik.jpg)
+
+# 🏭 Jobnik Job Management System
+
+Welcome to the architectural heart of **Jobnik**, our distributed job management ecosystem! 
+
+This document breaks down the primary components, their responsibilities, and how they seamlessly orchestrate complex, hierarchical workflows across our infrastructure. 
+
+*(Need code? Check the specific repositories linked in each section for deep implementation guides, configs, and API docs!)*
+
+## 🌐 System Overview
+
+Jobnik is built to handle massive, complex workflows effortlessly. 
+
+It cleanly separates **orchestration logic** (managing state, queuing, saving data) from **execution logic** (actually doing the heavy lifting). This means highly scalable and resilient distributed systems! 🚀
+
+The architecture stands on three core pillars:
+1. 🧠 **Jobnik Manager:** The central brain handling state and persistence.
+2. 🔌 **Jobnik SDK:** The robust library handling communication and type safety.
+3. 🏗️ **Worker Boilerplate:** The ultimate scaffolding for building new task-processing services.
+
+---
+
+## 1. 🧠 Jobnik Manager
+
+The Jobnik Manager is the ultimate orchestrator and the single source of truth for the entire system. It exposes a clean RESTful API allowing external services to spin up jobs, track progress, and manage task queues.
+
+**What it does:**
+* 🗂️ **Hierarchical Data Management:** Manages the complex relationships between **Jobs** (the big picture), **Stages** (logical groups), and **Tasks** (atomic units of work).
+* 🚦 **State Management:** Uses strict internal state machines to enforce valid transitions. No more adding tasks to completed stages or processing cancelled jobs!
+* 💾 **Persistence:** Safely stores all workflow data, history, and metadata in a rock-solid PostgreSQL database.
+* 🚥 **Queue Management:** Smartly dequeues tasks based on priority, guaranteeing the most important jobs jump the line.
+* 🏥 **Task Health Management:** Constantly monitors for 'forgotten' tasks, recovering from worker crashes and ensuring no task is ever left behind.
+* 🔭 **Observability:** Natively emits Prometheus metrics and OpenTelemetry distributed traces to monitor system health out-of-the-box!
+
+👉 **[Dive into the Job Manager Repository](https://github.com/MapColonies/jobnik-manager)**
+
+---
+
+## 2. 🔌 Jobnik SDK
+
+The Jobnik SDK is our custom TypeScript library that completely abstracts away the headache of talking to the Job Manager. It is the resilient communication layer for both **Producers** (services creating work) and **Consumers/Workers** (services doing work).
+
+**The Core Clients:**
+* 📤 **Producer Client:** Creates Jobs, Stages, and Tasks while seamlessly managing trace context propagation.
+* 📥 **Worker Client:** Manages the entire task lifecycle loop: polling for work, executing your business logic, and reporting back (Completed/Failed).
+
+**Why you will love it:**
+* 🛡️ **Type Safety:** Uses TypeScript Generics! You define custom schemas for your data, guaranteeing payloads are strictly typed and validated at compile time. 
+* 🛡️ **Built-in Resilience:** Ships with industry-standard stability:
+  * **Circuit Breakers:** Stops cascading failures if the Job Manager is overwhelmed.
+  * **Exponential Backoff:** Smart retry logic for network hiccups.
+  * **Graceful Shutdown:** Ensures active tasks finish or release cleanly when a pod spins down.
+* 📊 **Automated Observability:** Automatically injects tracing headers and exposes golden worker metrics (active tasks, duration, success rates) without you writing a single line of instrumentation code!
+
+👉 **[Explore the Jobnik SDK](/docs/knowledge-base/packages/jobnik-sdk/README.md)**
+
+---
+
+## 3. 🏗️ Worker Boilerplate
+
+Need to build a new task-processing service? Start here! The Worker Boilerplate is a production-ready template repository that slashes setup time.
+
+**What it gives you:**
+It perfectly integrates the Jobnik SDK with all our standard infrastructure requirements. You literally just drop in your specific business logic (like image processing or data ingestion) and go! 🚀
+
+**Out-of-the-box Features:**
+* 💉 **Dependency Injection:** Pre-wired with `tsyringe`.
+* ⚙️ **Config Management:** Fully integrated with our standard environment configuration libraries.
+* 🔌 **SDK Integration:** Includes a working example of the SDK's `Worker` client, showing you exactly how to register handlers and define types.
+* 🐳 **Deployment Assets:** Comes complete with standard Dockerfiles and Helm charts ready for immediate deployment.
+
+👉 **[Grab the Worker Boilerplate Repository](/docs/knowledge-base/jobnik/boilerplate/README.md)**
+
+---
+
+## 🔄 The Integration Flow
+
+How does it all fit together? Follow the flow from creation to completion!
+
+```mermaid
+sequenceDiagram
+autonumber
+
+    box rgba(120, 120, 120, 0.7) "User Implementation"
+        participant Producer as Producer Service<br/>(SDK Client)
+        participant Worker as Worker Service<br/>(Boilerplate + SDK)
+    end
+
+    box rgba(120, 120, 120, 0.7) "Jobnik Core"
+        participant Manager as Job Manager<br/>(REST API)
+        participant DB as PostgreSQL
+    end
+
+    participant Obs as Observability<br/>(Traces/Metrics)
+
+    Note over Producer, Worker: 1. Definition (Pre-runtime)
+
+    Note over Producer, DB: 2. Production Phase
+    Producer->>Manager: Create Job (Type-Safe Payload)
+    activate Manager
+    Manager->>DB: Persist Job Hierarchy
+    DB-->>Manager: Success
+    Manager-->>Producer: Return Job ID
+    deactivate Manager
+    Producer--)Obs: Emit Trace & Job Created Metric
+
+    Note over Worker, DB: 3. Consumption Phase
+    loop Polling Loop
+        Worker->>Manager: Dequeue Task (by Priority)
+        activate Manager
+        Manager->>DB: Lock & Retrieve Next Task
+        DB-->>Manager: Task Record
+        Manager-->>Worker: Return Task Data
+        deactivate Manager
+    end
+
+    Note over Worker: 4. Execution Phase
+    activate Worker
+    Worker->>Worker: Execute Business Logic
+
+    Note over Worker: Report Execution Result
+    alt Success
+        Worker->>Manager: Update Status: COMPLETED
+    else Failure
+        Worker->>Manager: Update Status: FAILED
+    end
+    deactivate Worker
+
+    activate Manager
+    Manager->>DB: Update State & Transition
+    deactivate Manager
+
+    Note over Producer, Obs: 5. Monitoring (Continuous)
+    Worker--)Obs: Emit Task Duration & Success Rate
+    Manager--)Obs: Emit Queue Depth Metrics
+```
+
+---
+
+## See Also
+
+- [Concepts & Data Structures](./concepts.mdx) — Jobs, Stages, Tasks: entity fields and the `data` vs `userMetadata` distinction
+- [State Transitions](./state-transitions.mdx) — what you control via API vs. what the system manages automatically
+- [Zero to Hero Guide](/docs/guides/jobnik/zero-to-hero.mdx) — step-by-step integration guide
+- [Best Practices](/docs/guides/jobnik/best-practices.mdx) — patterns and anti-patterns for production use

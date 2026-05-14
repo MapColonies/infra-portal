@@ -1,0 +1,50 @@
+---
+id: prometheus-guide
+title: Prometheus How-To Guides
+sidebar_label: Prometheus
+sidebar_class_name: monitoring-guides
+slug: /guides/monitoring/Prometheus
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 📈 Prometheus How-To Guides
+
+Let's get your metrics scraped and your alerts firing! 
+
+*(Looking for advanced PromQL magic? See the [official Prometheus documentation](https://prometheus.io/docs/introduction/overview/).)*
+
+## 🧲 Ensuring Your Service is Scraped
+
+We keep it simple: we use standard Kubernetes annotations to tell Prometheus exactly what to scrape. 
+
+To ensure your metrics make it to the dashboard, your **pods** (not your deployments!) must live in a monitored namespace and wear these three annotations:
+* `prometheus.io/scrape`
+* `prometheus.io/port`
+* `prometheus.io/path`
+
+## 🚨 Managing Prometheus Alerts
+
+We manage our Prometheus alerts centrally as code! These rules use PromQL expressions to constantly evaluate conditions over time.
+
+**Here is what a rule looks like:**
+```yaml title="Alerts Config"
+alerting_rules.yml:
+  groups:
+    - name: blackbox_alerts
+      rules:
+        - alert: CertExpiration
+          expr: ((probe_ssl_earliest_cert_expiry{job="blackbox"} - time()) / 3600 / 24 < 30)
+          for: 90s
+          labels:
+            severity: 'critical'
+          annotations:
+            description: "A certificate ({{ $labels.instance }}) is about to expire in 30 days!"
+            summary: "A certificate ({{ $labels.instance }}) is about to expire in 30 days!"
+```
+
+**Want to add or change an alert?** 
+No problem! Just open a Pull Request [right here](https://github.com/MapColonies/helm-charts/blob/master/infra/monitoring/values/alerts-values.yaml) with your shiny new rule, and ping the Infra team to review and deploy it! 🚀

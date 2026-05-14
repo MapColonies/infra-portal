@@ -1,0 +1,46 @@
+---
+id: sftpgo
+title: SFTP-Go
+sidebar_label: SFTP-Go
+sidebar_class_name: sftpgo
+slug: /knowledge-base/sftpgo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**SFTP-Go** is our unified central gateway for managing and securely transferring files across all storage environments. It keeps our data secure, robust, and cleanly abstracted.
+
+## ⚙️ How It Works
+
+Instead of forcing you to wrestle directly with raw storage infrastructure (like cloud buckets or raw disks), SFTP-Go acts as your intelligent middleman:
+
+* 🌍 **Unified Gateway:** Access different storage backends seamlessly using standard protocols (SFTP, FTP/S, WebDAV) or right through the web UI.
+* 🗺️ **Virtual Mapping:** It cleverly maps virtual folders to physical or cloud storage locations, hiding the complex infrastructure underneath.
+* 🔐 **Access Control:** It automatically handles permissions, user quotas, and access limits to keep our storage secure and organized.
+
+## 🖥️ User Interfaces
+
+Skip the raw APIs! You can manage files and configurations effortlessly through the SFTP-Go interface:
+
+* **WebAdmin UI:** A polished, user-friendly dashboard for viewing storage connections, managing virtual folders, setting up access rules, and tracking active file transfers.
+
+
+---
+
+## 📊 Monitoring
+
+### 📁 Sub-Folder Size Exporter
+We need granular visibility into our storage usage. To achieve this, we monitor the sub-folders located directly inside the SFTP-Go root directory.
+
+We deployed a custom `node_exporter` powered by a background script. 
+This script:
+1. Scans the PVC directory.
+2. Calculates the total size.
+3. Measures the size of each immediate subdirectory (e.g., `raster`, `3d`, `vector`).
+
+These metrics are then exported, giving us the power to build detailed dashboards and configure proactive alerts for storage capacity! 🚀
+
+![SFTP-Go Storage Dashboard](/img/sftpgo/sub-folder-size-panel.png)

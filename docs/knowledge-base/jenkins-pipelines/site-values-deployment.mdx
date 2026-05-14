@@ -1,0 +1,50 @@
+---
+id: site-values-deployment
+title: Site Values Auto Deployment
+sidebar_label: Site Values Auto Deployment
+sidebar_class_name: pipelines
+slug: /knowledge-base/pipelines/site-values-deployment
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🚀 Site Values Auto Deployment (Knowledge Base)
+
+The `site-values-deployment` pipeline is our flagship Continuous Deployment (CD) solution! 
+
+It automatically applies infrastructure and application changes across our Kubernetes environments. Unlike clunky older methods, this pipeline is entirely driven by **Helmfile**. It is highly efficient, surgical, and designed to deploy *exactly* what changed—and nothing more. 🎯
+
+*(Currently, this pipeline is locked in and exclusively monitors the **`master`** branch for automated rollouts.)*
+
+## 🧠 Smart Change Detection
+
+To minimize deployment time and eliminate risk, the pipeline uses a razor-sharp detection algorithm:
+* 🔍 **Git Diff Analysis:** The moment you push, it compares your commit against the previously deployed commit to identify the exact files modified.
+* 🗺️ **Release Mapping:** It rapidly parses your `helmfile.yaml.gotmpl` configurations to map those modified files directly to specific application or infrastructure releases.
+* ⚡ **Targeted Execution:** It doesn't blindly deploy your whole team's scope! It dynamically spins up parallel deployment stages *only* for the specific releases affected by your changes.
+
+## 🌍 Environment-Aware Processing
+
+The pipeline is incredibly smart about where things go. It filters your changes based on the target environment (like `dev`, `prod`, `stage`, `qa`, `integration`). 
+
+It natively understands two types of files:
+* 🌐 **Environment-Agnostic (Base):** Files like `base.yaml` or `base.yaml.gotmpl` apply universally. Touch one of these, and the pipeline will deploy the affected release across *any* targeted environment!
+* 🎯 **Environment-Specific:** Files explicitly named for an environment (e.g., `dev.yaml`) or tucked inside environment folders (e.g., `loki/dev/config.yaml`) will *only* trigger a deployment when the pipeline is looking at that specific environment. 
+
+## 📂 Monitored Scopes
+
+The pipeline keeps a close eye on changes made within these core team folders:
+* `infra` 
+* `3d` 
+* `raster` 
+* `vector` 
+* `app` 
+* `dem` 
+
+## 📩 Notifications
+
+Never wonder what the pipeline is doing! It hooks directly into Slack to keep you updated. 
+You will receive an initial heads-up detailing exactly which charts are queued for deployment, followed by a final success (or failure) ping complete with a direct link to the Jenkins build logs! 🕵️‍♂️

@@ -1,0 +1,26 @@
+---
+title: Shared Disk Among Namespaces
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 💾 Shared Disk Among Namespaces
+
+## 🤔 Why Do I Need This?
+
+Have you ever needed to crunch data against the massive, shared ingestion dataset, but your pod is stuck in a different development or staging namespace?  
+
+We maintain a central disk holding all this vital data, but a strict Kubernetes limitation prevents a single Persistent Volume Claim (PVC) from being shared across multiple namespaces! 🛑
+
+**The Solution:** This handy Jenkins pipeline! 🛠️
+
+It automatically creates a special "shortcut"—a brand new Persistent Volume (PV) and PVC—directly inside your namespace that points straight back to the central shared disk.  
+
+It is a lightning-fast, zero-copy way to get instant read-only access to all the data you need. 🚀
+
+![Shared Disk Pipeline](/img/jenkins-pipelines/shared-disk-pipeline.png)
+
+👉 **[Click here to trigger the Shared Disk Pipeline!](https://jenkins.mapcolonies.net/job/duplicate-shared-pvc/build?delay=0sec)**

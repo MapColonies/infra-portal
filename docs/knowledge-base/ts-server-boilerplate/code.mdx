@@ -1,0 +1,83 @@
+---
+id: code
+title: Code Architecture
+---
+
+# 🏗️ Boilerplate Code Architecture
+
+The boilerplate is built on [TypeScript](https://www.typescriptlang.org/) and powered by [Express.js](https://expressjs.com/). 
+
+Our goal is to give you a robust, production-ready structure packed with pre-configured features so you can skip the setup and start coding your business logic immediately! 
+
+Your actual business logic lives inside the resource directories under `src/`. *(The boilerplate includes `resourceName` and `anotherResource` as examples—just rename them and go!)*
+
+## 🚦 The Entry Point (`index.ts`)
+
+Everything starts at `src/index.ts`. This file initializes the application, imports necessary modules, and fires up the server. 
+Crucially, it also handles the capture and logging of critical, unhandled application errors.
+
+### 🩺 Healthchecks
+Your app's vitals are managed in `src/healthcheck.ts` (powered by [`@godaddy/terminus`](https://github.com/godaddy/terminus)). By default, it returns a simple `200 OK` if the app is breathing. **You should absolutely customize this logic** to verify your specific database connections or essential services!
+
+## 🛠️ Server Builder (`serverBuilder.ts`)
+
+The `src/serverBuilder.ts` file is the heart of Express. It configures the server, wires up middleware, and attaches your routes.
+
+### 📖 OpenAPI Viewer
+We include an interactive OpenAPI viewer out-of-the-box! By default, you can view your API docs in the browser at `/docs/api`. 
+*(Check out the [openapi-express-viewer docs](../packages/openapi-express-viewer/README.md) for more).*
+
+### 🔀 Routers
+Routers handle your HTTP requests. When you build a new resource, create its router, export it, and wire it up inside `serverBuilder.ts`.
+
+### 📊 Metrics Middleware
+Automatic observability! This middleware exposes NodeJS, Express, and custom metrics straight to [Prometheus](https://prometheus.io/) via the `/metrics` endpoint. *(See the [Prometheus package docs](../packages/prometheus/README.md)).*
+
+### 📝 HTTP Logger
+Every request and response is automatically logged using our custom HTTP logger middleware. *(See the [express-access-log-middleware docs](../packages/express-access-log-middleware/README.md)).*
+
+### 🛡️ OpenAPI Validator
+We strictly validate all incoming requests against your OpenAPI schema using `express-openapi-validator`. Bad requests are rejected before they ever hit your controllers!
+
+### 💥 Error Handler
+Caught an error? The centralized error handler intercepts it and formats a clean `JSON` response complete with the correct status code and message. *(See the [error-express-handler docs](../packages/error-express-handler/README.md)).*
+
+---
+
+## 💉 Container Config (Dependency Injection)
+
+We use `tsyringe` for elegant Dependency Injection. The container configuration manages your app's dependencies and injects them where needed. 
+
+To easily share and locate registered objects, utilize the `SERVICES` interface located in `src/common/constants.ts`. *(Need a deep dive? Check the [tsyringe docs](https://github.com/microsoft/tsyringe)).*
+
+## 🎛️ Configuration Management
+
+The boilerplate is pre-wired with the MapColonies configuration package! It fetches your app's config from a central server or local environment variables.
+
+Your app's config is defined in `src/common/config.ts` and uses a schema defined in the `schemas` package. **Don't forget to extend the boilerplate schema with your own service schema!**
+
+## 🔭 Telemetry
+
+We give you three powerful ways to observe your app:
+
+1. **Logger:** Inject the `js-logger` directly into your classes using the `@inject` decorator!
+2. **Metrics:** Powered by `prom-client`, natively exposing data for Prometheus.
+3. **Tracing:** Fully instrumented with OpenTelemetry! 
+
+:::warning ⚠️ Tracing Initialization
+The `instrumentation.mts` file **must** load before the application boots! Our NPM scripts and Dockerfile use the `--import` flag to guarantee this. If you change how the app launches, ensure this file still loads first!
+:::
+
+## 📐 OpenAPI First (Design First)
+
+We are a **Design-First** shop! You must design your API in the `openapi` directory *before* writing code. This schema automatically generates your TypeScript types and powers the validators!
+
+*Pro Tip:* Use the `openapi-helpers` package to strongly type the request handlers inside your controllers!
+
+## 📁 Resource Structure
+
+Every resource you build should live in its own directory under `src/` and follow this strict separation of concerns:
+
+* 🧠 **Model:** Your core business logic, database calls, and data types.
+* 🚦 **Controller:** HTTP request/response handlers. Keep business logic out of here!
+* 🛣️ **Routes:** Maps the controller handlers to specific endpoints defined in your OpenAPI schema.

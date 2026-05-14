@@ -1,0 +1,38 @@
+---
+id: alertmanager-guide
+title: Alertmanager Guides
+sidebar_label: Alertmanager
+sidebar_class_name: monitoring-guides
+slug: /guides/monitoring/Alertmanager
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🚨 Alertmanager Guides
+
+Welcome! This guide covers exactly how you, as a developer, will interact with Alertmanager to keep tabs on your services. 
+
+*(Want the deep technical dive? Check out the [official Alertmanager documentation](https://prometheus.io/docs/alerting/latest/alertmanager/).)*
+
+## 👀 Viewing and Managing Active Alerts
+
+While you cannot edit global routing rules, you have full power to view and manage active alerts directly through the UI!
+
+1. Jump into [Alertmanager](https://alertmanager.mapcolonies.net).
+2. Check the main dashboard to see all currently firing alerts neatly grouped by their labels.
+3. 🤫 **Silencing:** Is an alert already a known issue your team is fixing? Click **Silence** to temporarily mute notifications for that alert group. Your teammates will thank you for reducing the alert fatigue!
+
+![Alertmanager active alert](/img/monitoring/alertmanager/alertmanager-alert.png)
+
+## 🔀 Requesting Routing Changes
+
+:::note 🏗️ Infrastructure Managed
+Alert routing (deciding which alerts blast to which Slack channels or emails) is handled globally by the **infra team**.
+:::
+
+Currently, developers have **read-only access** to routing configurations. You don't have to worry about configuring routing for your apps!
+
+**Need a change?** If your team spun up a new Slack channel, or you need specific service alerts sent to a new destination, just ping the **infra team** and they will adjust the global configuration for you. 🤝

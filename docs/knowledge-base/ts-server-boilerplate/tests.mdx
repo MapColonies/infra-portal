@@ -1,0 +1,54 @@
+---
+id: tests
+title: Testing Strategy
+---
+
+# 🧪 Testing Strategy
+
+The boilerplate comes fully armed with a robust testing setup powered by [Jest](https://jestjs.io/)! 
+
+Tests live snugly inside the `tests` directory and are split into two vital categories:
+* 🔍 **Unit Tests:** For testing isolated functions and logic.
+* 🔗 **Integration Tests:** For testing API routes and database interactions.
+
+*(Want to become a testing master? Read Yoni Goldberg's incredible [JavaScript Testing Best Practices](https://github.com/goldbergyoni/javascript-testing-best-practices) guide!)*
+
+## 🏃 Running the Suite
+
+Want to run everything? Just smash this command:
+```bash
+npm run test
+```
+
+## 🚀 Killer Features
+
+### ⚡ Blazing Fast Compilation (SWC)
+Nobody likes waiting for tests. While we still type-check your code using the strict TypeScript compiler, the actual test execution is compiled using the hyper-fast [SWC](https://swc.rs/) Rust compiler! 
+*(Need to tweak compiler settings? Hit the `.swcrc` file).*
+
+### ⚙️ Dedicated Configurations
+Unit and Integration tests have different needs, so they get their own Jest config files!
+* `tests/configuration/unit/jest.config.js`
+* `tests/configuration/integration/jest.config.js`
+
+### 🛡️ OpenAPI Contract Testing (`jest-openapi`)
+Never break an API contract again! We include `jest-openapi` so you can assert that your actual API responses perfectly match your designed OpenAPI schema.
+
+Just drop this magic matcher into your integration test:
+```typescript
+expect(response).toSatisfyApiSpec();
+```
+:::warning ⚠️ Status Code Trap
+Always assert your HTTP status code *before* using the schema matcher! If you don't assert the status code, the matcher might falsely pass by comparing a 500 Error response against your schema's defined 500 response!
+:::
+
+### 🤝 OpenAPI Helpers
+To make integration testing completely painless, we built the `openapi-helpers` package. It generates a perfectly typed "request sender" straight from your OpenAPI schema, allowing you to fire beautifully structured HTTP requests at your test server!
+*(Read the [OpenAPI Helpers Docs](../packages/openapi-helpers/README.md) for more).*
+
+### 🧹 Strict Test Linting
+Your tests need to be as clean as your production code! We lint all test files using the powerful `eslint-plugin-jest` ruleset to catch bad testing patterns early.
+
+### 📊 Coverage & Reporting
+We don't guess; we measure! The test suite is configured with strict coverage thresholds that will fail your PR if coverage drops. 
+After running tests, you get a clean terminal output *and* a beautiful, navigable HTML report saved directly to the `reports` directory! 📈

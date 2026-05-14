@@ -1,0 +1,66 @@
+---
+id: repo
+title: Repo Configuration and Validation
+---
+
+# ⚙️ Repo Configuration & Validation
+
+To keep our codebase pristine and our developers sane, the boilerplate is loaded with automated configuration files and validation scripts. This guide breaks down what they do and where to find them!
+
+## 🤖 Dependabot
+Dependabot tirelessly scans our repository for outdated packages and automatically opens PRs to bump them! 
+* 📍 **Location:** `.github/dependabot.yml`
+* 📖 **Docs:** [Dependabot Configuration](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference)
+
+## ⚡ GitHub Workflows (CI/CD)
+Our automated CI/CD pipelines live in `.github/workflows`. Out-of-the-box, you get:
+* 🏗️ `build-and-push.yaml`: Builds and pushes the Docker image when a new version is tagged.
+* ✅ `pull_request.yaml`: Runs tests and linters the moment a PR is opened.
+* 🚀 `release-please.yaml`: Automates semantic versioning and changelog generation using [release-please](https://github.com/googleapis/release-please).
+
+## 🐶 Husky (Git Hooks)
+[Husky](https://typicode.github.io/husky/) intercepts your Git commands to enforce quality *before* code ever hits the server! 
+* **`pre-commit`:** Triggers `pretty-quick` to instantly format your staged files.
+* **`commit-msg`:** Triggers `commitlint` to ensure your commit message matches our strict MapColonies semantic format.
+
+## 💻 VSCode Settings
+
+We commit our `.vscode` folder to ensure every developer has the exact same editor experience:
+* ⚙️ **`settings.json`:** Enforces LF (`\n`) line endings, points to the local TypeScript SDK, and forces Prettier as the default formatter.
+* 🐞 **`launch.json`:** Pre-configured debugger setups for instant troubleshooting.
+* 🧩 **`extensions.json`:** A curated list of required extensions (like ESLint, Prettier, Docker, and OpenAPI support) that VSCode will prompt you to install.
+
+## 📝 EditorConfig
+The `.editorconfig` file enforces universal formatting rules (like indentation and charset) across *any* IDE, not just VSCode!
+
+## 🙈 Git Ignore & Attributes
+* **`.gitignore`:** Keeps node_modules, build artifacts, and secrets out of version control.
+* **`.gitattributes`:** Forces Git to strictly handle text files with LF line endings, preventing cross-platform checkout chaos.
+
+## 📦 NPM & Node Management
+* **`.npmrc`:** Enforces strict package dependency rules and engine versions.
+* **`.nvmrc`:** Locks down the exact Node.js version required for the project. Just run `nvm use` in your terminal to instantly switch to the correct version!
+
+## ✨ Prettier (Formatting)
+[Prettier](https://prettier.io/) handles all our code formatting, ensuring the entire codebase looks like it was written by one person.
+* 📍 **Config:** `.prettierrc` (Inherits from our shared MapColonies package).
+* 🏃 **Run:** `npm run format:fix`
+
+## 🧹 ESLint (Linting)
+[ESLint](https://eslint.org/) catches bugs and enforces structural best practices in TypeScript.
+* 📍 **Config:** `eslint.config.mjs` (Inherits from our shared MapColonies package).
+* 🏃 **Run:** `npm run lint` or `npm run lint:fix` to auto-resolve issues.
+
+## 📜 Redocly (OpenAPI Linting)
+Your API design must be flawless! We use `@redocly/cli` to strictly lint the OpenAPI specification.
+* 📍 **Config:** `.redocly.yaml`
+* 🏃 **Run:** `npm run lint:openapi`
+
+## 💬 Commitlint
+Forces your commit messages to follow the Conventional Commits specification, allowing `release-please` to auto-generate changelogs!
+* 📍 **Config:** `commitlint.config.js`
+
+## 🏗️ TSConfig
+Controls the TypeScript compiler behavior. 
+* **`tsconfig.json`:** The base config used heavily by your IDE, linter, and testing suite.
+* **`tsconfig.build.json`:** The stricter config used exclusively for compiling production builds.

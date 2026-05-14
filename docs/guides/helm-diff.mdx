@@ -1,0 +1,52 @@
+---
+title: Using Helm Diff
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**Helm Diff** is a lifesaver plugin that previews exactly what will change in your Kubernetes cluster *before* you actually deploy it! 🛡️
+
+By clearly highlighting added, modified, and deleted resources, it allows you to safely inspect intended modifications and avoid terrifying deployment surprises. 
+
+## 📦 Installation
+
+### 🌐 For Workstations with Internet Access
+Run this quick one-liner:
+```bash
+helm plugin install https://github.com/databus23/helm-diff
+```
+
+### 🔒 For Air-Gapped Windows Workstations (Outnet)
+Working securely offline? No problem. Install it manually by copying a few files into your `HELM_PLUGINS` directory:
+
+1. Clone the `helm-diff` GitLab repository to your local machine.
+2. Open the cloned folder and navigate to the `tar-gz` directory.
+3. Extract the `helm-diff-windows-amd64.tgz` archive.
+4. Find your Helm plugins directory by running `helm env` (look for the `HELM_PLUGINS` path in the output).
+5. If the `HELM_PLUGINS` directory doesn't exist, create it!
+6. Inside `HELM_PLUGINS`, create a new folder called `helm-diff`.
+7. Finally, copy the `bin` directory and `plugin.yaml` file from your extracted archive directly into your new `HELM_PLUGINS/helm-diff` folder.
+
+Boom! Helm Diff is ready to go on your Windows machine. 🎉
+
+## 🚀 How to Use It
+
+Ready to upgrade a chart? Let's assume your chart is named `foo` and your values file is `dev-values.yaml`. 
+
+Navigate to your chart directory and run:  
+```bash
+helm diff upgrade foo --values dev-values.yaml .
+```
+
+Need to merge multiple values files? Just chain them:  
+```bash
+helm diff upgrade foo --values dev-values.yaml --values dev1-values.yaml .
+```
+
+If there are any differences between your cluster's current state and your new configuration, the plugin will spit out a clear, color-coded diff showing exactly which Kubernetes objects will be created, modified, or deleted!
+
+**Example Output:**
+![Helm diff](/img/tools/helm-diff/example-output.png)

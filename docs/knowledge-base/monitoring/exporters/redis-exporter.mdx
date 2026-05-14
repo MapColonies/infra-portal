@@ -1,0 +1,29 @@
+---
+id: redis-exporter
+title: Redis Exporter
+sidebar_label: Redis Exporter
+sidebar_class_name: monitoring
+slug: /knowledge-base/monitoring/exporters/redis-exporter
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The **Redis Exporter** gives you instant visibility into the performance, memory footprint, and overall health of Redis databases running across our environment. 📊
+
+:::tip Recommended Tool: Redis App Plugin
+While the Redis Exporter does a great job collecting raw metrics, **we highly recommend using the `redis-app` Grafana plugin** for all your day-to-day monitoring and visualization! 
+
+The plugin comes loaded with comprehensive, ready-to-use dashboards and a custom UI that lets you query your databases directly. 
+
+You should only fall back on the raw metrics provided by this exporter if the `redis-app` plugin is missing a highly specific, edge-case metric you absolutely need.
+:::
+
+## 🏢 Central vs. Developer-Deployed Instances
+
+We support two primary workflows for using and monitoring Redis in our stack:
+
+1. **Managed Central Redis:** The infrastructure team maintains a rock-solid, central Redis instance. The infrastructure-level `redis-exporter` is dedicated exclusively to monitoring this managed instance.
+2. **Developer-Deployed Redis:** If your team needs custom Redis instances running alongside your applications, you are covered! The exporter is already built directly into our standard deployment charts, working out of the box. 🚀

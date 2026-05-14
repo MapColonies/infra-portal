@@ -1,20 +1,26 @@
 ---
 title: Default configs
-sidebar_position: 3
 toc_min_heading_level: 2
 toc_max_heading_level: 2
 ---
-## What are default configs?
-default configs are configs we define when creating our schema that will be deployed to the config-server when the server is started for the first time. This is useful as it makes it easier to manage configurations in a more organized way and make the deployment a breeze.
 
-Default configs support [references](./references.mdx) to other default configs, so you can reuse configurations in multiple places.
+# ⚙️ Default Configs
 
-## How do I define a default config?
-To define a default config, you need to create a file in the same folder as the schema, with the same version as the schema. For example if the schema is in `schemas/my-schema/v1.schema.json`, the default config should be in `config/my-schema/v1.configs.json`.
+## 🤔 What are default configs?
+Default configs are base configurations we define right alongside our schema. When the config-server spins up for the first time, these defaults are automatically deployed! 
 
-Each file supports multiple configs, as long as their name is unique across all the configs in the schemas repo.
+This makes managing configurations incredibly organized and turns service deployments into an absolute breeze. 🌬️
 
-The file is enforced with the following schema, with the value enforced by the schema of the config:
+*Pro Tip:* Default configs support [references](./references.mdx) to other default configs, allowing you to easily reuse configurations across multiple places!
+
+## 🛠️ How do I define a default config?
+It's simple! You create a file right next to your schema, perfectly matching its version. 
+
+For example, if your schema lives at `schemas/my-schema/v1.schema.json`, your default config belongs in `config/my-schema/v1.configs.json`.
+
+You can cram as many configs as you want into a single file, as long as **every config name is completely unique** across the entire schemas repository.
+
+The file strictly follows this JSON schema (and validates your `value` against your actual config schema!):
 ```json
 {
   "type": "array",
