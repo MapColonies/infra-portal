@@ -137,3 +137,12 @@ autonumber
     Manager--)Obs: Emit Queue Depth Metrics
 
 ```
+
+---
+
+## See Also
+
+- [Concepts & Data Structures](./concepts.mdx) — Jobs, Stages, Tasks: entity fields and the `data` vs `userMetadata` distinction
+- [State Transitions](./state-transitions.mdx) — what you control via API vs. what the system manages automatically
+- [Zero to Hero Guide](/docs/guides/jobnik/zero-to-hero.mdx) — step-by-step integration guide
+- [Best Practices](/docs/guides/jobnik/best-practices.mdx) — patterns and anti-patterns for production use
