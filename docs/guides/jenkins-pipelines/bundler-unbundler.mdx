@@ -53,13 +53,13 @@ It requires exactly one parameter: an `artifacts.json` file telling it what to g
 
 1. Head over to the [Bundler pipeline](https://jenkins.mapcolonies.net/job/bundler/).
 2. Click **Build with parameters**.
-   ![Bundler build with parameters](/img/jenkins-pipelines//bundler-build-with-params-1.png)
+   ![Bundler build with parameters](/img/jenkins-pipelines/bundler-build-with-params-1.png)
 3. Click **Choose File** and upload your local `artifacts.json`.
-   ![Bundler browse artifacts file](/img/jenkins-pipelines//bundler-browse-file-2.png)
+   ![Bundler browse artifacts file](/img/jenkins-pipelines/bundler-browse-file-2.png)
 4. Smash that **Build** button!
-   ![Bundler build button](/img/jenkins-pipelines//bundler-build-3.png)
+   ![Bundler build button](/img/jenkins-pipelines/bundler-build-3.png)
 5. Sit back and relax. When the pipeline finishes, it automatically fires off a Slack message to your team's notifications channel! 📩
-   ![Bundler slack message](/img/jenkins-pipelines//bundler-slack.png)
+   ![Bundler slack message](/img/jenkins-pipelines/bundler-slack.png)
 6. Click the download link in Slack to grab your ZIP bundle. Keep this safe—you will need it for the Unbundler in the target network.
 
 ---
@@ -73,6 +73,6 @@ Once you have crossed into the target network, the Unbundler pipeline unpacks yo
 1. Open the Jenkins instance located in the target network and locate the Unbundler pipeline.
 2. Click **Build with Parameters**.
 3. Click **Choose file** and upload the ZIP bundle you downloaded earlier.
-   ![Unbundler browse file](/img/jenkins-pipelines//unbundler-browse-file-1.png)
+   ![Unbundler browse file](/img/jenkins-pipelines/unbundler-browse-file-1.png)
 4. Hit **Build**! 🚀
 5. Once complete, you will find all your Docker images, Helm charts, and Git repositories securely pushed into their respective local registries within the new network.
