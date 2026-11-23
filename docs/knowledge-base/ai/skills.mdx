@@ -1,0 +1,42 @@
+---
+id: skills
+title: Skills
+sidebar_label: Skills
+sidebar_class_name: ai
+sidebar_position: 2
+slug: /knowledge-base/ai/skills
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# 🧰 Skills
+
+Skills are packaged instructions that teach Claude how to do a specific task. You run them with `/<skill-name>`.
+
+:::tip
+To install the skills, follow the [MapColonies Org Setup](../../guides/ai/org-setup.mdx#mapcolonies-skills) and [Skills Workflow](../../guides/ai/skills-workflow.mdx) guides.
+:::
+
+## 🗺️ MapColonies skills {#mapcolonies-skills}
+
+| Skill             | What it does                                                                                                                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `publish-tickets` | Publishes `/to-tickets` output to the connected tracker (Jira via the Atlassian MCP). Uses the org's issue types and templates: Current/Expected Behaviour for bugs; Feature Explanation/Expected Result/Services Involved for tasks. |
+| `version-bump`    | Bumps a service version in `MapColonies/helm-charts` and opens a PR for each environment branch (master, qa, integration).                                                                                                            |
+| `pr-checklist`    | Checks a PR against MapColonies review conventions before a human reviews it. Covers lint, prettier, tsc, OpenAPI lint, helm lint, tests, version-bump consistency, and common reviewer requests.                                     |
+
+## 🌍 Community skills: mattpocock/skills {#community-skills}
+
+This is our main engineering workflow skill set. See the [Skills Workflow](../../guides/ai/skills-workflow.mdx) guide for the recommended flow.
+
+Skills worth knowing:
+
+| Skill                 | Why                                                                                                                                                                                          |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/wayfinder`          | Breaks long, complex tasks into small tasks that can each be done on their own. Useful for team leads and architecture planning. [About wayfinder](https://www.aihero.dev/skills-wayfinder). |
+| `/grilling`           | Questions you hard about a plan. Since v1.2 it asks questions in rounds instead of one at a time.                                                                                            |
+| `/to-questionnaire`   | For grilling questions you can't answer yourself: turns the session into a doc you can go through on a call with a colleague.                                                                |
+| `/wait-what`          | Rewrites unclear model output in your domain language, in simplified English (ASD-STE100). Highly recommended.                                                                               |
+| `/prototype`          | Builds throwaway logic prototypes as HTML that's easy to share.                                                                                                                              |
+| `/writing-for-agents` | For anything agents read (AGENTS.md, CLAUDE.md, system prompts, skills).                                                                                                                     |
+| `/wizard`             | Has the agent build a terminal (TUI) wizard that walks you through infrastructure provisioning.                                                                                              |

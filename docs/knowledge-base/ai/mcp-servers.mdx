@@ -1,0 +1,52 @@
+---
+id: mcp-servers
+title: MCP Servers
+sidebar_label: MCP Servers
+sidebar_class_name: ai
+sidebar_position: 1
+slug: /knowledge-base/ai/mcp-servers
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# 🔌 MCP Servers
+
+MCP (Model Context Protocol) servers give Claude access to our tools and data, so you don't have to copy and paste it into the conversation.
+
+:::tip
+To connect the MapColonies MCP servers, follow the [MapColonies Org Setup](../../guides/ai/org-setup.mdx) guide.
+:::
+
+## 📋 Atlassian MCP: Jira and Confluence (read) {#atlassian-read}
+
+Lets Claude read MapColonies Jira (MAPCO project) and Confluence.
+
+Example prompts:
+
+- `hi Claude, /grill-me about issue MAPCO-1234`
+- `MAPCO-1234 has a lot of sub-tasks under it, how should I approach it?`
+- `Can you explain the raster-ingestion architecture? You may examine Confluence documents.`
+
+The server is read-mostly: the only write it allows is issue status transitions.
+Query conventions are in `mcp/atlassian/USAGE.md` in the [LLM-configuration](https://github.com/MapColonies/LLM-configuration) repo. For example, display names are surname-first and unbounded JQL is rejected.
+
+## ✍️ Atlassian MCP with write access (pilot) {#atlassian-write}
+
+A write-capable server (`atlassian-write`) can create, update, comment on and link Jira issues, and create and update Confluence pages.
+
+:::warning
+Writes are attributed to a **shared service account**, so confirm before writing.
+:::
+
+**Recommended flow:** use `/to-tickets` to break the work into tasks _locally_ (in a doc or in the conversation), review them, and then publish them with `/publish-tickets`.
+Please share feedback about what works and what should improve in [#ai-news](https://mapcolonies.slack.com/archives/C0B941EJ4KZ).
+
+## 🐘 Postgres (read-only)
+
+Ask questions about the data in plain language instead of writing complex queries in pgAdmin.
+Guide: [Giving Claude Read-Only Access to a Postgres Database](https://mapcolonies.atlassian.net/wiki/spaces/MAPConflicResolution/pages/3401416734/Giving+Claude+Read-Only+Access+to+a+Postgres+Database).
+
+## 📊 Grafana
+
+Build and modify Grafana dashboards using natural language.
+See [Adding Grafana MCP to an LLM](../../guides/monitoring/grafana.mdx#adding-grafana-mcp-to-an-llm).
