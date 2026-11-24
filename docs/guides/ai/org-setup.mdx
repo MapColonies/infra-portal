@@ -1,0 +1,78 @@
+---
+id: org-setup
+title: MapColonies Org Setup
+sidebar_label: Org Setup
+sidebar_class_name: ai-guides
+sidebar_position: 2
+slug: /guides/ai/org-setup
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# ⚙️ MapColonies Org Setup
+
+All org-level configuration (settings, skills, MCP wiring) is in the [MapColonies/LLM-configuration](https://github.com/MapColonies/LLM-configuration) repo.
+
+:::important
+**You must be on the VPN.**
+:::
+
+## 📥 Get the repo
+
+Clone it once:
+
+```bash
+git clone git@github.com:MapColonies/LLM-configuration.git
+cd LLM-configuration
+```
+
+To get updates, run `git pull` and re-run the relevant script. All scripts are idempotent.
+
+## 📈 Claude Code Metrics (mandatory for everyone)
+
+Measures how much Claude Code helps and speeds up our work. Requires `jq` and the VPN.
+
+```bash
+./claude/apply-settings.sh
+```
+
+- Restart any open Claude sessions afterwards so the settings take effect.
+- Keep the VPN on while working.
+
+:::info 🔐 Privacy
+Only technical metrics are collected (timings, token volume, errors). **Prompts, code and file contents are never collected.** The script keeps your personal settings and backs them up.
+:::
+
+## 📋 Atlassian MCP (read)
+
+```bash
+./mcp/atlassian/connect.sh
+```
+
+Restart Claude Code afterwards. See [Atlassian MCP: Jira and Confluence (read)](../../knowledge-base/ai/mcp-servers.mdx#atlassian-read) for what it does and example prompts.
+
+## ✍️ Atlassian MCP with write access (pilot) {#atlassian-write}
+
+```bash
+./claude/install-skills.sh           # installs the publish-tickets skill
+./mcp/atlassian/connect-write.sh     # connects the write-enabled MCP
+```
+
+:::warning
+Writes are attributed to a **shared service account**, so confirm before writing.
+:::
+
+See [Atlassian MCP with write access](../../knowledge-base/ai/mcp-servers.mdx#atlassian-write) for the recommended flow.
+
+## 🗺️ MapColonies skills {#mapcolonies-skills}
+
+```bash
+./claude/install-skills.sh
+```
+
+The script symlinks the skills into `~/.claude/skills/`. Restart Claude Code afterwards.
+See [MapColonies skills](../../knowledge-base/ai/skills.mdx#mapcolonies-skills) for what each skill does.
+
+## ➡️ Next step
+
+Install the community skills: [🔁 Skills Workflow](./skills-workflow.mdx).

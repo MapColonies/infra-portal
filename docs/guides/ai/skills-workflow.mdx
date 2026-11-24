@@ -1,0 +1,43 @@
+---
+id: skills-workflow
+title: Skills Workflow
+sidebar_label: Skills Workflow
+sidebar_class_name: ai-guides
+sidebar_position: 3
+slug: /guides/ai/skills-workflow
+toc_min_heading_level: 2
+toc_max_heading_level: 5
+---
+
+# 🔁 Skills Workflow
+
+[mattpocock/skills](https://github.com/mattpocock/skills) is our main engineering workflow skill set, covered in Workshop 1. It is distributed as a Claude Code plugin, which keeps it updated automatically.
+
+## 📦 Install
+
+```bash
+# first time only: add the marketplace
+claude plugin marketplace add mattpocock/skills
+# install
+claude plugins install mattpocock-skills
+```
+
+Or from inside a Claude Code session (type this in the Claude prompt, not in your terminal):
+
+```text title="Inside Claude Code"
+/plugins install mattpocock-skills@claude-plugins-official
+```
+
+:::note
+The older `npx skills add mattpocock/skills` install also works, but the plugin is preferred.
+:::
+
+## 🔁 The flow
+
+1. `/grilling` (grill-with-docs) **or** `/wayfinder`: clarify the problem
+2. `/to-spec`: write the spec
+3. `/to-tickets`: split it into tickets (then `/publish-tickets` to push them to Jira, see [Atlassian MCP with write access](./org-setup.mdx#atlassian-write))
+4. implement
+5. `/code-review`
+
+See [Skills](../../knowledge-base/ai/skills.mdx#community-skills) for more skills worth knowing.

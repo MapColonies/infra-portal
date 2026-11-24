@@ -168,9 +168,25 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
   {
     type: 'infra-packages',
     documents: ['README.md'],
-    package: 'openapi-helpers',
-    name: 'openapi-helpers',
-    targetDir: 'docs/knowledge-base/packages/openapi-helpers',
+    package: 'openapi-express-types',
+    name: 'openapi-express-types',
+    targetDir: 'docs/knowledge-base/packages/openapi-express-types',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'openapi-generators',
+    name: 'openapi-generators',
+    targetDir: 'docs/knowledge-base/packages/openapi-generators',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'openapi-supertest',
+    name: 'openapi-supertest',
+    targetDir: 'docs/knowledge-base/packages/openapi-supertest',
     typedoc: true,
   },
   {
