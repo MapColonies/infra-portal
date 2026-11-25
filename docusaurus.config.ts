@@ -8,7 +8,7 @@ import { Options } from '@docusaurus/plugin-content-docs';
 
 function injectTypeDocSidebar(items: Awaited<ReturnType<Options['sidebarItemsGenerator']>>) {
   return items.map((item) => {
-    if (item.type === 'category' && item.label === 'Packages') {
+    if (item.type === 'category' && item.label === 'NPM-Packages') {
       item.items = item.items.map((subItem) => {
         if (subItem.type !== 'category' || !subItem.link) {
           return subItem;
@@ -78,9 +78,9 @@ export default async function createConfigAsync() {
               return injectTypeDocSidebar(await defaultSidebarItemsGenerator(args));
             },
             sidebarPath: './sidebars.ts',
-            // Please change this to your repo.
-            // Remove this to remove the "edit this page" links.
-            editUrl: 'https://github.com/MapColonies/infra-portal/tree/master/',
+            // Typedoc pages are generated at build time and don't exist in the repo, so they get no edit link.
+            editUrl: ({ versionDocsDirPath, docPath }) =>
+              docPath.includes('/typedoc/') ? undefined : `https://github.com/MapColonies/infra-portal/tree/master/${versionDocsDirPath}/${docPath}`,
           },
           blog: {
             showReadingTime: true,
