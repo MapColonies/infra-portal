@@ -113,6 +113,13 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
   {
     type: 'infra-packages',
     documents: ['README.md'],
+    package: 'eslint-plugin',
+    name: 'eslint-plugin',
+    targetDir: 'docs/knowledge-base/packages/eslint-plugin',
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
     package: 'express-access-log-middleware',
     name: 'express-access-log-middleware',
     targetDir: 'docs/knowledge-base/packages/express-access-log-middleware',
@@ -187,6 +194,22 @@ export const sources: (GithubSource | Source | InfraPackagesSource)[] = [
     package: 'openapi-supertest',
     name: 'openapi-supertest',
     targetDir: 'docs/knowledge-base/packages/openapi-supertest',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'drizzle-utils',
+    name: 'drizzle-utils',
+    targetDir: 'docs/knowledge-base/packages/drizzle-utils',
+    typedoc: true,
+  },
+  {
+    type: 'infra-packages',
+    documents: ['README.md'],
+    package: 'vitest-utils',
+    name: 'vitest-utils',
+    targetDir: 'docs/knowledge-base/packages/vitest-utils',
     typedoc: true,
   },
   {
